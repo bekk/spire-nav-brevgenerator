@@ -15,7 +15,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 12
-      - run: npm ci && npm test
+      - run: npm ci
+      - run: npm test
 
   publish-gpr:
     needs: build
