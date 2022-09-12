@@ -42,6 +42,6 @@
     ]
   },
   "publishConfig": {
-    "@sberbom:registry":"https://npm.pkg.github.com/"
+    "@bekk:registry":"https://npm.pkg.github.com/"
   }
 }
