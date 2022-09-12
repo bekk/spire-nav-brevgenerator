@@ -42,6 +42,6 @@
     ]
   },
   "publishConfig": {
-    "@bekk/spire-nav22:registry":"https://npm.pkg.github.com/"
+    "@sberbom:registry":"https://npm.pkg.github.com/"
   }
 }
