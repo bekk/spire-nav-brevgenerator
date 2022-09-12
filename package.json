@@ -1,0 +1,42 @@
+{
+  "name": "spire-nav-brevgenerator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "brevGenerator.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@navikt/ds-css": "^1.0.0-rc.8",
+    "@navikt/ds-css-internal": "^1.0.0-rc.8",
+    "@navikt/ds-icons": "^1.0.0-rc.8",
+    "@navikt/ds-react": "^1.0.0-rc.8",
+    "@navikt/ds-react-internal": "^1.0.0-rc.8",
+    "axios": "^0.27.2",
+    "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "html-react-parser": "^3.0.4",
+    "html-to-draftjs": "^1.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/draft-js": "^0.11.9",
+    "@types/draftjs-to-html": "^0.8.1",
+    "@types/html-to-draftjs": "^1.4.0",
+    "@types/jest": "^29.0.1",
+    "@types/react": "^18.0.19",
+    "@types/react-draft-wysiwyg": "^1.13.4",
+    "jest": "^29.0.3",
+    "ts-jest": "^29.0.0"
+  },
+  "eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	}
+}

@@ -1,0 +1,17 @@
+.wrapper-class {
+	border: 1px solid rgba(112, 112, 112, 1);
+	border-radius: 4px;
+}
+
+.editor-class {
+	width: 100%;
+	padding: 8px;
+	color: black;
+	font-weight: normal;
+	display: block;
+	min-height: 1.2em;
+}
+
+.toolbar-class {
+	border-bottom: 1px solid rgba(112, 112, 112, 1);
+}
