@@ -31,7 +31,6 @@ jobs:
           node-version: 18
           scope: "@tengssimen"
           registry-url: https://npm.pkg.github.com/
-          scope: "@bekk"
       - run: npm ci
       - run: npm publish --registry=https://npm.pkg.github.com
         env:
