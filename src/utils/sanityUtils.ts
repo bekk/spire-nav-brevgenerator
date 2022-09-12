@@ -2,7 +2,7 @@ import {
 	SanityTekstObjekt,
 	SanityChildren,
 	SanityDropdown,
-} from '../brevgenerator/typer/sanity';
+} from '../typer/sanity';
 
 export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
 	const outStrengTabell: string[] = [];

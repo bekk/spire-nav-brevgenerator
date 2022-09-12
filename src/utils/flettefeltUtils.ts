@@ -1,4 +1,4 @@
-import { SanityChildren, SanityTekst } from '../brevgenerator/typer/sanity';
+import { SanityChildren, SanityTekst } from '../typer/sanity';
 
 export const finnFlettefelt = (sanityTekst: SanityTekst) => {
 	const flettefeltNy: SanityChildren[] = [];

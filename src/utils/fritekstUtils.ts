@@ -1,4 +1,4 @@
-import { SanityTekstObjekt } from '../brevgenerator/typer/sanity';
+import { SanityTekstObjekt } from '../typer/sanity';
 
 export const dobbelTabellTilStreng = (fritekstTabell: string[][]) => {
 	let tekst = '';
