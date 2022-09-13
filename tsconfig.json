@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		"target": "es6",
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
@@ -9,12 +9,14 @@
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
-		"module": "esnext",
+		"module": "es6",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noEmit": true,
-		"jsx": "react-jsx",
+		"noEmit": false,
+		"jsx": "react",
+		"declaration": true,
+		"outDir": "dist"
 	},
-	"include": ["src", "jest.config.ts", "tests/fritekstUtils.test.ts"]
+	"include": ["./src", "jest.config.ts", "./tester"]
 }
