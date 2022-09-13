@@ -9,7 +9,7 @@
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
-		"module": "es6",
+		"module": "esnext",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
@@ -18,5 +18,5 @@
 		"declaration": true,
 		"outDir": "dist"
 	},
-	"include": ["./src", "jest.config.ts", "./tester"]
+	"include": ["./src", "./tester"]
 }

@@ -7,9 +7,11 @@
 
 # testing
 /coverage
+.tgz
 
 # production
 /build
+/dist
 
 #Firebase
 .firebase

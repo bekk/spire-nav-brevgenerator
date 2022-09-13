@@ -1,12 +1,13 @@
 {
   "name": "@bekk/spire-nav-brevgenerator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
-  "main": "brevGenerator.tsx",
+  "main": "./brevGenerator.js",
   "scripts": {
     "test": "jest",
     "clean": "rm -rf dist",
-    "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist"
+    "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler",
+    "pack": "npm run build && npm pack ./dist"
   },
   "author": "",
   "license": "ISC",

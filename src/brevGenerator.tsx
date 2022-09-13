@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { renderToString } from "react-dom/server";
-import "./App.css";
+import "./stiler/brevGenerator.css";
 import "@navikt/ds-css";
 import { Skjema } from "./komponenter/skjema";
 import { Overskrift } from "./komponenter/overskrift";
