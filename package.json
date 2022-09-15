@@ -9,7 +9,7 @@
     "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler",
     "build:dev": "npm link ./dist && npm link ${npm_config_path}/node_modules/react && npm run clean && mkdir ./dist && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler && tsc -w",
     "pack": "npm run build && npm pack ./dist",
-    "prepare": "husky install",
+    "prepare": "is-ci || husky install",
     "pre-commit": "lint-staged"
   },
   "author": "",
