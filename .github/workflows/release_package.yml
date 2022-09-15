@@ -30,8 +30,8 @@ jobs:
         with:
           node-version: 18
           registry-url: https://npm.pkg.github.com/
-      - run: git config user.email "$GITHUB_ACTOR@gmail.com"
-      - run: git config user.name "$GITHUB_ACTOR"
+      - run: git config user.email "${{ github.event.pusher.email }}"
+      - run: git config user.name "${{ github.event.pusher.name }}"
       - run: npm version patch
       - run: npm ci
       - run: npm run build
