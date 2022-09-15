@@ -9,7 +9,8 @@
     "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler",
     "build:dev": "npm link ./dist && npm link ${npm_config_path}/node_modules/react && npm run clean && mkdir ./dist && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler && tsc -w",
     "pack": "npm run build && npm pack ./dist",
-    "testing": "echo ${npm_config_path}"
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
   },
   "author": "",
   "license": "ISC",
@@ -39,12 +40,15 @@
     "@types/react": "^18.0.19",
     "@types/react-dom": "^18.0.6",
     "@types/react-draft-wysiwyg": "^1.13.4",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "2.7.1",
     "ts-jest": "^29.0.0",
     "typescript": "^4.8.3"
   },
   "peerDependencies": {
-    "react-dom": "^18.2.0",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "eslintConfig": {
     "extends": [
