@@ -30,21 +30,8 @@ jobs:
         with:
           node-version: 18
           registry-url: https://npm.pkg.github.com/
-      - if: $GITHUB_ACTOR == kolbjornkelly
-        run: git config user.email "kolbjorn.kelly@gmail.com"
-        run: git config user.name "kolbjornkelly"
-        run: npm version patch
-      - if: $GITHUB_ACTOR == sarahjelle
-        run: git config user.email "sarahj.98@hotmail.com"
-        run: git config user.name "sarahjelle"
-        run: npm version patch
-      - if: $GITHUB_ACTOR == tengssimen
-        run: git config user.email "simentengs@gmail.com"
-        run: git config user.name "tengssimen"
-        run: npm version patch
-      - if: $GITHUB_ACTOR == sberbom
-        run: git config user.email "sberbom@gmail.com"
-        run: git config user.name "sberbom"
+        run: git config user.email "${{ github.event.pusher.name }}"
+        run: git config user.name "${{ github.event.pusher.email }}"
         run: npm version patch
       - run: npm ci
       - run: npm run build
