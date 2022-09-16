@@ -1,6 +1,6 @@
 {
   "name": "@bekk/spire-nav-brevgenerator",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "./brevGenerator.js",
   "scripts": {
@@ -9,14 +9,13 @@
     "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler",
     "build:dev": "npm link ./dist && npm link ${npm_config_path}/node_modules/react && npm run clean && mkdir ./dist && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler && tsc -w",
     "pack": "npm run build && npm pack ./dist",
-    "prepare": "is-ci || husky install",
     "pre-commit": "lint-staged"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/preset-env": "^7.19.0",
-    "@navikt/ds-css": "^1.0.0-rc.8",
+    "@navikt/ds-css": "^1.3.0",
     "@navikt/ds-css-internal": "^1.0.0-rc.8",
     "@navikt/ds-icons": "^1.0.0-rc.8",
     "@navikt/ds-react": "^1.0.0-rc.8",
