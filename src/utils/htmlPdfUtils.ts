@@ -28,7 +28,6 @@ export const settInnTabell = (
 	avsnittStateKopi: avsnittType,
 	tabeller: tabellObjekt[] = tabellObjekter
 ): string[] => {
-	console.log(avsnittStateKopi);
 	return avsnittStateKopi.map((avsnitt: string) => {
 		let nyttAvsnitt = avsnitt;
 		for (const tabell of tabeller) {
