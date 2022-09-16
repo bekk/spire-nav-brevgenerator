@@ -16,9 +16,8 @@ const HTMLPDF = () => {
 	const { avsnittState, brevmalTittelState, skalAvsnittInkluderesState } =
 		useContext(SkjemaContext);
 
-	const arkinnhold: string[] = [];
-
 	const genererInnholdTilArk = (paragraftabell: string[]) => {
+		let arkinnhold: string[] = [];
 		let antallLinjerLagtTil = 0;
 		let innhold = "";
 		let stoppIndeks = 0;
@@ -37,8 +36,13 @@ const HTMLPDF = () => {
 
 		arkinnhold.push(innhold);
 
-		if (stoppIndeks > 0)
-			genererInnholdTilArk(paragraftabell.slice(stoppIndeks));
+		if (stoppIndeks > 0) {
+			arkinnhold = arkinnhold.concat(
+				genererInnholdTilArk(paragraftabell.slice(stoppIndeks))
+			);
+		}
+
+		return arkinnhold;
 	};
 
 	const finnAvsnittSomSkalInkluderes = (): string[] => {
@@ -58,7 +62,7 @@ const HTMLPDF = () => {
 		tabellObjekter
 	);
 	const paragraftabell = avsnittTilParagraftabell(avsnittMedTabell);
-	genererInnholdTilArk(paragraftabell);
+	const arkinnhold = genererInnholdTilArk(paragraftabell);
 
 	return (
 		<div className="pdf-viser">
