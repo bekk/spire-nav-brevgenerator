@@ -11,4 +11,6 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
+        with:
+          node-version: 18
       - run: npm test
