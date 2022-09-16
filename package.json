@@ -59,9 +59,5 @@
   },
   "publishConfig": {
     "@bekk:registry": "https://npm.pkg.github.com"
-  },
-  "engines": {
-    "node": ">=16.13.1",
-    "npm": ">=8.2.0"
   }
 }
