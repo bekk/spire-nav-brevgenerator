@@ -1,0 +1,71 @@
+.pdf-viser {
+	height: 80vmin;
+	width: calc(80vmin / 1.414);
+	max-height: 297mm;
+	max-width: 210mm;
+	border: 1px solid black;
+	background-color: #8f8f8f;
+	text-align: left;
+	position: sticky;
+	top: 4em;
+	overflow-y: scroll;
+}
+
+.ark {
+	margin: 3%;
+	max-height: 297mm;
+	max-width: 210mm;
+	background-color: white;
+	padding: 12mm;
+	height: 100%;
+}
+
+.innhold {
+	height: 100%;
+	overflow: scroll;
+}
+
+.ark p{
+	font-size: 1.15vmin;
+}
+
+.brevmaloverskrift {
+	font-size: 2vmin;
+	margin: 0;
+}
+
+.brevhode {
+	width: 100%;
+	height: calc(80vmin / 6);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.nav-ikon {
+	display: block;
+	width: calc(70vmin / 10);
+}
+
+.brevhode p {
+	font-weight: bold;
+	width: calc(70vmin / 10);
+	text-align: left;
+}
+
+table,
+th,
+td {
+	border: 1px solid;
+	font-size: 1.2vmin;
+}
+
+th,
+td {
+	padding: 0.3vmin 1vmin;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
