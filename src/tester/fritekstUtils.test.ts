@@ -2,6 +2,7 @@ import {
 	dobbelTabellTilStreng,
 	finnAntallTegnLagtTil,
 	finnEndringsIndeks,
+	finnKaraktererIListeMedStrenger,
 	finnTabellIndeksOgNyttFritekstElement,
 	sanityTekstObjektTilStreng,
 } from '../utils/fritekstUtils';
@@ -433,4 +434,23 @@ describe('test av finnTabellIndeksOgNyttFritekstElement(HTML)', () => {
 			expect(streng).toBe("");
 		})
 	})
+
+	describe("test av finnKaraktererIListeMedStenger", () => {
+		it("liste elementer med karakterer", () => {
+			const listeMedStrenger = ["en", "tekst", "med", "karakterer"];
+
+			const resultat = finnKaraktererIListeMedStrenger(listeMedStrenger);
+
+			expect(resultat).toBe(20);
+		})
+
+		it("liste elementer med karakterer og tomme liste elementer", () => {
+			const listeMedStrenger = ["", "tekst", "med", ""];
+
+			const resultat = finnKaraktererIListeMedStrenger(listeMedStrenger);
+
+			expect(resultat).toBe(8);
+		})
+	})
+
 });

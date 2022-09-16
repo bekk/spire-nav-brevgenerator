@@ -89,10 +89,4 @@ export const finnTabellIndeksOgNyttFritekstElement = (
 
 export const finnKaraktererIListeMedStrenger = (
 	listeMedStrenger: string[]
-): number => {
-	let teller = 0;
-	listeMedStrenger.forEach((element) => {
-		teller += element.length;
-	});
-	return teller;
-};
+): number => (listeMedStrenger.join('').length);
