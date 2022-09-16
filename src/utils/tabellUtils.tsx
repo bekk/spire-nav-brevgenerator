@@ -1,6 +1,7 @@
-import React from 'react';
-import { renderToString } from 'react-dom/server';
+import React from "react";
+import { renderToString } from "react-dom/server";
 
+//Kommentar legges til for testing
 export const listeTilHtmlTabell = (tabell: string[][]) => {
 	return renderToString(
 		<table>
