@@ -33,9 +33,4 @@ export default `
     display: inline-block;
 	margin-top: 40mm;
 }
-
-.hoved-brev p {
-	margin: 0px;
-}
-
 `;
