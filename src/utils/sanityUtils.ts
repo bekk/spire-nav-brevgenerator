@@ -5,7 +5,7 @@ import {
 	SanityTekst,
 } from '../typer/sanity';
 
-export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
+export const sanityBlocktekstToHtml = (tekst: SanityTekstObjekt): string[] => {
 	const outStrengTabell: string[] = [];
 	let gjeldendeTabellElement = '';
 	tekst.tekst.forEach((tekstElement) => {
