@@ -10,14 +10,14 @@ export const sanityBlocktekstToHtml = (tekst: SanityTekstObjekt): string[] => {
 	let gjeldendeTabellElement = '';
 	tekst.tekst.forEach((tekstElement) => {
 		tekstElement.children.forEach((child, childIndeks) => {
-			const childErFlettefeltReferanse = erFlettefeltReferanse(
+			const erChildFlettefeltReferanse = erFlettefeltReferanse(
 				tekstElement,
 				child
 			);
 
 			if (childIndeks === 0) {
 				gjeldendeTabellElement += '<p>';
-				if (childErFlettefeltReferanse) {
+				if (erChildFlettefeltReferanse) {
 					outStrengTabell.push(gjeldendeTabellElement);
 					gjeldendeTabellElement = '';
 				}
@@ -33,18 +33,18 @@ export const sanityBlocktekstToHtml = (tekst: SanityTekstObjekt): string[] => {
 					'[' + tekstElement.markDefs[0].tabell.tabellReferanse + ']';
 			}
 
-			if (childErFlettefeltReferanse) {
+			if (erChildFlettefeltReferanse) {
 				outStrengTabell.push(gjeldendeTabellElement);
 				gjeldendeTabellElement = '';
 				if (
 					childIndeks !== tekstElement.children.length - 1 &&
-					childErFlettefeltReferanse
+					erChildFlettefeltReferanse
 				) {
 					outStrengTabell.push(gjeldendeTabellElement);
 				}
 			} else if (
 				childIndeks !== tekstElement.children.length - 1 &&
-				childErFlettefeltReferanse
+				erChildFlettefeltReferanse
 			) {
 				outStrengTabell.push(gjeldendeTabellElement);
 				gjeldendeTabellElement = '';
