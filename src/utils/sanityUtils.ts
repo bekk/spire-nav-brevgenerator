@@ -2,6 +2,7 @@ import {
 	SanityTekstObjekt,
 	SanityChildren,
 	SanityDropdown,
+	SanityTekst,
 } from '../typer/sanity';
 
 export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
@@ -9,9 +10,14 @@ export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
 	let gjeldendeTabellElement = '';
 	tekst.tekst.forEach((tekstElement) => {
 		tekstElement.children.forEach((child, childIndeks) => {
+			const childErFlettefeltReferanse = erFlettefeltReferanse(
+				tekstElement,
+				child
+			);
+
 			if (childIndeks === 0) {
 				gjeldendeTabellElement += '<p>';
-				if (erFlettefelt(child)) {
+				if (childErFlettefeltReferanse) {
 					outStrengTabell.push(gjeldendeTabellElement);
 					gjeldendeTabellElement = '';
 				}
@@ -22,18 +28,23 @@ export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
 				gjeldendeTabellElement += child.text;
 			}
 
-			if (erFlettefelt(child)) {
+			if (erTabellReferanse(tekstElement, child)) {
+				gjeldendeTabellElement =
+					'[' + tekstElement.markDefs[0].tabell.tabellReferanse + ']';
+			}
+
+			if (childErFlettefeltReferanse) {
 				outStrengTabell.push(gjeldendeTabellElement);
 				gjeldendeTabellElement = '';
 				if (
 					childIndeks !== tekstElement.children.length - 1 &&
-					erFlettefelt(tekstElement.children[childIndeks + 1])
+					childErFlettefeltReferanse
 				) {
 					outStrengTabell.push(gjeldendeTabellElement);
 				}
 			} else if (
 				childIndeks !== tekstElement.children.length - 1 &&
-				erFlettefelt(tekstElement.children[childIndeks + 1])
+				childErFlettefeltReferanse
 			) {
 				outStrengTabell.push(gjeldendeTabellElement);
 				gjeldendeTabellElement = '';
@@ -46,8 +57,33 @@ export const sanityToHtml = (tekst: SanityTekstObjekt): string[] => {
 	outStrengTabell.push(gjeldendeTabellElement);
 	return outStrengTabell;
 };
-const erFlettefelt = (child: SanityChildren): boolean => {
-	return child.marks.length === 1 && !child.marks.includes('strong');
+
+const erFlettefeltReferanse = (
+	tekstElement: SanityTekst,
+	child: SanityChildren
+): boolean => {
+	if (child.marks.length === 1 && !child.marks.includes('strong')) {
+		for (let i = 0; i < tekstElement.markDefs.length; i++) {
+			if (tekstElement.markDefs[i]._type === 'flettefeltReferanse') {
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+const erTabellReferanse = (
+	tekstElement: SanityTekst,
+	child: SanityChildren
+): boolean => {
+	if (child.marks.length === 1 && !child.marks.includes('strong')) {
+		for (let i = 0; i < tekstElement.markDefs.length; i++) {
+			if (tekstElement.markDefs[i]._type === 'tabellReferanse') {
+				return true;
+			}
+		}
+	}
+	return false;
 };
 
 export const erInnholdDropdown = (
