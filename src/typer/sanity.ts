@@ -36,18 +36,7 @@ export interface SanityTekstObjekt extends SanityDocument {
 }
 
 export interface SanityTabell extends SanityDocument {
-	tabellNavn: string;
-	tabell: {
-		rows: SanityTableRow[];
-		_key: string;
-		_type: string;
-	};
-}
-
-export interface SanityTableRow {
-	cells: string[];
-	_key: string;
-	_type: string;
+	tabellReferanse: string;
 }
 
 export interface SanityTekst {

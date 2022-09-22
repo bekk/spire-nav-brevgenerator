@@ -4,27 +4,7 @@ import {
 	finnEndringsIndeks,
 	finnKaraktererIListeMedStrenger,
 	finnTabellIndeksOgNyttFritekstElement,
-	sanityTekstObjektTilStreng,
 } from '../utils/fritekstUtils';
-import { sanityTekstMedFlettefelt, sanityTekstPlain } from './testobjekter';
-
-describe('test av sanityTekstObjektTilStreng()', () => {
-	it('gitt tekst uten markDefs og marks', () => {
-		const testObjekt = sanityTekstPlain;
-		const streng = sanityTekstObjektTilStreng(testObjekt);
-		expect(streng).toBe(
-			'Dette er en en plain tekst uten flettefelt og bold-text'
-		);
-	});
-
-	it('gitt tekst med markDefs', () => {
-		const testObjekt = sanityTekstMedFlettefelt;
-		const streng = sanityTekstObjektTilStreng(testObjekt);
-		expect(streng).toBe(
-			'Vi har beregnet dette både ut ifra arbeidsinntekten din og [stønad] du får fra oss. Dette gir en forventet årsinntekt på [beløp] kroner.'
-		);
-	});
-});
 
 describe('test av finnEndringsIndeks', () => {
 	const gammelTekst = 'dette er en test';
@@ -398,59 +378,72 @@ describe('test av finnTabellIndeksOgNyttFritekstElement(HTML)', () => {
 		});
 	});
 
-	describe("dobbelTabellTilStreng", () => {
+	describe('dobbelTabellTilStreng', () => {
 		it('Vanlig data', () => {
-			const tabell = [["dette ", "er ", "en ", "tabell "], ["med ", "to ", "rader"]];
+			const tabell = [
+				['dette ', 'er ', 'en ', 'tabell '],
+				['med ', 'to ', 'rader'],
+			];
 
 			const streng = dobbelTabellTilStreng(tabell);
-			expect(streng).toBe("dette er en tabell med to rader");
-		})
+			expect(streng).toBe('dette er en tabell med to rader');
+		});
 
 		it('Tom indre liste midten', () => {
-			const tabell = [["dette ", "er ", "en ", "tabell "],[], ["med ", "to ", "rader"]];
+			const tabell = [
+				['dette ', 'er ', 'en ', 'tabell '],
+				[],
+				['med ', 'to ', 'rader'],
+			];
 
 			const streng = dobbelTabellTilStreng(tabell);
-			expect(streng).toBe("dette er en tabell med to rader");
-		})
+			expect(streng).toBe('dette er en tabell med to rader');
+		});
 
 		it('Tom indre liste start', () => {
-			const tabell = [[], ["dette ", "er ", "en ", "tabell "], ["med ", "to ", "rader"]];
+			const tabell = [
+				[],
+				['dette ', 'er ', 'en ', 'tabell '],
+				['med ', 'to ', 'rader'],
+			];
 
 			const streng = dobbelTabellTilStreng(tabell);
-			expect(streng).toBe("dette er en tabell med to rader");
-		})
+			expect(streng).toBe('dette er en tabell med to rader');
+		});
 
 		it('Tom indre liste slutt', () => {
-			const tabell = [ ["dette ", "er ", "en ", "tabell "], ["med ", "to ", "rader"]];
+			const tabell = [
+				['dette ', 'er ', 'en ', 'tabell '],
+				['med ', 'to ', 'rader'],
+			];
 
 			const streng = dobbelTabellTilStreng(tabell);
-			expect(streng).toBe("dette er en tabell med to rader");
-		})
+			expect(streng).toBe('dette er en tabell med to rader');
+		});
 
 		it('Tom liste', () => {
 			const tabell = [[]];
 
 			const streng = dobbelTabellTilStreng(tabell);
-			expect(streng).toBe("");
-		})
-	})
+			expect(streng).toBe('');
+		});
+	});
 
-	describe("test av finnKaraktererIListeMedStenger", () => {
-		it("liste elementer med karakterer", () => {
-			const listeMedStrenger = ["en", "tekst", "med", "karakterer"];
+	describe('test av finnKaraktererIListeMedStenger', () => {
+		it('liste elementer med karakterer', () => {
+			const listeMedStrenger = ['en', 'tekst', 'med', 'karakterer'];
 
 			const resultat = finnKaraktererIListeMedStrenger(listeMedStrenger);
 
 			expect(resultat).toBe(20);
-		})
+		});
 
-		it("liste elementer med karakterer og tomme liste elementer", () => {
-			const listeMedStrenger = ["", "tekst", "med", ""];
+		it('liste elementer med karakterer og tomme liste elementer', () => {
+			const listeMedStrenger = ['', 'tekst', 'med', ''];
 
 			const resultat = finnKaraktererIListeMedStrenger(listeMedStrenger);
 
 			expect(resultat).toBe(8);
-		})
-	})
-
+		});
+	});
 });
