@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
-import "../stiler/htmlPDF.css";
-import { tabellObjekter } from "../mockdata/tabeller";
-import { SkjemaContext } from "../context/context";
+import React, { useContext } from 'react';
+import '../stiler/htmlPDF.css';
+import { tabellObjekter } from '../mockdata/tabeller';
+import { SkjemaContext } from '../context/context';
 import {
 	avsnittTilParagraftabell,
 	beregnAntallLinjerIParagraf,
 	MAKS_ANTALL_LINJER,
 	settInnTabell,
-} from "../utils/htmlPdfUtils";
-import { Ark } from "./ark";
-import { ArkMedBrevhode } from "./arkMedBrevhode";
+} from '../utils/htmlPdfUtils';
+import { Ark } from './ark';
+import { ArkMedBrevhode } from './arkMedBrevhode';
 
 const HTMLPDF = () => {
 	const { avsnittState, brevmalTittelState, skalAvsnittInkluderesState } =
@@ -18,7 +18,7 @@ const HTMLPDF = () => {
 	const genererInnholdTilArk = (paragraftabell: string[]) => {
 		let arkinnhold: string[] = [];
 		let antallLinjerLagtTil = 0;
-		let innhold = "";
+		let innhold = '';
 		let stoppIndeks = 0;
 
 		for (let indeks = 0; indeks < paragraftabell.length; indeks++) {
@@ -68,11 +68,12 @@ const HTMLPDF = () => {
 			{arkinnhold.map((innhold, indeks) =>
 				indeks === 0 ? (
 					<ArkMedBrevhode
+						key={indeks}
 						innhold={innhold}
 						brevmaltittel={brevmalTittelState}
 					/>
 				) : (
-					<Ark innhold={innhold} />
+					<Ark key={indeks} innhold={innhold} />
 				)
 			)}
 		</div>
