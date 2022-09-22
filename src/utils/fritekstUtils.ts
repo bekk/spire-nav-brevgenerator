@@ -10,16 +10,6 @@ export const dobbelTabellTilStreng = (fritekstTabell: string[][]) => {
 	return tekst;
 };
 
-export const sanityTekstObjektTilStreng = (valg: SanityTekstObjekt) => {
-	let returnStreng = '';
-	valg.tekst.forEach((valgtekst) => {
-		valgtekst.children.forEach((child) => {
-			returnStreng += child.text;
-		});
-	});
-	return returnStreng;
-};
-
 export const finnEndringsIndeks = (
 	nyFritekst: string,
 	gammelTekst: string
@@ -73,8 +63,11 @@ export const finnTabellIndeksOgNyttFritekstElement = (
 		);
 	} else {
 		nyttFritekstElement = nyFritekst.slice(
-			antallTegnITidligereElementer + antallTegnFørElement + tabellIndeks * skilletegnLengde,
-			antallTegnITidligereElementer + indeksTilSisteTegn +
+			antallTegnITidligereElementer +
+				antallTegnFørElement +
+				tabellIndeks * skilletegnLengde,
+			antallTegnITidligereElementer +
+				indeksTilSisteTegn +
 				tabellIndeks * skilletegnLengde +
 				antallTegnLagtTil +
 				1
@@ -89,4 +82,4 @@ export const finnTabellIndeksOgNyttFritekstElement = (
 
 export const finnKaraktererIListeMedStrenger = (
 	listeMedStrenger: string[]
-): number => (listeMedStrenger.join('').length);
+): number => listeMedStrenger.join('').length;
