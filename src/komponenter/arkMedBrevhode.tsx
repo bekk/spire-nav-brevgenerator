@@ -1,6 +1,6 @@
-import React from "react";
-import { NavIkon } from "../ikoner/navikon";
-import parse from "html-react-parser";
+import React from 'react';
+import { NavIkon } from '../ikoner/navikon';
+import parse from 'html-react-parser';
 
 interface ArkMedBrevhodeProps {
 	brevmaltittel: string;

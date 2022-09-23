@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { NavIkon } from "../ikoner/navikon";
-import parse from "html-react-parser";
-import { SkjemaContext } from "../context/context";
-import { settInnTabell } from "../utils/htmlPdfUtils";
+import React, { useContext } from 'react';
+import { NavIkon } from '../ikoner/navikon';
+import parse from 'html-react-parser';
+import { SkjemaContext } from '../context/context';
+import { settInnTabell } from '../utils/htmlPdfUtils';
 
 const PDF = () => {
 	const { avsnittState, skalAvsnittInkluderesState, brevmalTittelState } =
@@ -22,7 +22,7 @@ const PDF = () => {
 					avsnittMedTabell.map((avsnitt, index) => (
 						<div className="avsnitt" key={index}>
 							{skalAvsnittInkluderesState[index] === true && avsnitt && (
-								<>{parse(avsnitt.replaceAll("<p></p>", "<br></br>"))}</>
+								<>{parse(avsnitt.replaceAll('<p></p>', '<br></br>'))}</>
 							)}
 						</div>
 					))}
