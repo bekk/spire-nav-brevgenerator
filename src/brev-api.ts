@@ -1,11 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import css from './stiler/css';
 
-const genererSanityURL = (query: string): string => {
-	const datasett = "production";
-	const prosjektid = 'nrbknng4';
-	const QUERY = encodeURIComponent(query);
-	return `https://${prosjektid}.api.sanity.io/v2021-10-21/data/query/${datasett}?query=${QUERY}`;
+const genererSanityURL = (sanityBaseURL: string, query: string): string => {
+	return sanityBaseURL + query;
 };
 
 export const hentData = async (URL: string) => {
@@ -20,16 +17,18 @@ export const hentAvsnitt = async (URL: string) => {
 	});
 };
 
-export const hentBrevmaler = async () => {
-	const URL = genererSanityURL('*[_type == "brevmal"]');
+export const hentBrevmaler = async (sanityBaseURL: string) => {
+	const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
 
 	return axios.get(URL).then((res) => {
 		return res.data.result;
 	});
 };
 
-export const hentBrevmal = async (id: string) => {
-	const URL = genererSanityURL(`*[_id=="${id}"][0]{
+export const hentBrevmal = async (sanityBaseURL: string, id: string) => {
+	const URL = genererSanityURL(
+		sanityBaseURL,
+		`*[_id=="${id}"][0]{
 		...,
 		seksjoner[]->{
 			...,
@@ -67,7 +66,8 @@ export const hentBrevmal = async (id: string) => {
 				}
 			}
 		}
-	}`);
+	}`
+	);
 
 	return axios.get(URL).then((res) => {
 		return res.data.result;

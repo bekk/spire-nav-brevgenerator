@@ -15,9 +15,10 @@ import { sanityBlocktekstToHtml } from '../utils/sanityUtils';
 
 interface SkjemaProps {
 	brevmaler: brevmal[];
+	sanityBaseURL: string;
 }
 
-export function Skjema({ brevmaler }: SkjemaProps) {
+export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
 	const [gjeldendeBrevmalId, setGjeldendeBrevmalId] = useState<string>('-1');
 	const [gjeldendeBrevmal, setGjeldendeBrevmal] =
 		useState<SanityBrevmalMedSeksjoner | null>(null);
@@ -55,20 +56,22 @@ export function Skjema({ brevmaler }: SkjemaProps) {
 	};
 
 	useEffect(() => {
-		hentBrevmal(gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
-			setGjeldendeBrevmal(res);
-			if (res !== null && res.seksjoner.length > 0) {
-				brevmalTittelDispatch(res.brevmaloverskrift);
-				const { nyeAvsnitt, antallDelSeksjoner } =
-					finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
-				const nyeInkluderingsBrytere: boolean[] = new Array(
-					antallDelSeksjoner
-				).fill(true);
+		hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then(
+			(res: SanityBrevmalMedSeksjoner) => {
+				setGjeldendeBrevmal(res);
+				if (res !== null && res.seksjoner.length > 0) {
+					brevmalTittelDispatch(res.brevmaloverskrift);
+					const { nyeAvsnitt, antallDelSeksjoner } =
+						finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
+					const nyeInkluderingsBrytere: boolean[] = new Array(
+						antallDelSeksjoner
+					).fill(true);
 
-				avsnittDispatch(nyeAvsnitt);
-				skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+					avsnittDispatch(nyeAvsnitt);
+					skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+				}
 			}
-		});
+		);
 	}, [gjeldendeBrevmalId]);
 
 	const renderSeksjoner = () => {

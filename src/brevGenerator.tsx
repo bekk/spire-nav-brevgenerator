@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { renderToString } from "react-dom/server";
-import "./stiler/brevGenerator.css";
-import "@navikt/ds-css";
-import { Skjema } from "./komponenter/skjema";
-import { Overskrift } from "./komponenter/overskrift";
-import PDF from "./komponenter/pdf";
-import { brevmal } from "./typer/typer";
-import { Button } from "@navikt/ds-react";
-import { genererPDF, hentBrevmaler } from "./brev-api";
+import React, { useState, useEffect, useReducer } from 'react';
+import { renderToString } from 'react-dom/server';
+import './stiler/brevGenerator.css';
+import '@navikt/ds-css';
+import { Skjema } from './komponenter/skjema';
+import { Overskrift } from './komponenter/overskrift';
+import PDF from './komponenter/pdf';
+import { brevmal } from './typer/typer';
+import { Button } from '@navikt/ds-react';
+import { genererPDF, hentBrevmaler } from './brev-api';
 import {
 	avsnittStateReducer,
 	brevmalTittelStateReducer,
@@ -15,12 +15,16 @@ import {
 	initialBrevmalTittelState,
 	initialSkalAvsnittInkluderesState,
 	skalAvsnittInkluderesStateReducer,
-} from "./context/reducer";
-import { SkjemaContext } from "./context/context";
-import { SanityBrevmalUtenSeksjoner } from "./typer/sanity";
-import HTMLPDF from "./komponenter/htmlPDF";
+} from './context/reducer';
+import { SkjemaContext } from './context/context';
+import { SanityBrevmalUtenSeksjoner } from './typer/sanity';
+import HTMLPDF from './komponenter/htmlPDF';
 
-function BrevGenerator() {
+interface brevGeneratorProps {
+	sanityBaseURL: string;
+}
+
+function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
 	const [avsnittState, avsnittDispatch] = useReducer(
 		avsnittStateReducer,
 		initialAvsnittState
@@ -47,7 +51,7 @@ function BrevGenerator() {
 	};
 
 	useEffect(() => {
-		hentBrevmaler().then((results) => {
+		hentBrevmaler(sanityBaseURL).then((results) => {
 			const hentetBrevmaler = results.map(
 				(result: SanityBrevmalUtenSeksjoner) => {
 					return {
@@ -73,7 +77,7 @@ function BrevGenerator() {
 			<div>
 				<Overskrift />
 				<div className="side-om-side">
-					<Skjema brevmaler={brevmaler} />
+					<Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
 					<HTMLPDF />
 				</div>
 				<div className="bottomBar">
