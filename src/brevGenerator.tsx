@@ -1,89 +1,85 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { renderToString } from "react-dom/server";
-import "./stiler/brevGenerator.css";
-import "@navikt/ds-css";
-import { Skjema } from "./komponenter/skjema";
-import { Overskrift } from "./komponenter/overskrift";
-import PDF from "./komponenter/pdf";
-import { brevmal } from "./typer/typer";
-import { Button } from "@navikt/ds-react";
-import { genererPDF, hentBrevmaler } from "./brev-api";
+import React, { useState, useEffect, useReducer } from 'react';
+import { renderToString } from 'react-dom/server';
+import './stiler/brevGenerator.css';
+import '@navikt/ds-css';
+import { Skjema } from './komponenter/skjema';
+import { Overskrift } from './komponenter/overskrift';
+import PDF from './komponenter/pdf';
+import { brevmal } from './typer/typer';
+import { Button } from '@navikt/ds-react';
+import { genererPDF, hentBrevmaler } from './brev-api';
 import {
-	avsnittStateReducer,
-	brevmalTittelStateReducer,
-	initialAvsnittState,
-	initialBrevmalTittelState,
-	initialSkalAvsnittInkluderesState,
-	skalAvsnittInkluderesStateReducer,
-} from "./context/reducer";
-import { SkjemaContext } from "./context/context";
-import { SanityBrevmalUtenSeksjoner } from "./typer/sanity";
-import HTMLPDF from "./komponenter/htmlPDF";
+    avsnittStateReducer,
+    brevmalTittelStateReducer,
+    initialAvsnittState,
+    initialBrevmalTittelState,
+    initialSkalAvsnittInkluderesState,
+    skalAvsnittInkluderesStateReducer,
+} from './context/reducer';
+import { SkjemaContext } from './context/context';
+import { SanityBrevmalUtenSeksjoner } from './typer/sanity';
+import HTMLPDF from './komponenter/htmlPDF';
 
-function BrevGenerator() {
-	const [avsnittState, avsnittDispatch] = useReducer(
-		avsnittStateReducer,
-		initialAvsnittState
-	);
-	const [skalAvsnittInkluderesState, skalAvsnittInkluderesDispatch] =
-		useReducer(
-			skalAvsnittInkluderesStateReducer,
-			initialSkalAvsnittInkluderesState
-		);
-	const [brevmalTittelState, brevmalTittelDispatch] = useReducer(
-		brevmalTittelStateReducer,
-		initialBrevmalTittelState
-	);
+interface brevGeneratorProps {
+    sanityBaseURL: string;
+}
 
-	const [brevmaler, setBrevmaler] = useState<brevmal[]>([]);
+function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
+    const [avsnittState, avsnittDispatch] = useReducer(avsnittStateReducer, initialAvsnittState);
+    const [skalAvsnittInkluderesState, skalAvsnittInkluderesDispatch] = useReducer(
+        skalAvsnittInkluderesStateReducer,
+        initialSkalAvsnittInkluderesState
+    );
+    const [brevmalTittelState, brevmalTittelDispatch] = useReducer(
+        brevmalTittelStateReducer,
+        initialBrevmalTittelState
+    );
 
-	const contextValue = {
-		avsnittState,
-		avsnittDispatch,
-		skalAvsnittInkluderesState,
-		skalAvsnittInkluderesDispatch,
-		brevmalTittelState,
-		brevmalTittelDispatch,
-	};
+    const [brevmaler, setBrevmaler] = useState<brevmal[]>([]);
 
-	useEffect(() => {
-		hentBrevmaler().then((results) => {
-			const hentetBrevmaler = results.map(
-				(result: SanityBrevmalUtenSeksjoner) => {
-					return {
-						id: result._id,
-						tittel: result.brevmaltittel,
-					};
-				}
-			);
-			setBrevmaler(hentetBrevmaler);
-		});
-	}, []);
+    const contextValue = {
+        avsnittState,
+        avsnittDispatch,
+        skalAvsnittInkluderesState,
+        skalAvsnittInkluderesDispatch,
+        brevmalTittelState,
+        brevmalTittelDispatch,
+    };
 
-	const genererHTMLString = () => {
-		return renderToString(
-			<SkjemaContext.Provider value={contextValue}>
-				<PDF />
-			</SkjemaContext.Provider>
-		);
-	};
+    useEffect(() => {
+        hentBrevmaler(sanityBaseURL).then((results) => {
+            const hentetBrevmaler = results.map((result: SanityBrevmalUtenSeksjoner) => {
+                return {
+                    id: result._id,
+                    tittel: result.brevmaltittel,
+                };
+            });
+            setBrevmaler(hentetBrevmaler);
+        });
+    }, []);
 
-	return (
-		<SkjemaContext.Provider value={contextValue}>
-			<div>
-				<Overskrift />
-				<div className="side-om-side">
-					<Skjema brevmaler={brevmaler} />
-					<HTMLPDF />
-				</div>
-				<div className="bottomBar">
-					<Button onClick={() => genererPDF(genererHTMLString())}>
-						Generer PDF
-					</Button>
-				</div>
-			</div>
-		</SkjemaContext.Provider>
-	);
+    const genererHTMLString = () => {
+        return renderToString(
+            <SkjemaContext.Provider value={contextValue}>
+                <PDF />
+            </SkjemaContext.Provider>
+        );
+    };
+
+    return (
+        <SkjemaContext.Provider value={contextValue}>
+            <div>
+                <Overskrift />
+                <div className="side-om-side">
+                    <Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
+                    <HTMLPDF />
+                </div>
+                <div className="bottomBar">
+                    <Button onClick={() => genererPDF(genererHTMLString())}>Generer PDF</Button>
+                </div>
+            </div>
+        </SkjemaContext.Provider>
+    );
 }
 
 export default BrevGenerator;
