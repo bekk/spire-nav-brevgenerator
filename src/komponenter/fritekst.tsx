@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { EditorState } from 'draft-js';
+import { EditorState, Modifier } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import { ContentState, convertToRaw } from 'draft-js';
@@ -38,6 +38,7 @@ export function Fritekst({ defaultTekst, håndterEndringIFritekstFelt }: friteks
                 wrapperClassName="wrapper-class"
                 editorClassName="editor-class"
                 editorState={editorState}
+                stripPastedStyles={true}
                 onEditorStateChange={(e) => handterEditorEndring(e)}
                 toolbarClassName="toolbar-class"
                 toolbar={{
