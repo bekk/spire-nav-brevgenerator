@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import css from './stiler/css';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
-    return sanityBaseURL + query;
+    return sanityBaseURL + '?query=' + query;
 };
 
 export const hentData = async (URL: string) => {
