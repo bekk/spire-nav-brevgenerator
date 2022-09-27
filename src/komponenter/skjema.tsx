@@ -161,7 +161,9 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     </option>
                 ))}
             </Select>
-            <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
+            {/* <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
+                Mellomlagre brev
+            </Button> */}
             {renderSeksjoner()}
         </div>
     );
