@@ -23,33 +23,22 @@ export function Dropdown({
     return (
         <Select
             label={sanityDropdown.dropdowntittel}
-            onChange={(e) =>
-                håndterEndringIDropdown(
-                    e.target.value,
-                    innholdIndeks,
-                    dropdownIndeks
-                )
-            }
+            onChange={(e) => håndterEndringIDropdown(e.target.value, innholdIndeks, dropdownIndeks)}
             defaultValue={''}
-            data-cy='dropdown'
+            data-cy="dropdown"
         >
             <option value={''} disabled>
                 Velg et alternativ
             </option>
             {sanityDropdown.valg !== undefined &&
-                sanityDropdown.valg.map(
-                    (valg: SanityTekstObjekt, indeks2: number) => (
-                        <option
-                            key={indeks2}
-                            value={
-                                sanityBlocktekstToHtml(valg) +
-                                `@&#${indeks2.toString()}`
-                            }
-                        >
-                            {valg.tekstTittel}
-                        </option>
-                    )
-                )}
+                sanityDropdown.valg.map((valg: SanityTekstObjekt, indeks2: number) => (
+                    <option
+                        key={indeks2}
+                        value={sanityBlocktekstToHtml(valg) + `@&#${indeks2.toString()}`}
+                    >
+                        {valg.tekstTittel}
+                    </option>
+                ))}
         </Select>
     );
 }

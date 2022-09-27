@@ -6,24 +6,24 @@ import {
 } from '../typer/typer';
 
 export const avsnittStateReducer = (
-	avsnittState: avsnittType,
-	action: avsnittType
+    avsnittState: avsnittType,
+    action: avsnittType
 ): avsnittType => {
-	return action;
+    return action;
 };
 
 export const skalAvsnittInkluderesStateReducer = (
-	skalAvsnittInkluderesState: skalAvsnittInkluderesType,
-	action: skalAvsnittInkluderesType
+    skalAvsnittInkluderesState: skalAvsnittInkluderesType,
+    action: skalAvsnittInkluderesType
 ): skalAvsnittInkluderesType => {
-	return action;
+    return action;
 };
 
 export const brevmalTittelStateReducer = (
-	brevmalTittelState: brevmalTittelType,
-	action: brevmalTittelType
+    brevmalTittelState: brevmalTittelType,
+    action: brevmalTittelType
 ): brevmalTittelType => {
-	return action;
+    return action;
 };
 
 export const mellomlagringDelseksjonerStateReducer = (

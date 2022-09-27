@@ -2,8 +2,8 @@ import { Dispatch } from 'react';
 import { mellomlagringDelseksjon } from './mellomlagring';
 
 export interface brevmal {
-	tittel: string;
-	id: string;
+    tittel: string;
+    id: string;
 }
 
 export type avsnittType = string[];
@@ -16,11 +16,11 @@ export type SkjemaContextType = {
 	avsnittState: avsnittType;
 	avsnittDispatch: Dispatch<avsnittType>;
 
-	skalAvsnittInkluderesState: skalAvsnittInkluderesType;
-	skalAvsnittInkluderesDispatch: Dispatch<skalAvsnittInkluderesType>;
+    skalAvsnittInkluderesState: skalAvsnittInkluderesType;
+    skalAvsnittInkluderesDispatch: Dispatch<skalAvsnittInkluderesType>;
 
-	brevmalTittelState: brevmalTittelType;
-	brevmalTittelDispatch: Dispatch<brevmalTittelType>;
+    brevmalTittelState: brevmalTittelType;
+    brevmalTittelDispatch: Dispatch<brevmalTittelType>;
 };
 
 export type MellomlagringContextType = { 

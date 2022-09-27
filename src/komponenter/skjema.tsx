@@ -17,19 +17,18 @@ import {
     sanityBlocktekstToHtml,
 } from '../utils/sanityUtils';
 import { finnFlettefeltITekst } from '../utils/flettefeltUtils';
-import {
-    mellomlagringDelseksjon,
-    mellomlagringDropdowns,
-} from '../typer/mellomlagring';
+import { mellomlagringDelseksjon, mellomlagringDropdowns } from '../typer/mellomlagring';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
+    sanityBaseURL: string;
 }
 
-export function Skjema({ brevmaler }: SkjemaProps) {
+export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [gjeldendeBrevmalId, setGjeldendeBrevmalId] = useState<string>('-1');
-    const [gjeldendeBrevmal, setGjeldendeBrevmal] =
-        useState<SanityBrevmalMedSeksjoner | null>(null);
+    const [gjeldendeBrevmal, setGjeldendeBrevmal] = useState<SanityBrevmalMedSeksjoner | null>(
+        null
+    );
     const {
         avsnittDispatch,
         avsnittState,
@@ -37,32 +36,22 @@ export function Skjema({ brevmaler }: SkjemaProps) {
         skalAvsnittInkluderesState,
         brevmalTittelDispatch,
     } = React.useContext(SkjemaContext);
-    const {
-        mellomlagringDelseksjonerDispatch,
-        mellomlagringDelseksjonerState,
-    } = React.useContext(MellomlagringContext);
+    const { mellomlagringDelseksjonerDispatch, mellomlagringDelseksjonerState } =
+        React.useContext(MellomlagringContext);
 
     const finnInitelleAvsnittISeksjon = (seksjon: SanitySeksjon) => {
         return seksjon.delseksjoner.map((delseksjon) => {
             let nyFritekst = '';
-            delseksjon.innhold.forEach(
-                (innhold: SanityDropdown | SanityTekstObjekt) => {
-                    if (
-                        (innhold as SanityTekstObjekt).tekstTittel !== undefined
-                    ) {
-                        nyFritekst += sanityBlocktekstToHtml(
-                            innhold as SanityTekstObjekt
-                        ).join(' ');
-                    }
+            delseksjon.innhold.forEach((innhold: SanityDropdown | SanityTekstObjekt) => {
+                if ((innhold as SanityTekstObjekt).tekstTittel !== undefined) {
+                    nyFritekst += sanityBlocktekstToHtml(innhold as SanityTekstObjekt).join(' ');
                 }
-            );
+            });
             return nyFritekst;
         });
     };
 
-    const finnInitielleAvsnittOgAntallDelseksjoner = (
-        seksjoner: SanitySeksjon[]
-    ) => {
+    const finnInitielleAvsnittOgAntallDelseksjoner = (seksjoner: SanitySeksjon[]) => {
         let antallDelSeksjoner = 0;
         const nyeAvsnitt: string[] = seksjoner.flatMap((seksjon) => {
             antallDelSeksjoner += seksjon.delseksjoner.length;
@@ -71,36 +60,29 @@ export function Skjema({ brevmaler }: SkjemaProps) {
         return { nyeAvsnitt, antallDelSeksjoner };
     };
 
-    const initierMellomlagringDelseksjonState = (
-        seksjoner: SanitySeksjon[]
-    ) => {
+    const initierMellomlagringDelseksjonState = (seksjoner: SanitySeksjon[]) => {
         const mellomlagring = seksjoner.flatMap((seksjon) => {
             return seksjon.delseksjoner.map((delseksjon) => {
                 let antallDropdowns = 0;
                 let antallFlettefelt = 0;
 
-                delseksjon.innhold.forEach(
-                    (innhold: SanityDropdown | SanityTekstObjekt) => {
-                        if (erInnholdTekstObjekt(innhold)) {
-                            (innhold as SanityTekstObjekt).tekst.forEach(
-                                (tekst) => {
-                                    const flettefelt =
-                                        finnFlettefeltITekst(tekst);
-                                    antallFlettefelt += flettefelt.length;
-                                }
-                            );
-                        }
-                        if (erInnholdDropdown(innhold)) {
-                            antallDropdowns++;
-                        }
+                delseksjon.innhold.forEach((innhold: SanityDropdown | SanityTekstObjekt) => {
+                    if (erInnholdTekstObjekt(innhold)) {
+                        (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                            const flettefelt = finnFlettefeltITekst(tekst);
+                            antallFlettefelt += flettefelt.length;
+                        });
                     }
-                );
+                    if (erInnholdDropdown(innhold)) {
+                        antallDropdowns++;
+                    }
+                });
 
-                const dropdownState: mellomlagringDropdowns[] = Array(
-                    antallDropdowns
-                ).fill({ valgId: null, flettefelt: [] });
-                const flettefeltState: string[] =
-                    Array(antallFlettefelt).fill('');
+                const dropdownState: mellomlagringDropdowns[] = Array(antallDropdowns).fill({
+                    valgId: null,
+                    flettefelt: [],
+                });
+                const flettefeltState: string[] = Array(antallFlettefelt).fill('');
 
                 const mellomlagringDelseksjon: mellomlagringDelseksjon = {
                     flettefelt: flettefeltState,
@@ -115,44 +97,38 @@ export function Skjema({ brevmaler }: SkjemaProps) {
     };
 
     useEffect(() => {
-        hentBrevmal(gjeldendeBrevmalId).then(
-            (res: SanityBrevmalMedSeksjoner) => {
-                setGjeldendeBrevmal(res);
-                if (res !== null && res.seksjoner.length > 0) {
-                    console.log(res);
-                    brevmalTittelDispatch(res.brevmaloverskrift);
-                    const { nyeAvsnitt, antallDelSeksjoner } =
-                        finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
-                    const nyeInkluderingsBrytere: boolean[] = new Array(
-                        antallDelSeksjoner
-                    ).fill(true);
+        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
+            setGjeldendeBrevmal(res);
+            if (res !== null && res.seksjoner.length > 0) {
+                console.log(res);
+                brevmalTittelDispatch(res.brevmaloverskrift);
+                const { nyeAvsnitt, antallDelSeksjoner } = finnInitielleAvsnittOgAntallDelseksjoner(
+                    res.seksjoner
+                );
+                const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
 
-                    avsnittDispatch(nyeAvsnitt);
-                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                    initierMellomlagringDelseksjonState(res.seksjoner);
-                }
+                avsnittDispatch(nyeAvsnitt);
+                skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                initierMellomlagringDelseksjonState(res.seksjoner);
             }
-        );
+        });
     }, [gjeldendeBrevmalId]);
 
     const renderSeksjoner = () => {
         let delseksjonTeller = 0;
         return (
             gjeldendeBrevmal !== null &&
-            gjeldendeBrevmal.seksjoner.map(
-                (seksjon: SanitySeksjon, indeks: number) => {
-                    const seksjonsKomponent = (
-                        <Seksjon
-                            seksjon={seksjon as SanitySeksjon}
-                            key={indeks}
-                            seksjonStartIndeks={delseksjonTeller}
-                        />
-                    );
-                    delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner
-                        .length;
-                    return seksjonsKomponent;
-                }
-            )
+            gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
+                const seksjonsKomponent = (
+                    <Seksjon
+                        seksjon={seksjon as SanitySeksjon}
+                        key={indeks}
+                        seksjonStartIndeks={delseksjonTeller}
+                    />
+                );
+                delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
+                return seksjonsKomponent;
+            })
         );
     };
 
@@ -167,15 +143,15 @@ export function Skjema({ brevmaler }: SkjemaProps) {
     };
 
     return (
-        <div className='skjema'>
+        <div className="skjema">
             <Select
-                label='Velg brevmal'
-                size='medium'
+                label="Velg brevmal"
+                size="medium"
                 onChange={(e) => setGjeldendeBrevmalId(e.target.value)}
                 defaultValue={''}
-                data-cy='velgBrevmal'
+                data-cy="velgBrevmal"
             >
-                <option value='' disabled>
+                <option value="" disabled>
                     Velg brevmal
                 </option>
                 {brevmaler.map((brevmal) => (

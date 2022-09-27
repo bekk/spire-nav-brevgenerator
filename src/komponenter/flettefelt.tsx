@@ -25,16 +25,11 @@ export function Flettefelt({
     return (
         <TextField
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                håndterEndringIFletteFelt(
-                    e,
-                    flettefeltIndeks,
-                    innholdIndeks,
-                    dropdownIndeks
-                )
+                håndterEndringIFletteFelt(e, flettefeltIndeks, innholdIndeks, dropdownIndeks)
             }
             key={flettefelt.key}
             label={flettefelt.tekst}
-            size='small'
+            size="small"
         />
     );
 }

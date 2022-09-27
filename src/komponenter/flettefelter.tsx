@@ -23,18 +23,16 @@ export function Flettefelter({
 }: flettefeltProps) {
     return (
         <>
-            {flettefelter.map(
-                (flettefelt: flettefelt, flettefeltIndeks: number) => (
-                    <Flettefelt
-                        key={flettefeltIndeks}
-                        flettefelt={flettefelt}
-                        flettefeltIndeks={flettefeltIndeks}
-                        innholdIndeks={innholdIndeks}
-                        håndterEndringIFletteFelt={håndterEndringIFletteFelt}
-                        dropdownIndeks={dropdownIndeks}
-                    />
-                )
-            )}
+            {flettefelter.map((flettefelt: flettefelt, flettefeltIndeks: number) => (
+                <Flettefelt
+                    key={flettefeltIndeks}
+                    flettefelt={flettefelt}
+                    flettefeltIndeks={flettefeltIndeks}
+                    innholdIndeks={innholdIndeks}
+                    håndterEndringIFletteFelt={håndterEndringIFletteFelt}
+                    dropdownIndeks={dropdownIndeks}
+                />
+            ))}
         </>
     );
 }

@@ -1,20 +1,20 @@
 .side-om-side {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	justify-content: space-around;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-around;
 }
 
 .app-overskrift {
-	margin: 25px auto 50px auto;
-	text-align: center;
+    margin: 25px auto 50px auto;
+    text-align: center;
 }
 
 .bottomBar {
-	background-color: #282c34;
-	position: fixed;
-	left: 0;
-	bottom: 0;
-	width: 100%;
-	text-align: center;
+    background-color: #282c34;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
 }
