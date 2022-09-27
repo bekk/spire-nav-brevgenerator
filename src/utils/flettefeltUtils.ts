@@ -4,7 +4,6 @@ import { flettefelt } from '../typer/typer';
 import { erInnholdTekstObjekt } from './sanityUtils';
 
 export const finnFlettefeltITekst = (sanityTekst: SanityTekst) : flettefelt[] => {
-	//TODO: Skrive om til å bruke reducer
 	const flettefeltNy: flettefelt[] = [];
 	sanityTekst.markDefs &&
 		sanityTekst.markDefs.forEach((markdef) => {
