@@ -12,14 +12,12 @@ export interface flettefeltProps {
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
-    dropdownIndeks?: number;
 }
 
 export function Flettefelter({
     flettefelter,
     innholdIndeks,
     håndterEndringIFletteFelt,
-    dropdownIndeks,
 }: flettefeltProps) {
     return (
         <>
@@ -30,7 +28,6 @@ export function Flettefelter({
                     flettefeltIndeks={flettefeltIndeks}
                     innholdIndeks={innholdIndeks}
                     håndterEndringIFletteFelt={håndterEndringIFletteFelt}
-                    dropdownIndeks={dropdownIndeks}
                 />
             ))}
         </>

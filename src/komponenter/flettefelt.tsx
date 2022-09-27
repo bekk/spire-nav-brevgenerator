@@ -12,7 +12,6 @@ export interface flettefeltProps {
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
-    dropdownIndeks?: number;
 }
 
 export function Flettefelt({
@@ -20,12 +19,11 @@ export function Flettefelt({
     flettefeltIndeks,
     innholdIndeks,
     håndterEndringIFletteFelt,
-    dropdownIndeks,
 }: flettefeltProps) {
     return (
         <TextField
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                håndterEndringIFletteFelt(e, flettefeltIndeks, innholdIndeks, dropdownIndeks)
+                håndterEndringIFletteFelt(e, flettefeltIndeks, innholdIndeks)
             }
             key={flettefelt.key}
             label={flettefelt.tekst}

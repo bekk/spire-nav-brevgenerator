@@ -29,6 +29,7 @@ import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/fl
 import { flettefelt } from '../typer/typer';
 import { mellomlagringDelseksjon } from '../typer/mellomlagring';
 import { dypKopi } from '../utils/utils';
+import { erMellomLagringInnholdDropdown } from '../utils/mellomlagring';
 
 interface seksjonProps {
     delseksjon: SanityDelseksjon;
@@ -149,11 +150,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         settFritekstTabell(nyFritekstTabell);
     };
 
-    const håndterEndringIDropdown = (
-        nyTekstOgIndeksStreng: string,
-        innholdIndeks: number,
-        dropdownIndeks: number
-    ) => {
+    const håndterEndringIDropdown = (nyTekstOgIndeksStreng: string, innholdIndeks: number) => {
         const fritekstTabellKopi = [...fritekstTabell];
         const nyTekstOgIndeks = nyTekstOgIndeksStreng.split('@&#');
         const optionValgIndeks = Number(nyTekstOgIndeks[1]);
@@ -170,7 +167,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         const mellomlagringDelseksjonKopi = dypKopi(
             mellomlagringDelseksjonerState[delseksjonIndeks]
         );
-        mellomlagringDelseksjonKopi.dropdowns[dropdownIndeks].valgId = optionValgIndeks;
+        mellomlagringDelseksjonKopi.innhold[innholdIndeks].valgId = optionValgIndeks;
 
         //finner flettefelt referanser i valgt dropdown option og setter nye flettefelt i flettefeltDropdown state.
         if (erInnholdDropdown(delseksjon.innhold[innholdIndeks])) {
@@ -180,7 +177,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             );
             oppdaterFlettefeltFraDropdowns(flettefeltNy, innholdIndeks);
 
-            mellomlagringDelseksjonKopi.dropdowns[dropdownIndeks].flettefelt = Array(
+            mellomlagringDelseksjonKopi.innhold[innholdIndeks].flettefelt = Array(
                 flettefeltNy.length
             ).fill('');
         }
@@ -188,15 +185,10 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
     };
 
-    const håndterEndringIFletteFelt = (
-        e: any,
-        flettefeltIndeks: number,
-        listeindeks: number,
-        dropdownIndeks?: number
-    ) => {
+    const håndterEndringIFletteFelt = (e: any, flettefeltIndeks: number, innholdIndeks: number) => {
         const friteksttabellKopi = [...fritekstTabell];
 
-        friteksttabellKopi[listeindeks][flettefeltIndeks * 2 + 1] = e.target.value;
+        friteksttabellKopi[innholdIndeks][flettefeltIndeks * 2 + 1] = e.target.value;
 
         const nyFritekst = dobbelTabellTilStreng(friteksttabellKopi);
 
@@ -207,11 +199,12 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         const mellomlagringDelseksjonKopi = dypKopi(
             mellomlagringDelseksjonerState[delseksjonIndeks]
         );
-        if (dropdownIndeks == undefined) {
-            mellomlagringDelseksjonKopi.flettefelt[flettefeltIndeks] = e.target.value;
-        } else {
-            mellomlagringDelseksjonKopi.dropdowns[dropdownIndeks].flettefelt[flettefeltIndeks] =
+
+        if (erMellomLagringInnholdDropdown(mellomlagringDelseksjonKopi.innhold[innholdIndeks])) {
+            mellomlagringDelseksjonKopi.innhold[innholdIndeks].flettefelt[flettefeltIndeks] =
                 e.target.value;
+        } else {
+            mellomlagringDelseksjonKopi.innhold[innholdIndeks][flettefeltIndeks] = e.target.value;
         }
         setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
     };
@@ -222,7 +215,6 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         mellomlagringDelseksjonerDispatch(mellomlagringDelseksjonStateKopi);
     };
 
-    let dropdownTeller = -1;
     return (
         <div className="delseksjon">
             <Checkbox
@@ -243,20 +235,17 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                 innholdIndeks: number
                             ) => {
                                 if (erInnholdDropdown(innhold)) {
-                                    dropdownTeller++;
                                     return (
                                         <div key={innholdIndeks}>
                                             <Dropdown
                                                 sanityDropdown={innhold as SanityDropdown}
                                                 håndterEndringIDropdown={håndterEndringIDropdown}
                                                 innholdIndeks={innholdIndeks}
-                                                dropdownIndeks={dropdownTeller}
                                             />
                                             {flettefelt[innholdIndeks] !== undefined && (
                                                 <Flettefelter
                                                     flettefelter={flettefelt[innholdIndeks]}
                                                     innholdIndeks={innholdIndeks}
-                                                    dropdownIndeks={dropdownTeller}
                                                     håndterEndringIFletteFelt={
                                                         håndterEndringIFletteFelt
                                                     }

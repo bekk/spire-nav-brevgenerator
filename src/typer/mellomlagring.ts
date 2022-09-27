@@ -7,11 +7,10 @@ export interface mellomlagringState {
 }
 
 export type mellomlagringDelseksjon = {
-    flettefelt: String[];
-    dropdowns: mellomlagringDropdowns[]
+    innhold: (string[] | mellomlagringDropdown)[];
 }
 
-export interface mellomlagringDropdowns {
+export interface mellomlagringDropdown {
     valgId: number | null;
     flettefelt: String[];
 }  

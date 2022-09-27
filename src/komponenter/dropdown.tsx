@@ -5,25 +5,19 @@ import { sanityBlocktekstToHtml } from '../utils/sanityUtils';
 
 export interface dropdownProps {
     sanityDropdown: SanityDropdown;
-    håndterEndringIDropdown: (
-        nyStreng: string,
-        innholdIndeks: number,
-        dropdownIndeks: number
-    ) => void;
+    håndterEndringIDropdown: (nyStreng: string, innholdIndeks: number) => void;
     innholdIndeks: number;
-    dropdownIndeks: number;
 }
 
 export function Dropdown({
     sanityDropdown,
     håndterEndringIDropdown,
     innholdIndeks,
-    dropdownIndeks,
 }: dropdownProps) {
     return (
         <Select
             label={sanityDropdown.dropdowntittel}
-            onChange={(e) => håndterEndringIDropdown(e.target.value, innholdIndeks, dropdownIndeks)}
+            onChange={(e) => håndterEndringIDropdown(e.target.value, innholdIndeks)}
             defaultValue={''}
             data-cy="dropdown"
         >

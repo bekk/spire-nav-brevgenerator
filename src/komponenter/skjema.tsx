@@ -11,13 +11,9 @@ import { brevmal } from '../typer/typer';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
 import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
-import {
-    erInnholdDropdown,
-    erInnholdTekstObjekt,
-    sanityBlocktekstToHtml,
-} from '../utils/sanityUtils';
+import { erInnholdDropdown, sanityBlocktekstToHtml } from '../utils/sanityUtils';
 import { finnFlettefeltITekst } from '../utils/flettefeltUtils';
-import { mellomlagringDelseksjon, mellomlagringDropdowns } from '../typer/mellomlagring';
+import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -61,39 +57,31 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     };
 
     const initierMellomlagringDelseksjonState = (seksjoner: SanitySeksjon[]) => {
-        const mellomlagring = seksjoner.flatMap((seksjon) => {
-            return seksjon.delseksjoner.map((delseksjon) => {
-                let antallDropdowns = 0;
-                let antallFlettefelt = 0;
-
-                delseksjon.innhold.forEach((innhold: SanityDropdown | SanityTekstObjekt) => {
-                    if (erInnholdTekstObjekt(innhold)) {
-                        (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
-                            const flettefelt = finnFlettefeltITekst(tekst);
-                            antallFlettefelt += flettefelt.length;
-                        });
-                    }
-                    if (erInnholdDropdown(innhold)) {
-                        antallDropdowns++;
-                    }
+        const mellomlagringDelseksjoner: mellomlagringDelseksjon[] = seksjoner.flatMap(
+            (seksjon) => {
+                return seksjon.delseksjoner.map((delseksjon) => {
+                    const innhold = delseksjon.innhold.map(
+                        (innhold): string[] | mellomlagringDropdown => {
+                            if (erInnholdDropdown(innhold)) {
+                                return {
+                                    valgId: null,
+                                    flettefelt: [],
+                                };
+                            } else {
+                                let antallFlettefelt = 0;
+                                (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                                    const flettefelt = finnFlettefeltITekst(tekst);
+                                    antallFlettefelt += flettefelt.length;
+                                });
+                                return Array(antallFlettefelt).fill('');
+                            }
+                        }
+                    );
+                    return { innhold: innhold };
                 });
-
-                const dropdownState: mellomlagringDropdowns[] = Array(antallDropdowns).fill({
-                    valgId: null,
-                    flettefelt: [],
-                });
-                const flettefeltState: string[] = Array(antallFlettefelt).fill('');
-
-                const mellomlagringDelseksjon: mellomlagringDelseksjon = {
-                    flettefelt: flettefeltState,
-                    dropdowns: dropdownState,
-                };
-
-                return mellomlagringDelseksjon;
-            });
-        });
-
-        mellomlagringDelseksjonerDispatch(mellomlagring);
+            }
+        );
+        mellomlagringDelseksjonerDispatch(mellomlagringDelseksjoner);
     };
 
     useEffect(() => {
@@ -139,6 +127,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
             avsnitt: avsnittState,
             delseksjoner: mellomlagringDelseksjonerState,
         };
+        console.log(mellomlagringsobjekt.delseksjoner);
         console.log(JSON.stringify(mellomlagringsobjekt));
     };
 
