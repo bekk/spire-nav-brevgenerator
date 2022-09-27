@@ -109,7 +109,7 @@ npm run build
 npm run build:dev --path="path to testklient"
 ```
 
-NB! Pakken vil nå lytte på endringer i typescript-filer, og vise endringene i testklienten fortløpende. Dersom man gjør endringer på andre fil-typer må prosjektet bygges på nytt.
+NB! Pakken vil nå lytte etter endringer i typescript-filer, og vise endringene i testklienten fortløpende. Dersom man gjør endringer på andre fil-typer må prosjektet bygges på nytt.
 
 ### Lage pull request
 
