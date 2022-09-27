@@ -1,13 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Checkbox } from '@navikt/ds-react';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
-import {
-    SanityChildren,
-    SanityDelseksjon,
-    SanityDropdown,
-    SanityTekst,
-    SanityTekstObjekt,
-} from '../typer/sanity';
+import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from '../typer/sanity';
 
 import { Fritekst } from './fritekst';
 import {
@@ -27,7 +21,7 @@ import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
 import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/flettefeltUtils';
 import { flettefelt } from '../typer/typer';
-import { mellomlagringDelseksjon } from '../typer/mellomlagring';
+import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
 import { dypKopi } from '../utils/utils';
 import { erMellomLagringInnholdDropdown } from '../utils/mellomlagring';
 
@@ -53,11 +47,18 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         settFritekst('');
         if (delseksjon.innhold !== null) {
             const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
-            const nyFlettefeltTabell = innholdTilFlettefeltTabell(delseksjon.innhold);
+            const nyFlettefeltTabell = innholdTilFlettefeltTabell(
+                delseksjon.innhold,
+                mellomlagringDelseksjonerState[delseksjonIndeks].innhold
+            );
 
             settFritekstTabell(nyFritekstTabell);
             settFlettefelt(nyFlettefeltTabell);
-            const nyFritekst = dobbelTabellTilStreng(nyFritekstTabell);
+
+            const nyFritekst =
+                avsnittState[delseksjonIndeks].length > 0
+                    ? avsnittState[delseksjonIndeks]
+                    : dobbelTabellTilStreng(nyFritekstTabell);
             settFritekst(nyFritekst);
         }
     }, [delseksjon]);
@@ -167,7 +168,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         const mellomlagringDelseksjonKopi = dypKopi(
             mellomlagringDelseksjonerState[delseksjonIndeks]
         );
-        mellomlagringDelseksjonKopi.innhold[innholdIndeks].valgId = optionValgIndeks;
+        mellomlagringDelseksjonKopi.innhold[innholdIndeks].valgVerdi = nyTekstOgIndeksStreng;
 
         //finner flettefelt referanser i valgt dropdown option og setter nye flettefelt i flettefeltDropdown state.
         if (erInnholdDropdown(delseksjon.innhold[innholdIndeks])) {
@@ -241,6 +242,15 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                                 sanityDropdown={innhold as SanityDropdown}
                                                 håndterEndringIDropdown={håndterEndringIDropdown}
                                                 innholdIndeks={innholdIndeks}
+                                                mellomlagretVerdi={
+                                                    (
+                                                        mellomlagringDelseksjonerState[
+                                                            delseksjonIndeks
+                                                        ].innhold[
+                                                            innholdIndeks
+                                                        ] as mellomlagringDropdown
+                                                    ).valgVerdi
+                                                }
                                             />
                                             {flettefelt[innholdIndeks] !== undefined && (
                                                 <Flettefelter
@@ -248,6 +258,15 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                                     innholdIndeks={innholdIndeks}
                                                     håndterEndringIFletteFelt={
                                                         håndterEndringIFletteFelt
+                                                    }
+                                                    mellomlagretVerdier={
+                                                        (
+                                                            mellomlagringDelseksjonerState[
+                                                                delseksjonIndeks
+                                                            ].innhold[
+                                                                innholdIndeks
+                                                            ] as mellomlagringDropdown
+                                                        ).flettefelt
                                                     }
                                                 />
                                             )}
@@ -262,6 +281,10 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                                 innholdIndeks={innholdIndeks}
                                                 håndterEndringIFletteFelt={
                                                     håndterEndringIFletteFelt
+                                                }
+                                                mellomlagretVerdier={
+                                                    mellomlagringDelseksjonerState[delseksjonIndeks]
+                                                        .innhold[innholdIndeks] as string[]
                                                 }
                                             />
                                         );

@@ -1,6 +1,7 @@
-import { SanityChildren, SanityDropdown, SanityTekst, SanityTekstObjekt } from '../typer/sanity';
+import { mellomlagringDropdown } from '../typer/mellomlagring';
+import { SanityDropdown, SanityTekst, SanityTekstObjekt } from '../typer/sanity';
 import { flettefelt } from '../typer/typer';
-import { erInnholdTekstObjekt, sanityBlocktekstToHtml } from './sanityUtils';
+import { erInnholdTekstObjekt } from './sanityUtils';
 
 export const finnFlettefeltITekst = (sanityTekst: SanityTekst) : flettefelt[] => {
 	//TODO: Skrive om til å bruke reducer
@@ -29,11 +30,15 @@ export const finnFlettefeltIDropdown = (sanityDropdown: SanityDropdown, valgInde
 	return sanityDropdown.valg[valgIndeks].tekst.flatMap((sanityTekst: SanityTekst) => finnFlettefeltITekst(sanityTekst))
 }
 
-export const innholdTilFlettefeltTabell = (innhold: (SanityDropdown | SanityTekstObjekt)[]) : flettefelt[][] => {
-	return innhold.map((innhold: SanityDropdown | SanityTekstObjekt) => {
+export const innholdTilFlettefeltTabell = (innhold: (SanityDropdown | SanityTekstObjekt)[], mellomlagring?: (string[] | mellomlagringDropdown)[]) : flettefelt[][] => {
+	return innhold.map((innhold: SanityDropdown | SanityTekstObjekt, innholdIndeks: number) => {
 			if (erInnholdTekstObjekt(innhold)) {
 				return (innhold as SanityTekstObjekt).tekst.flatMap((sanityTekst: SanityTekst) => finnFlettefeltITekst(sanityTekst));
 			} else {
+				if(mellomlagring !== undefined && (mellomlagring[innholdIndeks] as mellomlagringDropdown).valgVerdi !== undefined) {
+					const valgIndeks = (mellomlagring[innholdIndeks] as mellomlagringDropdown).valgVerdi!.split('@&#')[1];
+					return finnFlettefeltIDropdown(innhold as SanityDropdown, parseInt(valgIndeks))
+				}
 				return [];
 			}
 		}

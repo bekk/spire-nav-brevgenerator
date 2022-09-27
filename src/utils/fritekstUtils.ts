@@ -1,5 +1,3 @@
-import { SanityTekstObjekt } from '../typer/sanity';
-
 export const dobbelTabellTilStreng = (fritekstTabell: string[][]) => {
 	let tekst = '';
 	fritekstTabell.map((liste) => {

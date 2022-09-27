@@ -1,8 +1,8 @@
 
 export interface mellomlagringState {
-    brevmalId: number;
+    brevmalId: string;
     inkluderingsbrytere: boolean[];
-    avsnitt: String[];
+    avsnitt: string[];
     delseksjoner: mellomlagringDelseksjon[]
 }
 
@@ -11,6 +11,6 @@ export type mellomlagringDelseksjon = {
 }
 
 export interface mellomlagringDropdown {
-    valgId: number | null;
-    flettefelt: String[];
+    valgVerdi?: string;
+    flettefelt: string[];
 }  

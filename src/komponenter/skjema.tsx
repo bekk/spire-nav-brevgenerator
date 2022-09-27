@@ -1,6 +1,6 @@
 import { Button, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { hentBrevmal } from '../brev-api';
+import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
 import {
     SanityBrevmalMedSeksjoner,
     SanityDropdown,
@@ -13,7 +13,11 @@ import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
 import { erInnholdDropdown, sanityBlocktekstToHtml } from '../utils/sanityUtils';
 import { finnFlettefeltITekst } from '../utils/flettefeltUtils';
-import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
+import {
+    mellomlagringDelseksjon,
+    mellomlagringDropdown,
+    mellomlagringState,
+} from '../typer/mellomlagring';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -64,7 +68,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         (innhold): string[] | mellomlagringDropdown => {
                             if (erInnholdDropdown(innhold)) {
                                 return {
-                                    valgId: null,
+                                    valgVerdi: undefined,
                                     flettefelt: [],
                                 };
                             } else {
@@ -88,16 +92,25 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
             setGjeldendeBrevmal(res);
             if (res !== null && res.seksjoner.length > 0) {
-                console.log(res);
                 brevmalTittelDispatch(res.brevmaloverskrift);
-                const { nyeAvsnitt, antallDelSeksjoner } = finnInitielleAvsnittOgAntallDelseksjoner(
-                    res.seksjoner
+                const mellomlagretBrev: mellomlagringState | undefined = hentMellomlagretBrev(
+                    res._id
                 );
-                const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
+                if (mellomlagretBrev === undefined) {
+                    const { nyeAvsnitt, antallDelSeksjoner } =
+                        finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
+                    const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
+                        true
+                    );
 
-                avsnittDispatch(nyeAvsnitt);
-                skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                initierMellomlagringDelseksjonState(res.seksjoner);
+                    avsnittDispatch(nyeAvsnitt);
+                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                    initierMellomlagringDelseksjonState(res.seksjoner);
+                } else if (mellomlagretBrev !== undefined) {
+                    avsnittDispatch(mellomlagretBrev.avsnitt);
+                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                }
             }
         });
     }, [gjeldendeBrevmalId]);
@@ -127,8 +140,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
             avsnitt: avsnittState,
             delseksjoner: mellomlagringDelseksjonerState,
         };
-        console.log(mellomlagringsobjekt.delseksjoner);
-        console.log(JSON.stringify(mellomlagringsobjekt));
+        postMellomlagreBrev(mellomlagringsobjekt);
     };
 
     return (

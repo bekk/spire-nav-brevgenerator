@@ -12,6 +12,7 @@ export interface flettefeltProps {
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
+    mellomlagretVerdi?: string;
 }
 
 export function Flettefelt({
@@ -19,6 +20,7 @@ export function Flettefelt({
     flettefeltIndeks,
     innholdIndeks,
     håndterEndringIFletteFelt,
+    mellomlagretVerdi,
 }: flettefeltProps) {
     return (
         <TextField
@@ -28,6 +30,7 @@ export function Flettefelt({
             key={flettefelt.key}
             label={flettefelt.tekst}
             size="small"
+            defaultValue={mellomlagretVerdi}
         />
     );
 }

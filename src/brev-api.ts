@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import css from './stiler/css';
+import { mellomlagringState } from './typer/mellomlagring';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + query;
@@ -101,3 +102,15 @@ export const genererPDF = async (html: string) => {
         }
     }, 500);
 };
+
+export const hentMellomlagretBrev = (brevmalId: string): mellomlagringState | undefined => {
+    if(brevmalId == "ea1eed05-915e-4609-b255-b051acf4a753"){
+        const string = '{"brevmalId":"ea1eed05-915e-4609-b255-b051acf4a753","inkluderingsbrytere":[true,true,true,true,true],"avsnitt":["<p>Navn: Sigmund Berbom</p><p>Fødselsnummer: 25.11.96</p><p></p><p><strong>Fake ny overksrift</strong></p><p>Ny ubrukelig tekst.</p>","[Tabellnr2]</p><p>No siste </p>","<p>Du får overgangsstønad fra 25.11.23, som er måneden etter at du har vært i Norge i 5 år.</p><p>Stønaden varer til og med 12.12.23. Da har du fått stønad i 3 år i tillegg til 2 måneder i forbindelse med fødsel.</p>","<p><strong>Her er det fet tekst</strong></p><p>Du får [beløp] kroner før <strong>skatt</strong> innen den 20. hver måned fra [måned] til [måned]. Fra og med [måned] endrer beløpet seg til [beløp], på grunn av årlige reguleringer av stønader. Du kan lese mer om utbetaling på nav.no/utbetaling.</p><p>Ut ifra våre opplysninger har du ikke inntekt.</p><p>Hvis du har fått økonomisk sosialhjelp fra oss, kan vi trekke dette beløpet fra etterbetalingen din. Vi betaler derfor ikke ut pengene før vi har fått beskjed fra Oslo. Dette kan ta inntil 4 uker.</p><p></p><p>Du må si ifra til oss hvis månedsinntekten din blir høyere 4 433 enn kroner før skatt. Da må vi beregne stønaden din på nytt, fordi 4433 kroner er den høyeste månedsinntekten du kan ha før vi må redusere stønaden din. Du kan si ifra om endringene i inntekt på Ditt NAV på nav.no.</p>",""],"delseksjoner":[{"innhold":[["Sigmund Berbom","25.11.96"]]},{"innhold":[[]]},{"innhold":[{"flettefelt":["25.11.23"],"valgVerdi":"<p>Du får overgangsstønad fra ,[dato],, som er måneden etter at du har vært i Norge i 5 år.</p>@&#2"},{"flettefelt":["12.12.23"],"valgVerdi":"<p>Stønaden varer til og med ,[dato],. Da har du fått stønad i 3 år i tillegg til 2 måneder i forbindelse med fødsel.</p>@&#1"}]},{"innhold":[{"flettefelt":["","","","","","Oslo"],"valgVerdi":"<p><strong>Her er det fet tekst</strong></p><p>Du får ,[beløp], kroner før <strong>skatt</strong> innen den 20. hver måned fra ,[måned], til ,[måned],. Fra og med ,[måned], endrer beløpet seg til ,[beløp],, på grunn av årlige reguleringer av stønader. Du kan lese mer om utbetaling på nav.no/utbetaling.</p><p>Ut ifra våre opplysninger har du ikke inntekt.</p><p>Hvis du har fått økonomisk sosialhjelp fra oss, kan vi trekke dette beløpet fra etterbetalingen din. Vi betaler derfor ikke ut pengene før vi har fått beskjed fra ,[NAV-kontoret],. Dette kan ta inntil 4 uker.</p><p></p><p>Du må si ifra til oss hvis månedsinntekten din blir høyere 4 433 enn kroner før skatt. Da må vi beregne stønaden din på nytt, fordi 4433 kroner er den høyeste månedsinntekten du kan ha før vi må redusere stønaden din. Du kan si ifra om endringene i inntekt på Ditt NAV på nav.no.</p>@&#1"}]},{"innhold":[{"flettefelt":[]},{"flettefelt":[]},{"flettefelt":[]}]}]}'
+        return JSON.parse(string);
+    }
+    return undefined;
+}
+
+export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
+    console.log(mellomlagring)
+}

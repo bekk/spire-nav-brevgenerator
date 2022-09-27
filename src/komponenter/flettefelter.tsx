@@ -1,5 +1,4 @@
 import React from 'react';
-import { SanityChildren } from '../typer/sanity';
 import { flettefelt } from '../typer/typer';
 import { Flettefelt } from './flettefelt';
 
@@ -12,12 +11,14 @@ export interface flettefeltProps {
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
+    mellomlagretVerdier?: string[];
 }
 
 export function Flettefelter({
     flettefelter,
     innholdIndeks,
     håndterEndringIFletteFelt,
+    mellomlagretVerdier,
 }: flettefeltProps) {
     return (
         <>
@@ -28,6 +29,9 @@ export function Flettefelter({
                     flettefeltIndeks={flettefeltIndeks}
                     innholdIndeks={innholdIndeks}
                     håndterEndringIFletteFelt={håndterEndringIFletteFelt}
+                    mellomlagretVerdi={
+                        mellomlagretVerdier ? mellomlagretVerdier[flettefeltIndeks] : undefined
+                    }
                 />
             ))}
         </>
