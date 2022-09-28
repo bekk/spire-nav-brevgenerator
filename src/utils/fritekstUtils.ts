@@ -1,3 +1,6 @@
+import { SanityDropdown, SanityTekstObjekt } from "../typer/sanity";
+import { erInnholdTekstObjekt, sanityBlocktekstToHtml } from "./sanityUtils";
+
 export const dobbelTabellTilStreng = (fritekstTabell: string[][]) => {
 	let tekst = '';
 	fritekstTabell.map((liste) => {
@@ -81,3 +84,15 @@ export const finnTabellIndeksOgNyttFritekstElement = (
 export const finnKaraktererIListeMedStrenger = (
 	listeMedStrenger: string[]
 ): number => listeMedStrenger.join('').length;
+
+export const innholdTilFritekstTabell = (
+        innhold: (SanityDropdown | SanityTekstObjekt)[]
+    ): string[][] => {
+        return innhold.map((innhold: SanityDropdown | SanityTekstObjekt) => {
+            if (erInnholdTekstObjekt(innhold)) {
+                return sanityBlocktekstToHtml(innhold as SanityTekstObjekt);
+            } else {
+                return [];
+            }
+        });
+    };

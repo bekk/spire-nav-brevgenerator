@@ -96,7 +96,11 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                 const mellomlagretBrev: mellomlagringState | undefined = hentMellomlagretBrev(
                     res._id
                 );
-                if (mellomlagretBrev === undefined) {
+                if (mellomlagretBrev !== undefined) {
+                    avsnittDispatch(mellomlagretBrev.avsnitt);
+                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                } else {
                     const { nyeAvsnitt, antallDelSeksjoner } =
                         finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
                     const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
@@ -106,10 +110,6 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     avsnittDispatch(nyeAvsnitt);
                     skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
                     initierMellomlagringDelseksjonState(res.seksjoner);
-                } else if (mellomlagretBrev !== undefined) {
-                    avsnittDispatch(mellomlagretBrev.avsnitt);
-                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
-                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 }
             }
         });

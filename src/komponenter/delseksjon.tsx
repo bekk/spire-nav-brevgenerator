@@ -10,6 +10,7 @@ import {
     finnAntallTegnLagtTil,
     dobbelTabellTilStreng,
     finnKaraktererIListeMedStrenger,
+    innholdTilFritekstTabell,
 } from '../utils/fritekstUtils';
 import '../stiler/delseksjon.css';
 import {
@@ -22,7 +23,6 @@ import { Flettefelter } from './flettefelter';
 import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/flettefeltUtils';
 import { flettefelt } from '../typer/typer';
 import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
-import { dypKopi } from '../utils/utils';
 import { erMellomLagringInnholdDropdown } from '../utils/mellomlagring';
 
 interface seksjonProps {
@@ -69,18 +69,6 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             settFritekst(nyFritekst);
         }
     }, [delseksjon]);
-
-    const innholdTilFritekstTabell = (
-        innhold: (SanityDropdown | SanityTekstObjekt)[]
-    ): string[][] => {
-        return innhold.map((innhold: SanityDropdown | SanityTekstObjekt) => {
-            if (erInnholdTekstObjekt(innhold)) {
-                return sanityBlocktekstToHtml(innhold as SanityTekstObjekt);
-            } else {
-                return [];
-            }
-        });
-    };
 
     const oppdaterFlettefeltFraDropdowns = (nyeFlettefelt: flettefelt[], indeks: number) => {
         const flettefeltKopi = [...flettefelt];
@@ -157,9 +145,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
 
         settFritekstTabell(nyFritekstTabell);
 
-        const mellomlagringDelseksjonKopi = dypKopi(
-            mellomlagringDelseksjonerState[delseksjonIndeks]
-        );
+        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
         mellomlagringDelseksjonKopi.fritekstTabell = nyFritekstTabell;
         setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
     };
@@ -178,10 +164,9 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         oppdaterAvsnitt(fritekstStreng);
         settFritekst(fritekstStreng);
 
-        const mellomlagringDelseksjonKopi = dypKopi(
-            mellomlagringDelseksjonerState[delseksjonIndeks]
-        );
-        mellomlagringDelseksjonKopi.innhold[innholdIndeks].valgVerdi = nyTekstOgIndeksStreng;
+        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
+        (mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown).valgVerdi =
+            nyTekstOgIndeksStreng;
         mellomlagringDelseksjonKopi.fritekstTabell = fritekstTabellKopi;
 
         //finner flettefelt referanser i valgt dropdown option og setter nye flettefelt i flettefeltDropdown state.
@@ -192,9 +177,9 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             );
             oppdaterFlettefeltFraDropdowns(flettefeltNy, innholdIndeks);
 
-            mellomlagringDelseksjonKopi.innhold[innholdIndeks].flettefelt = Array(
-                flettefeltNy.length
-            ).fill('');
+            (
+                mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown
+            ).flettefelt = Array(flettefeltNy.length).fill('');
         }
 
         setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
@@ -211,17 +196,17 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         settFritekst(nyFritekst);
         oppdaterAvsnitt(nyFritekst);
 
-        const mellomlagringDelseksjonKopi = dypKopi(
-            mellomlagringDelseksjonerState[delseksjonIndeks]
-        );
+        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
 
         mellomlagringDelseksjonKopi.fritekstTabell = friteksttabellKopi;
 
         if (erMellomLagringInnholdDropdown(mellomlagringDelseksjonKopi.innhold[innholdIndeks])) {
-            mellomlagringDelseksjonKopi.innhold[innholdIndeks].flettefelt[flettefeltIndeks] =
-                e.target.value;
+            (
+                mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown
+            ).flettefelt[flettefeltIndeks] = e.target.value;
         } else {
-            mellomlagringDelseksjonKopi.innhold[innholdIndeks][flettefeltIndeks] = e.target.value;
+            (mellomlagringDelseksjonKopi.innhold[innholdIndeks] as string[])[flettefeltIndeks] =
+                e.target.value;
         }
         setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
     };
