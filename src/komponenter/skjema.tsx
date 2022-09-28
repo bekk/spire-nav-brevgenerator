@@ -1,6 +1,6 @@
-import { Select } from '@navikt/ds-react';
+import { Button, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { hentBrevmal } from '../brev-api';
+import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
 import {
     SanityBrevmalMedSeksjoner,
     SanityDropdown,
@@ -8,10 +8,16 @@ import {
     SanityTekstObjekt,
 } from '../typer/sanity';
 import { brevmal } from '../typer/typer';
-import { SkjemaContext } from '../context/context';
+import { MellomlagringContext, SkjemaContext } from '../context/context';
 import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
-import { sanityBlocktekstToHtml } from '../utils/sanityUtils';
+import { erInnholdDropdown, sanityBlocktekstToHtml } from '../utils/sanityUtils';
+import { finnFlettefeltITekst } from '../utils/flettefeltUtils';
+import {
+    mellomlagringDelseksjon,
+    mellomlagringDropdown,
+    mellomlagringState,
+} from '../typer/mellomlagring';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -23,8 +29,15 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [gjeldendeBrevmal, setGjeldendeBrevmal] = useState<SanityBrevmalMedSeksjoner | null>(
         null
     );
-    const { avsnittDispatch, skalAvsnittInkluderesDispatch, brevmalTittelDispatch } =
-        React.useContext(SkjemaContext);
+    const {
+        avsnittDispatch,
+        avsnittState,
+        skalAvsnittInkluderesDispatch,
+        skalAvsnittInkluderesState,
+        brevmalTittelDispatch,
+    } = React.useContext(SkjemaContext);
+    const { mellomlagringDelseksjonerDispatch, mellomlagringDelseksjonerState } =
+        React.useContext(MellomlagringContext);
 
     const finnInitelleAvsnittISeksjon = (seksjon: SanitySeksjon) => {
         return seksjon.delseksjoner.map((delseksjon) => {
@@ -47,18 +60,57 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         return { nyeAvsnitt, antallDelSeksjoner };
     };
 
+    const initierMellomlagringDelseksjonState = (seksjoner: SanitySeksjon[]) => {
+        const mellomlagringDelseksjoner: mellomlagringDelseksjon[] = seksjoner.flatMap(
+            (seksjon) => {
+                return seksjon.delseksjoner.map((delseksjon) => {
+                    const innhold = delseksjon.innhold.map(
+                        (innhold): string[] | mellomlagringDropdown => {
+                            if (erInnholdDropdown(innhold)) {
+                                return {
+                                    valgVerdi: undefined,
+                                    flettefelt: [],
+                                };
+                            } else {
+                                let antallFlettefelt = 0;
+                                (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                                    const flettefelt = finnFlettefeltITekst(tekst);
+                                    antallFlettefelt += flettefelt.length;
+                                });
+                                return Array(antallFlettefelt).fill('');
+                            }
+                        }
+                    );
+                    return { innhold: innhold, fritekstTabell: [] };
+                });
+            }
+        );
+        mellomlagringDelseksjonerDispatch(mellomlagringDelseksjoner);
+    };
+
     useEffect(() => {
         hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
             setGjeldendeBrevmal(res);
             if (res !== null && res.seksjoner.length > 0) {
                 brevmalTittelDispatch(res.brevmaloverskrift);
-                const { nyeAvsnitt, antallDelSeksjoner } = finnInitielleAvsnittOgAntallDelseksjoner(
-                    res.seksjoner
+                const mellomlagretBrev: mellomlagringState | undefined = hentMellomlagretBrev(
+                    res._id
                 );
-                const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
+                if (mellomlagretBrev !== undefined) {
+                    avsnittDispatch(mellomlagretBrev.avsnitt);
+                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                } else {
+                    const { nyeAvsnitt, antallDelSeksjoner } =
+                        finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
+                    const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
+                        true
+                    );
 
-                avsnittDispatch(nyeAvsnitt);
-                skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                    avsnittDispatch(nyeAvsnitt);
+                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                    initierMellomlagringDelseksjonState(res.seksjoner);
+                }
             }
         });
     }, [gjeldendeBrevmalId]);
@@ -81,6 +133,16 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         );
     };
 
+    const mellomlagreBrev = () => {
+        const mellomlagringsobjekt = {
+            brevmalId: gjeldendeBrevmalId,
+            inkluderingsbrytere: skalAvsnittInkluderesState,
+            avsnitt: avsnittState,
+            delseksjoner: mellomlagringDelseksjonerState,
+        };
+        postMellomlagreBrev(mellomlagringsobjekt);
+    };
+
     return (
         <div className="skjema">
             <Select
@@ -99,6 +161,9 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     </option>
                 ))}
             </Select>
+            {/* <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
+                Mellomlagre brev
+            </Button> */}
             {renderSeksjoner()}
         </div>
     );

@@ -5,20 +5,22 @@ import { sanityBlocktekstToHtml } from '../utils/sanityUtils';
 
 export interface dropdownProps {
     sanityDropdown: SanityDropdown;
-    håndterEndringIDropdown: (e: string, indeks: number) => void;
+    håndterEndringIDropdown: (nyStreng: string, innholdIndeks: number) => void;
     innholdIndeks: number;
+    mellomlagretVerdi?: string;
 }
 
 export function Dropdown({
     sanityDropdown,
     håndterEndringIDropdown,
     innholdIndeks,
+    mellomlagretVerdi,
 }: dropdownProps) {
     return (
         <Select
             label={sanityDropdown.dropdowntittel}
             onChange={(e) => håndterEndringIDropdown(e.target.value, innholdIndeks)}
-            defaultValue={''}
+            value={mellomlagretVerdi ? mellomlagretVerdi : ''}
             data-cy="dropdown"
         >
             <option value={''} disabled>

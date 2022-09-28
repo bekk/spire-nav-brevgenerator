@@ -1,16 +1,18 @@
 import React from 'react';
 import { TextField } from '@navikt/ds-react';
-import { SanityChildren } from '../typer/sanity';
+import { flettefelt } from '../typer/typer';
 
 export interface flettefeltProps {
-    flettefelt: SanityChildren;
+    flettefelt: flettefelt;
     flettefeltIndeks: number;
     innholdIndeks: number;
     håndterEndringIFletteFelt: (
         e: React.ChangeEvent<HTMLInputElement>,
         flettefeltIndeks: number,
-        innholdIndeks: number
+        innholdIndeks: number,
+        dropdownIndeks?: number
     ) => void;
+    mellomlagretVerdi?: string;
 }
 
 export function Flettefelt({
@@ -18,15 +20,17 @@ export function Flettefelt({
     flettefeltIndeks,
     innholdIndeks,
     håndterEndringIFletteFelt,
+    mellomlagretVerdi,
 }: flettefeltProps) {
     return (
         <TextField
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 håndterEndringIFletteFelt(e, flettefeltIndeks, innholdIndeks)
             }
-            key={flettefelt._key}
-            label={flettefelt.text}
+            key={flettefelt.key}
+            label={flettefelt.tekst}
             size="small"
+            defaultValue={mellomlagretVerdi}
         />
     );
 }
