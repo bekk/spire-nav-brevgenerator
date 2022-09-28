@@ -38,6 +38,7 @@ export function Fritekst({ defaultTekst, håndterEndringIFritekstFelt }: friteks
                 wrapperClassName="wrapper-class"
                 editorClassName="editor-class"
                 editorState={editorState}
+                stripPastedStyles={true}
                 onEditorStateChange={(e) => handterEditorEndring(e)}
                 toolbarClassName="toolbar-class"
                 toolbar={{

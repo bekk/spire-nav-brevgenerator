@@ -12,11 +12,13 @@ import {
     avsnittStateReducer,
     brevmalTittelStateReducer,
     initialAvsnittState,
+    initialMellomlagringDelseksjonerState,
+    mellomlagringDelseksjonerStateReducer,
     initialBrevmalTittelState,
     initialSkalAvsnittInkluderesState,
     skalAvsnittInkluderesStateReducer,
 } from './context/reducer';
-import { SkjemaContext } from './context/context';
+import { MellomlagringContext, SkjemaContext } from './context/context';
 import { SanityBrevmalUtenSeksjoner } from './typer/sanity';
 import HTMLPDF from './komponenter/htmlPDF';
 
@@ -34,16 +36,25 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
         brevmalTittelStateReducer,
         initialBrevmalTittelState
     );
+    const [mellomlagringDelseksjonerState, mellomlagringDelseksjonerDispatch] = useReducer(
+        mellomlagringDelseksjonerStateReducer,
+        initialMellomlagringDelseksjonerState
+    );
 
     const [brevmaler, setBrevmaler] = useState<brevmal[]>([]);
 
-    const contextValue = {
+    const skjemaContextValue = {
         avsnittState,
         avsnittDispatch,
         skalAvsnittInkluderesState,
         skalAvsnittInkluderesDispatch,
         brevmalTittelState,
         brevmalTittelDispatch,
+    };
+
+    const mellomlagringContextValue = {
+        mellomlagringDelseksjonerState,
+        mellomlagringDelseksjonerDispatch,
     };
 
     useEffect(() => {
@@ -60,25 +71,27 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
 
     const genererHTMLString = () => {
         return renderToString(
-            <SkjemaContext.Provider value={contextValue}>
+            <SkjemaContext.Provider value={skjemaContextValue}>
                 <PDF />
             </SkjemaContext.Provider>
         );
     };
 
     return (
-        <SkjemaContext.Provider value={contextValue}>
-            <div>
-                <Overskrift />
-                <div className="side-om-side">
-                    <Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
-                    <HTMLPDF />
+        <MellomlagringContext.Provider value={mellomlagringContextValue}>
+            <SkjemaContext.Provider value={skjemaContextValue}>
+                <div>
+                    <Overskrift />
+                    <div className="side-om-side">
+                        <Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
+                        <HTMLPDF />
+                    </div>
+                    <div className="bottomBar">
+                        <Button onClick={() => genererPDF(genererHTMLString())}>Generer PDF</Button>
+                    </div>
                 </div>
-                <div className="bottomBar">
-                    <Button onClick={() => genererPDF(genererHTMLString())}>Generer PDF</Button>
-                </div>
-            </div>
-        </SkjemaContext.Provider>
+            </SkjemaContext.Provider>
+        </MellomlagringContext.Provider>
     );
 }
 

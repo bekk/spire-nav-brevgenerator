@@ -38,13 +38,13 @@ export const sanityBlocktekstToHtml = (tekst: SanityTekstObjekt): string[] => {
 				gjeldendeTabellElement = '';
 				if (
 					childIndeks !== tekstElement.children.length - 1 &&
-					erChildFlettefeltReferanse
+					erFlettefeltReferanse(tekstElement, tekstElement.children[childIndeks + 1])
 				) {
 					outStrengTabell.push(gjeldendeTabellElement);
 				}
 			} else if (
 				childIndeks !== tekstElement.children.length - 1 &&
-				erChildFlettefeltReferanse
+				erFlettefeltReferanse(tekstElement, tekstElement.children[childIndeks + 1])
 			) {
 				outStrengTabell.push(gjeldendeTabellElement);
 				gjeldendeTabellElement = '';
