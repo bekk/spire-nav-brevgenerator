@@ -3,11 +3,7 @@ import css from './stiler/css';
 import { mellomlagringState } from './typer/mellomlagring';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
-<<<<<<< HEAD
     return sanityBaseURL + "/?query=" + query;
-=======
-    return sanityBaseURL + '?query=' + query;
->>>>>>> 7489d0afcfba7539da58c00ec2ba9118e83a1138
 };
 
 export const hentData = async (URL: string) => {
