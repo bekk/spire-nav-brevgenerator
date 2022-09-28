@@ -1,15 +1,15 @@
 import { Button, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../../brev-api';
-import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../../typer/sanity';
-import { brevmal } from '../../typer/typer';
-import { MellomlagringContext, SkjemaContext } from '../../context/context';
-import { Seksjon } from '../seksjon';
-import '../../stiler/skjema.css';
+import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
+import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
+import { brevmal } from '../typer/typer';
+import { MellomlagringContext, SkjemaContext } from '../context/context';
+import { Seksjon } from './seksjon';
+import '../stiler/skjema.css';
 import {
     finnInitielleAvsnittOgAntallDelseksjoner,
     finnInitielMellomlagringDelseksjonState,
-} from './skjemaHjelpere';
+} from '../utils/skjemaUtils';
 
 interface SkjemaProps {
     brevmaler: brevmal[];

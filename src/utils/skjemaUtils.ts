@@ -1,7 +1,7 @@
-import { mellomlagringDelseksjon, mellomlagringDropdown } from "../../typer/mellomlagring";
-import { SanityDropdown, SanitySeksjon, SanityTekstObjekt } from "../../typer/sanity";
-import { finnFlettefeltITekst } from "../../utils/flettefeltUtils";
-import { erInnholdDropdown, sanityBlocktekstToHtml } from "../../utils/sanityUtils";
+import { mellomlagringDelseksjon, mellomlagringDropdown } from "../typer/mellomlagring";
+import { SanityDropdown, SanitySeksjon, SanityTekstObjekt } from "../typer/sanity";
+import { finnFlettefeltITekst } from "./flettefeltUtils";
+import { erInnholdDropdown, sanityBlocktekstToHtml } from "./sanityUtils";
 
 const finnInitelleAvsnittISeksjon = (seksjon: SanitySeksjon): string[] => {
         return seksjon.delseksjoner.map((delseksjon) => {

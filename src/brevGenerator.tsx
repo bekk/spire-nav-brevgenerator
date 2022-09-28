@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { renderToString } from 'react-dom/server';
 import './stiler/brevGenerator.css';
 import '@navikt/ds-css';
-import { Skjema } from './komponenter/skjema/skjema';
+import { Skjema } from './komponenter/skjema';
 import { Overskrift } from './komponenter/overskrift';
 import PDF from './komponenter/pdf';
 import { brevmal } from './typer/typer';
