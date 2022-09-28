@@ -2,28 +2,27 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Checkbox } from '@navikt/ds-react';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
 import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from '../typer/sanity';
-
 import { Fritekst } from './fritekst';
 import {
-    finnEndringsIndeks,
-    finnTabellIndeksOgNyttFritekstElement,
-    finnAntallTegnLagtTil,
     dobbelTabellTilStreng,
-    finnKaraktererIListeMedStrenger,
     innholdTilFritekstTabell,
+    oppdaterFritekstTabellMedTekst,
+    oppdaterFritekstTabellMedDropdown,
+    oppdaterFritekstTabellMedFlettefelt,
 } from '../utils/fritekstUtils';
 import '../stiler/delseksjon.css';
-import {
-    erInnholdDropdown,
-    erInnholdTekstObjekt,
-    sanityBlocktekstToHtml,
-} from '../utils/sanityUtils';
+import { erInnholdDropdown, erInnholdTekstObjekt } from '../utils/sanityUtils';
 import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
 import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/flettefeltUtils';
 import { flettefelt } from '../typer/typer';
 import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
-import { erMellomLagringInnholdDropdown } from '../utils/mellomlagring';
+import {
+    erDataMellomlagret,
+    oppdaterDropdownIMellomlagring,
+    oppdaterFlettefeltIMellomlagring,
+    oppdaterFritekstTabellIMellomlagring,
+} from '../utils/mellomlagring';
 
 interface seksjonProps {
     delseksjon: SanityDelseksjon;
@@ -48,25 +47,20 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         if (delseksjon.innhold !== null) {
             const mellomlagretDelseskjon = mellomlagringDelseksjonerState[delseksjonIndeks];
 
-            const nyFritekstTabell =
-                mellomlagretDelseskjon.fritekstTabell.length > 0
-                    ? mellomlagretDelseskjon.fritekstTabell
-                    : innholdTilFritekstTabell(delseksjon.innhold);
-
             const nyFlettefeltTabell = innholdTilFlettefeltTabell(
                 delseksjon.innhold,
                 mellomlagretDelseskjon.innhold
             );
-
-            const nyFritekst =
-                avsnittState[delseksjonIndeks].length > 0
-                    ? avsnittState[delseksjonIndeks]
-                    : dobbelTabellTilStreng(nyFritekstTabell);
-
-            settFritekstTabell(nyFritekstTabell);
             settFlettefelt(nyFlettefeltTabell);
 
-            settFritekst(nyFritekst);
+            if (erDataMellomlagret(mellomlagretDelseskjon)) {
+                settFritekstTabell(mellomlagretDelseskjon.fritekstTabell);
+                settFritekst(avsnittState[delseksjonIndeks]);
+            } else {
+                const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+                settFritekstTabell(nyFritekstTabell);
+                settFritekst(dobbelTabellTilStreng(nyFritekstTabell));
+            }
         }
     }, [delseksjon]);
 
@@ -85,136 +79,80 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
     const handterToggle = () => {
         const nyeInkluderingsBrytere = [...skalAvsnittInkluderesState];
         nyeInkluderingsBrytere[delseksjonIndeks] = !skalAvsnittInkluderesState[delseksjonIndeks];
-
         skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
     };
 
-    const genererNyFritekstTabell = (
-        nyTekst: string,
-        fritekstTabellKopi: string[],
-        indeks: number
-    ) => {
-        fritekstTabellKopi[indeks] = nyTekst;
-        return fritekstTabellKopi;
-    };
-
-    const håndterEndringIFritekstFelt = (nyFritekst: string) => {
-        oppdaterAvsnitt(nyFritekst);
-
-        const nyFritekstSterialisert = nyFritekst
-            .replaceAll('&nbsp;', ' ')
-            .replaceAll('\n', '')
-            .replaceAll('&lt;', '')
-            .replaceAll('&gt;', '');
-
-        const gammelTekst = dobbelTabellTilStreng(fritekstTabell);
-
-        const endringsIndeks = finnEndringsIndeks(nyFritekstSterialisert, gammelTekst);
-
-        if (endringsIndeks === -1) return;
-
-        const fritekstTabellKopi = [...fritekstTabell];
-        const antallTegnLagtTil = finnAntallTegnLagtTil(nyFritekstSterialisert, gammelTekst);
-
-        let karakterTeller = 0;
-        let erEndringGjort = false;
-        const nyFritekstTabell = fritekstTabellKopi.map((liste) => {
-            const gammelKarakterTeller = karakterTeller;
-            karakterTeller += finnKaraktererIListeMedStrenger(liste);
-
-            if (karakterTeller > endringsIndeks && !erEndringGjort) {
-                erEndringGjort = true;
-                const { tabellIndeks, nyttFritekstElement } = finnTabellIndeksOgNyttFritekstElement(
-                    endringsIndeks,
-                    nyFritekstSterialisert,
-                    liste,
-                    antallTegnLagtTil,
-                    gammelKarakterTeller
-                );
-
-                const nyFritekstTabellElement = genererNyFritekstTabell(
-                    nyttFritekstElement,
-                    liste,
-                    tabellIndeks
-                );
-                return nyFritekstTabellElement;
-            } else {
-                return liste;
-            }
-        });
-
-        settFritekstTabell(nyFritekstTabell);
-
-        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
-        mellomlagringDelseksjonKopi.fritekstTabell = nyFritekstTabell;
-        setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
-    };
-
-    const håndterEndringIDropdown = (nyTekstOgIndeksStreng: string, innholdIndeks: number) => {
-        const fritekstTabellKopi = [...fritekstTabell];
-        const nyTekstOgIndeks = nyTekstOgIndeksStreng.split('@&#');
-        const optionValgIndeks = Number(nyTekstOgIndeks[1]);
-
-        fritekstTabellKopi[innholdIndeks] = sanityBlocktekstToHtml(
-            (delseksjon.innhold[innholdIndeks] as SanityDropdown).valg[optionValgIndeks]
-        );
-
-        settFritekstTabell(fritekstTabellKopi);
-        const fritekstStreng = dobbelTabellTilStreng(fritekstTabellKopi);
-        oppdaterAvsnitt(fritekstStreng);
-        settFritekst(fritekstStreng);
-
-        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
-        (mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown).valgVerdi =
-            nyTekstOgIndeksStreng;
-        mellomlagringDelseksjonKopi.fritekstTabell = fritekstTabellKopi;
-
-        //finner flettefelt referanser i valgt dropdown option og setter nye flettefelt i flettefeltDropdown state.
-        if (erInnholdDropdown(delseksjon.innhold[innholdIndeks])) {
-            const flettefeltNy = finnFlettefeltIDropdown(
-                delseksjon.innhold[innholdIndeks] as SanityDropdown,
-                optionValgIndeks
-            );
-            oppdaterFlettefeltFraDropdowns(flettefeltNy, innholdIndeks);
-
-            (
-                mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown
-            ).flettefelt = Array(flettefeltNy.length).fill('');
-        }
-
-        setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
-    };
-
-    const håndterEndringIFletteFelt = (e: any, flettefeltIndeks: number, innholdIndeks: number) => {
-        const friteksttabellKopi = [...fritekstTabell];
-
-        friteksttabellKopi[innholdIndeks][flettefeltIndeks * 2 + 1] = e.target.value;
-
-        const nyFritekst = dobbelTabellTilStreng(friteksttabellKopi);
-
-        settFritekstTabell(friteksttabellKopi);
-        settFritekst(nyFritekst);
-        oppdaterAvsnitt(nyFritekst);
-
-        const mellomlagringDelseksjonKopi = { ...mellomlagringDelseksjonerState[delseksjonIndeks] };
-
-        mellomlagringDelseksjonKopi.fritekstTabell = friteksttabellKopi;
-
-        if (erMellomLagringInnholdDropdown(mellomlagringDelseksjonKopi.innhold[innholdIndeks])) {
-            (
-                mellomlagringDelseksjonKopi.innhold[innholdIndeks] as mellomlagringDropdown
-            ).flettefelt[flettefeltIndeks] = e.target.value;
-        } else {
-            (mellomlagringDelseksjonKopi.innhold[innholdIndeks] as string[])[flettefeltIndeks] =
-                e.target.value;
-        }
-        setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
-    };
-
-    const setmellomlagringDelseksjonState = (mellomlagringDelseksjon: mellomlagringDelseksjon) => {
+    const setMellomlagringDelseksjonState = (mellomlagringDelseksjon: mellomlagringDelseksjon) => {
         const mellomlagringDelseksjonStateKopi = [...mellomlagringDelseksjonerState];
         mellomlagringDelseksjonStateKopi[delseksjonIndeks] = mellomlagringDelseksjon;
         mellomlagringDelseksjonerDispatch(mellomlagringDelseksjonStateKopi);
+    };
+
+    const håndterEndringIFritekstFelt = (nyFritekst: string) => {
+        const nyFritekstTabell = oppdaterFritekstTabellMedTekst(
+            [...fritekstTabell],
+            nyFritekst,
+            fritekstTabell
+        );
+        const nyMellomlagringDelseksjon = oppdaterFritekstTabellIMellomlagring(
+            { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
+            nyFritekstTabell
+        );
+
+        oppdaterAvsnitt(nyFritekst);
+        settFritekstTabell(nyFritekstTabell);
+        setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
+    };
+
+    const håndterEndringIDropdown = (nyTekstOgIndeksStreng: string, innholdIndeks: number) => {
+        const nyTekstOgIndeks = nyTekstOgIndeksStreng.split('@&#');
+        const valgIndeks = Number(nyTekstOgIndeks[1]);
+        const nyFritekstTabell = oppdaterFritekstTabellMedDropdown(
+            [...fritekstTabell],
+            innholdIndeks,
+            delseksjon,
+            valgIndeks
+        );
+        const fritekstStreng = dobbelTabellTilStreng(nyFritekstTabell);
+        const nyeFlettefelt = finnFlettefeltIDropdown(
+            delseksjon.innhold[innholdIndeks] as SanityDropdown,
+            valgIndeks
+        );
+        const nyMellomlagringDelseksjon = oppdaterDropdownIMellomlagring(
+            { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
+            nyFritekstTabell,
+            innholdIndeks,
+            nyTekstOgIndeksStreng,
+            nyeFlettefelt
+        );
+
+        settFritekstTabell(nyFritekstTabell);
+        oppdaterAvsnitt(fritekstStreng);
+        settFritekst(fritekstStreng);
+        oppdaterFlettefeltFraDropdowns(nyeFlettefelt, innholdIndeks);
+        setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
+    };
+
+    const håndterEndringIFletteFelt = (e: any, flettefeltIndeks: number, innholdIndeks: number) => {
+        const nyFritekstTabell = oppdaterFritekstTabellMedFlettefelt(
+            [...fritekstTabell],
+            innholdIndeks,
+            flettefeltIndeks,
+            e.target.value
+        );
+        const nyFritekst = dobbelTabellTilStreng(nyFritekstTabell);
+        const nyMellomlagringDelseksjon = oppdaterFlettefeltIMellomlagring(
+            { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
+            nyFritekstTabell,
+            innholdIndeks,
+            flettefeltIndeks,
+            e.target.value
+        );
+
+        settFritekstTabell(nyFritekstTabell);
+        settFritekst(nyFritekst);
+        oppdaterAvsnitt(nyFritekst);
+        setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
     };
 
     return (

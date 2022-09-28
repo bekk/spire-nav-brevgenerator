@@ -1,4 +1,4 @@
-import { SanityDropdown, SanityTekstObjekt } from "../typer/sanity";
+import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from "../typer/sanity";
 import { erInnholdTekstObjekt, sanityBlocktekstToHtml } from "./sanityUtils";
 
 export const dobbelTabellTilStreng = (fritekstTabell: string[][]) => {
@@ -96,3 +96,58 @@ export const innholdTilFritekstTabell = (
             }
         });
     };
+
+
+export const fjernSpesialKarakterer = (str: string): string => {
+	return str
+		.replaceAll('&nbsp;', ' ')
+		.replaceAll('\n', '')
+		.replaceAll('&lt;', '')
+		.replaceAll('&gt;', '');
+}
+
+export const oppdaterFritekstTabellMedTekst =(fritekstTabellKopi: string[][], nyFritekst: string, gammelFritekstTabell: string[][]): string[][] => {
+
+        const nyFritekstSterialisert = fjernSpesialKarakterer(nyFritekst);
+        const gammelFritekst = dobbelTabellTilStreng(gammelFritekstTabell);
+        const antallTegnLagtTil = finnAntallTegnLagtTil(nyFritekstSterialisert, gammelFritekst);
+        const endringsIndeks = finnEndringsIndeks(nyFritekstSterialisert, gammelFritekst);
+
+        let karakterTeller = 0;
+        let erEndringGjort = false;
+
+        return fritekstTabellKopi.map((fritekstTabellElement) => {
+            const gammelKarakterTeller = karakterTeller;
+            karakterTeller += finnKaraktererIListeMedStrenger(fritekstTabellElement);
+
+            if (karakterTeller > endringsIndeks && !erEndringGjort) {
+                erEndringGjort = true;
+                const { tabellIndeks, nyttFritekstElement } = finnTabellIndeksOgNyttFritekstElement(
+                    endringsIndeks,
+                    nyFritekstSterialisert,
+                    fritekstTabellElement,
+                    antallTegnLagtTil,
+                    gammelKarakterTeller
+                );
+
+
+                fritekstTabellElement[tabellIndeks] = nyttFritekstElement; 
+				
+                return fritekstTabellElement;
+            } else {
+                return fritekstTabellElement;
+            }
+        });
+}
+
+export const oppdaterFritekstTabellMedDropdown = (fritekstTabellKopi: string[][], innholdIndeks: number, delseksjon: SanityDelseksjon, valgIndeks: number): string[][] => {
+	fritekstTabellKopi[innholdIndeks] = sanityBlocktekstToHtml(
+		(delseksjon.innhold[innholdIndeks] as SanityDropdown).valg[valgIndeks]
+	);
+	return fritekstTabellKopi;
+}
+
+export const oppdaterFritekstTabellMedFlettefelt = (fritekstTabellKopi: string[][], innholdIndeks: number, flettefeltIndeks: number, nyVerdi: string): string[][] => {
+        fritekstTabellKopi[innholdIndeks][flettefeltIndeks * 2 + 1] = nyVerdi;
+		return fritekstTabellKopi
+}
