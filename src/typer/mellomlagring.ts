@@ -8,6 +8,7 @@ export interface mellomlagringState {
 
 export type mellomlagringDelseksjon = {
     innhold: (string[] | mellomlagringDropdown)[];
+    fritekstTabell: string[][];
 }
 
 export interface mellomlagringDropdown {

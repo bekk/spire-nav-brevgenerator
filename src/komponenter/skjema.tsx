@@ -81,7 +81,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                             }
                         }
                     );
-                    return { innhold: innhold };
+                    return { innhold: innhold, fritekstTabell: [] };
                 });
             }
         );

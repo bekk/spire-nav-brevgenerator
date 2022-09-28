@@ -46,19 +46,26 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
     useEffect(() => {
         settFritekst('');
         if (delseksjon.innhold !== null) {
-            const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+            const mellomlagretDelseskjon = mellomlagringDelseksjonerState[delseksjonIndeks];
+
+            const nyFritekstTabell =
+                mellomlagretDelseskjon.fritekstTabell.length > 0
+                    ? mellomlagretDelseskjon.fritekstTabell
+                    : innholdTilFritekstTabell(delseksjon.innhold);
+
             const nyFlettefeltTabell = innholdTilFlettefeltTabell(
                 delseksjon.innhold,
-                mellomlagringDelseksjonerState[delseksjonIndeks].innhold
+                mellomlagretDelseskjon.innhold
             );
-
-            settFritekstTabell(nyFritekstTabell);
-            settFlettefelt(nyFlettefeltTabell);
 
             const nyFritekst =
                 avsnittState[delseksjonIndeks].length > 0
                     ? avsnittState[delseksjonIndeks]
                     : dobbelTabellTilStreng(nyFritekstTabell);
+
+            settFritekstTabell(nyFritekstTabell);
+            settFlettefelt(nyFlettefeltTabell);
+
             settFritekst(nyFritekst);
         }
     }, [delseksjon]);
@@ -149,6 +156,12 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         });
 
         settFritekstTabell(nyFritekstTabell);
+
+        const mellomlagringDelseksjonKopi = dypKopi(
+            mellomlagringDelseksjonerState[delseksjonIndeks]
+        );
+        mellomlagringDelseksjonKopi.fritekstTabell = nyFritekstTabell;
+        setmellomlagringDelseksjonState(mellomlagringDelseksjonKopi);
     };
 
     const håndterEndringIDropdown = (nyTekstOgIndeksStreng: string, innholdIndeks: number) => {
@@ -169,6 +182,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             mellomlagringDelseksjonerState[delseksjonIndeks]
         );
         mellomlagringDelseksjonKopi.innhold[innholdIndeks].valgVerdi = nyTekstOgIndeksStreng;
+        mellomlagringDelseksjonKopi.fritekstTabell = fritekstTabellKopi;
 
         //finner flettefelt referanser i valgt dropdown option og setter nye flettefelt i flettefeltDropdown state.
         if (erInnholdDropdown(delseksjon.innhold[innholdIndeks])) {
@@ -200,6 +214,8 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         const mellomlagringDelseksjonKopi = dypKopi(
             mellomlagringDelseksjonerState[delseksjonIndeks]
         );
+
+        mellomlagringDelseksjonKopi.fritekstTabell = friteksttabellKopi;
 
         if (erMellomLagringInnholdDropdown(mellomlagringDelseksjonKopi.innhold[innholdIndeks])) {
             mellomlagringDelseksjonKopi.innhold[innholdIndeks].flettefelt[flettefeltIndeks] =
