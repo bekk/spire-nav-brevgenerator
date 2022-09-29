@@ -1,78 +1,113 @@
 import axios, { AxiosResponse } from 'axios';
 import css from './stiler/css';
+import { CacheObjekt } from './typer/cache';
 import { mellomlagringState } from './typer/mellomlagring';
+
+const skalCache = true
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
 };
 
-export const hentData = async (URL: string) => {
-    return axios.get(URL).then((res) => {
-        console.log('BREV API', res.data.result);
-    });
-};
+const dateToString = (date: Date): string => {
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+}
 
-export const hentAvsnitt = async (URL: string) => {
-    return axios.get(URL).then((res) => {
-        return res.data.result;
-    });
-};
+const erCacheGyldig = (cache: CacheObjekt): boolean => {
+    return cache.dato === dateToString(new Date());
+}
+
+const hentCache = (key: string): any=> {
+    if(skalCache){
+        const cacheString = localStorage.getItem(key);
+        if (cacheString != null) {
+            const cacheObjekt = JSON.parse(cacheString) as CacheObjekt;
+            if (erCacheGyldig(cacheObjekt)) {
+                return JSON.parse(cacheObjekt.data);
+            }
+        }
+    }
+    return null
+}
+
+const lagreCache = (key: string, data: any) => {
+    if(skalCache){
+        const cache: CacheObjekt = {
+            dato: dateToString(new Date()),
+            data: JSON.stringify(data)
+        }
+        localStorage.setItem(key, JSON.stringify(cache)); 
+    }
+}
 
 export const hentBrevmaler = async (sanityBaseURL: string) => {
-    const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
-
-    return axios.get(URL).then((res) => {
-        return res.data.result;
-    });
+    const cachedBrevmaler = hentCache('brevmaler');
+    if(cachedBrevmaler !== null) {
+        return cachedBrevmaler;
+    }
+    else{
+        const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
+        return axios.get(URL).then((res) => {
+            lagreCache('brevmaler', res.data.result);
+            return res.data.result;
+        });
+    }
 };
 
 export const hentBrevmal = async (sanityBaseURL: string, id: string) => {
-    const URL = genererSanityURL(
-        sanityBaseURL,
-        `*[_id=="${id}"][0]{
-		...,
-		seksjoner[]->{
-			...,
-			delseksjoner[]->{
-				...,
-				innhold[]->{
-					...,
-          			tekst[]{
-						...,
-						markDefs[]{
-							...,
-							_type=="flettefeltReferanse" => {
-								"flettefelt": *[_id==^.referanse._ref][0]
-							},
-							_type=="tabellReferanse" => {
-								"tabell": *[_id==^.referanse._ref][0]
-							}
-						}
-					},
-					valg[]->{
-						...,
-						tekst[]{
-							...,
-							markDefs[]{
-								...,
-								_type=="flettefeltReferanse" => {
-									"flettefelt": *[_id==^.referanse._ref][0]
-								},
-								_type=="tabellReferanse" => {
-									"tabell": *[_id==^.referanse._ref][0]
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}`
-    );
+    const cachedBrevmal = hentCache('brevmal' + id);
+    if(cachedBrevmal !== null) {
+        return cachedBrevmal;
+    }
+    else{
+        const URL = genererSanityURL(
+            sanityBaseURL,
+            `*[_id=="${id}"][0]{
+            ...,
+            seksjoner[]->{
+                ...,
+                delseksjoner[]->{
+                    ...,
+                    innhold[]->{
+                        ...,
+                        tekst[]{
+                            ...,
+                            markDefs[]{
+                                ...,
+                                _type=="flettefeltReferanse" => {
+                                    "flettefelt": *[_id==^.referanse._ref][0]
+                                },
+                                _type=="tabellReferanse" => {
+                                    "tabell": *[_id==^.referanse._ref][0]
+                                }
+                            }
+                        },
+                        valg[]->{
+                            ...,
+                            tekst[]{
+                                ...,
+                                markDefs[]{
+                                    ...,
+                                    _type=="flettefeltReferanse" => {
+                                        "flettefelt": *[_id==^.referanse._ref][0]
+                                    },
+                                    _type=="tabellReferanse" => {
+                                        "tabell": *[_id==^.referanse._ref][0]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }`
+        );
 
-    return axios.get(URL).then((res) => {
-        return res.data.result;
-    });
+        return axios.get(URL).then((res) => {
+            lagreCache('brevmal' + id, res.data.result);
+            return res.data.result;
+        });
+    }
 };
 
 const genererPDFKontekst = (html: string): string => {
