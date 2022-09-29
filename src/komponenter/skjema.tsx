@@ -29,6 +29,8 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [gjeldendeBrevmal, setGjeldendeBrevmal] = useState<SanityBrevmalMedSeksjoner | null>(
         null
     );
+    const [antallNullstillinger, setAntallNullstillinger] = useState(0);
+
     const {
         avsnittDispatch,
         avsnittState,
@@ -125,6 +127,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         seksjon={seksjon as SanitySeksjon}
                         key={indeks}
                         seksjonStartIndeks={delseksjonTeller}
+                        antallNullstillinger={antallNullstillinger}
                     />
                 );
                 delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
@@ -141,6 +144,20 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
             delseksjoner: mellomlagringDelseksjonerState,
         };
         postMellomlagreBrev(mellomlagringsobjekt);
+    };
+
+    const nullstillAlleValg = () => {
+        if (gjeldendeBrevmal !== null) {
+            setAntallNullstillinger(antallNullstillinger + 1);
+            const { nyeAvsnitt, antallDelSeksjoner } = finnInitielleAvsnittOgAntallDelseksjoner(
+                gjeldendeBrevmal.seksjoner
+            );
+            const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
+
+            avsnittDispatch(nyeAvsnitt);
+            skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+            initierMellomlagringDelseksjonState(gjeldendeBrevmal.seksjoner);
+        }
     };
 
     return (
@@ -165,6 +182,11 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                 Mellomlagre brev
             </Button> */}
             {renderSeksjoner()}
+            {gjeldendeBrevmal !== null && (
+                <div className="skjema-knapper">
+                    <Button onClick={nullstillAlleValg}>Nullstill</Button>
+                </div>
+            )}
         </div>
     );
 }

@@ -5,6 +5,12 @@
 }
 
 .mellomlagre-button {
-	margin-top: 20px;
-	width: 100%;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.skjema-knapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
 }

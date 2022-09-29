@@ -28,9 +28,10 @@ import { erMellomLagringInnholdDropdown } from '../utils/mellomlagring';
 interface seksjonProps {
     delseksjon: SanityDelseksjon;
     delseksjonIndeks: number;
+    antallNullstillinger: number;
 }
 
-export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
+export function Delseksjon({ delseksjon, delseksjonIndeks, antallNullstillinger }: seksjonProps) {
     const {
         avsnittState,
         avsnittDispatch,
@@ -69,6 +70,21 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             settFritekst(nyFritekst);
         }
     }, [delseksjon]);
+
+    useEffect(() => {
+        const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+
+        const nyFlettefeltTabell = innholdTilFlettefeltTabell(delseksjon.innhold);
+
+        const nyFritekst =
+            avsnittState[delseksjonIndeks].length > 0
+                ? avsnittState[delseksjonIndeks]
+                : dobbelTabellTilStreng(nyFritekstTabell); // Usikker på om sjekken her er nødvendig siden avsnittState skal være satt
+
+        settFritekstTabell(nyFritekstTabell);
+        settFlettefelt(nyFlettefeltTabell);
+        settFritekst(nyFritekst);
+    }, [antallNullstillinger]);
 
     const oppdaterFlettefeltFraDropdowns = (nyeFlettefelt: flettefelt[], indeks: number) => {
         const flettefeltKopi = [...flettefelt];
