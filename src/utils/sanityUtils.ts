@@ -30,7 +30,7 @@ export const sanityBlocktekstToHtml = (tekst: SanityTekstObjekt): string[] => {
 
 			if (erTabellReferanse(tekstElement, child)) {
 				gjeldendeTabellElement =
-					'[' + tekstElement.markDefs[0].tabell.tabellReferanse + ']';
+					'[' + tekstElement.markDefs[0].tabell!.tabellReferanse + ']';
 			}
 
 			if (erChildFlettefeltReferanse) {

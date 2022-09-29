@@ -14,7 +14,7 @@ export const finnFlettefeltITekst = (sanityTekst: SanityTekst) : flettefelt[] =>
 						(markdef.tabell === undefined || markdef.tabell === null)
 					) {
 						flettefeltNy.push({
-							tekst: child.text,
+							tekst: markdef.flettefelt ? markdef.flettefelt.flettefeltNavn : child.text,
 							marks: child.marks,
 							key: child._key
 						});

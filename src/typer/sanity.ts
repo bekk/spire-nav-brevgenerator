@@ -56,10 +56,16 @@ export interface SanityChildren {
 }
 
 export interface SanityMarkDefs {
-    tabell: SanityTabell;
+    tabell?: SanityTabell;
+    flettefelt?: SanityFlettefelt;
     referanse: SanityReferanse[];
     _key: string;
     _type: string;
+}
+
+export interface SanityFlettefelt extends SanityDocument{
+    flettefeltNavn: string;
+    flettefeltType: string;
 }
 
 export interface SanityReferanse {
