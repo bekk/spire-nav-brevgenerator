@@ -1,13 +1,13 @@
 {
     "name": "@bekk/spire-nav-brevgenerator",
-    "version": "1.0.15",
+    "version": "1.0.17",
     "description": "",
     "main": "./brevGenerator.js",
     "scripts": {
         "test": "jest",
         "clean": "rm -rf dist",
         "build": "npm run clean && mkdir ./dist && tsc && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler",
-        "build:dev": "npm link ./dist && npm link ${npm_config_path}/node_modules/react && npm run clean && mkdir ./dist && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler && tsc -w",
+        "build:dev": "npm link ./dist && npm link ${npm_config_path}/node_modules/react && npm link ${npm_config_path}/node_modules/react-dom && npm run clean && mkdir ./dist && cp package.json README.md ./dist && cp -a ./src/stiler/. ./dist/stiler && tsc -w",
         "pack": "npm run build && npm pack ./dist",
         "pre-commit": "lint-staged"
     },
