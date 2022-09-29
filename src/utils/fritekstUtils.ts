@@ -108,10 +108,10 @@ export const fjernSpesialKarakterer = (str: string): string => {
 
 export const oppdaterFritekstTabellMedTekst =(fritekstTabellKopi: string[][], nyFritekst: string, gammelFritekstTabell: string[][]): string[][] => {
 
-        const nyFritekstSterialisert = fjernSpesialKarakterer(nyFritekst);
+        const nyFritekstSterilisert = fjernSpesialKarakterer(nyFritekst);
         const gammelFritekst = dobbelTabellTilStreng(gammelFritekstTabell);
-        const antallTegnLagtTil = finnAntallTegnLagtTil(nyFritekstSterialisert, gammelFritekst);
-        const endringsIndeks = finnEndringsIndeks(nyFritekstSterialisert, gammelFritekst);
+        const antallTegnLagtTil = finnAntallTegnLagtTil(nyFritekstSterilisert, gammelFritekst);
+        const endringsIndeks = finnEndringsIndeks(nyFritekstSterilisert, gammelFritekst);
 
         let karakterTeller = 0;
         let erEndringGjort = false;
@@ -124,7 +124,7 @@ export const oppdaterFritekstTabellMedTekst =(fritekstTabellKopi: string[][], ny
                 erEndringGjort = true;
                 const { tabellIndeks, nyttFritekstElement } = finnTabellIndeksOgNyttFritekstElement(
                     endringsIndeks,
-                    nyFritekstSterialisert,
+                    nyFritekstSterilisert,
                     fritekstTabellElement,
                     antallTegnLagtTil,
                     gammelKarakterTeller
