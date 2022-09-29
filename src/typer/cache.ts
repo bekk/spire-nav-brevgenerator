@@ -1,4 +1,4 @@
 export type CacheObjekt = {
-    date: string,
+    dato: string,
     data: string
 }

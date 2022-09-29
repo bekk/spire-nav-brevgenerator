@@ -14,7 +14,7 @@ const dateToString = (date: Date): string => {
 }
 
 const erCacheGyldig = (cache: CacheObjekt): boolean => {
-    return cache.date === dateToString(new Date());
+    return cache.dato === dateToString(new Date());
 }
 
 const hentCache = (key: string): any=> {
@@ -33,7 +33,7 @@ const hentCache = (key: string): any=> {
 const lagreCache = (key: string, data: any) => {
     if(skalCache){
         const cache: CacheObjekt = {
-            date: dateToString(new Date()),
+            dato: dateToString(new Date()),
             data: JSON.stringify(data)
         }
         localStorage.setItem(key, JSON.stringify(cache)); 
