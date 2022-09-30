@@ -4,6 +4,7 @@ import { CacheObjekt } from './typer/cache';
 import { mellomlagringState } from './typer/mellomlagring';
 
 const skalCache = true
+const backendURL = "http://34.88.177.137:8080"
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
@@ -139,14 +140,97 @@ export const genererPDF = async (html: string) => {
 };
 
 export const hentMellomlagretBrev = (brevmalId: string): mellomlagringState | undefined => {
-    if(brevmalId == "ea1eed05-915e-4609-b255-b051acf4a753"){
-        const string = '{"brevmalId":"ea1eed05-915e-4609-b255-b051acf4a753","inkluderingsbrytere":[true,true,true,true,true],"avsnitt":["<p>Navn: Sigmund Berbom</p><p>Fødselsnummer: 25.11.1996</p><p></p><p><strong>Fake ny overksrift</strong></p><p>Ny ubrukelig tekst.</p>","[Tabellnr2]</p><p>No siste </p>","<p>Du får overgangsstønad fra 20.11.22, som er måneden før du har termin.</p><p>Stønaden varer til og med 20.12.22.Da har du fått bra med støtte</p>","<p><strong>Her er det fet tekst</strong></p><p>Du får [beløp] kroner før <strong>skatt</strong> innen den 20. hver måned fra [måned] til [måned]. Fra og med [måned] endre beløpet seg til [beløp], på grunn av årlige reguleringer av stønader. Du kan lese mer om utbetaling på nav.no/utbetaling.</p><p>Ut ifra våre opplysninger har du ikke inntekt.</p><p>Hvis du har fått økonomisk sosialhjelp fra oss, kan vi trekke dette beløpet fra etterbetalingen din. Vi betaler derfor ikke ut pengene før vi har fått beskjed fra Oslo. Dette kan ta inntil 4 uker.</p><p></p><p>Du må si ifra til oss hvis månedsinntekten din blir høyere 4 433 enn kroner før skatt. Da må vi beregne stønaden din på nytt, fordi 4433 kroner er den høyeste månedsinntekten du kan ha før vi må redusere stønaden din. Du kan si ifra om endringene i inntekt på Ditt NAV på nav.no.</p>",""],"delseksjoner":[{"innhold":[["Sigmund Berbom","25.11.1996"]],"fritekstTabell":[["<p>Navn: ","Sigmund Berbom","</p><p>Fødselsnummer: ","25.11.1996","</p><p></p><p><strong>Fake ny overksrift</strong></p><p>Ny ubrukelig tekst.</p>"]]},{"innhold":[[]],"fritekstTabell":[]},{"innhold":[{"flettefelt":["20.11.22"],"valgVerdi":"<p>Du får overgangsstønad fra ,[dato],, som er måneden før du har termin.</p>@&#0"},{"flettefelt":["20.12.22","Da har du fått bra med støtte"],"valgVerdi":"<p>Stønaden varer til og med ,[dato],.,[Begrunnelse],</p>@&#2"}],"fritekstTabell":[["<p>Du får overgangsstønad fra ","20.11.22",", som er måneden før du har termin.</p>"],["<p>Stønaden varer til og med ","20.12.22",".","Da har du fått bra med støtte","</p>"]]},{"innhold":[{"flettefelt":["","","","","","Oslo"],"valgVerdi":"<p><strong>Her er det fet tekst</strong></p><p>Du får ,[beløp], kroner før <strong>skatt</strong> innen den 20. hver måned fra ,[måned], til ,[måned],. Fra og med ,[måned], endre beløpet seg til ,[beløp],, på grunn av årlige reguleringer av stønader. Du kan lese mer om utbetaling på nav.no/utbetaling.</p><p>Ut ifra våre opplysninger har du ikke inntekt.</p><p>Hvis du har fått økonomisk sosialhjelp fra oss, kan vi trekke dette beløpet fra etterbetalingen din. Vi betaler derfor ikke ut pengene før vi har fått beskjed fra ,[NAV-kontoret],. Dette kan ta inntil 4 uker.</p><p></p><p>Du må si ifra til oss hvis månedsinntekten din blir høyere 4 433 enn kroner før skatt. Da må vi beregne stønaden din på nytt, fordi 4433 kroner er den høyeste månedsinntekten du kan ha før vi må redusere stønaden din. Du kan si ifra om endringene i inntekt på Ditt NAV på nav.no.</p>@&#1"}],"fritekstTabell":[["<p><strong>Her er det fet tekst</strong></p><p>Du får ","[beløp]"," kroner før <strong>skatt</strong> innen den 20. hver måned fra ","[måned]"," til ","[måned]",". Fra og med ","[måned]"," endrer beløpet seg til ","[beløp]",", på grunn av årlige reguleringer av stønader. Du kan lese mer om utbetaling på nav.no/utbetaling.</p><p>Ut ifra våre opplysninger har du ikke inntekt.</p><p>Hvis du har fått økonomisk sosialhjelp fra oss, kan vi trekke dette beløpet fra etterbetalingen din. Vi betaler derfor ikke ut pengene før vi har fått beskjed fra ","Oslo",". Dette kan ta inntil 4 uker.</p><p></p><p>Du må si ifra til oss hvis månedsinntekten din blir høyere 4 433 enn kroner før skatt. Da må vi beregne stønaden din på nytt, fordi 4433 kroner er den høyeste månedsinntekten du kan ha før vi må redusere stønaden din. Du kan si ifra om endringene i inntekt på Ditt NAV på nav.no.</p>"]]},{"innhold":[{"flettefelt":[]},{"flettefelt":[]},{"flettefelt":[]}],"fritekstTabell":[]}]}'
-        return JSON.parse(string);
+    const brev = {
+        søknadId: 1,
+        brevmalId: brevmalId
     }
+    const token = localStorage.getItem('token');
+    axios.post(`${backendURL}/mellomlagring/hentEttBrev`, JSON.stringify(brev), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }}).then((res) => {
+        if(res.data !== null || res.data !== undefined){
+            const brevFraBackend = JSON.parse(res.data);
+            return brevFraBackend.brev;
+        }
+    });
     return undefined;
 }
 
 export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
     console.log(mellomlagring)
     console.log(JSON.stringify(mellomlagring))
+    const brevTilBackend = {
+        søknadId: 1,
+        brevmalId: mellomlagring.brevmalId,
+        brev: JSON.stringify(mellomlagring)
+    }
+    const token = localStorage.getItem('token');
+    console.log("token", token)
+    axios.post(`${backendURL}/mellomlagring/`, JSON.stringify(brevTilBackend), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Access-Control-Allow-Origin': 'http://localhost:3000'
+        }
+    }).then((res) => {
+        console.log("post brev res:", res)
+    }).catch((err) => {
+        console.log("post brev err:", err)
+    })
+}
+
+export const signUp = async () => {
+    const user = {
+        username: "sigmund",
+        email: "sigmund@mail.no",
+        password: "password",
+        roles: ["admin", "mod", "user"]
+    }
+    await axios.post(`${backendURL}/auth/signup`, JSON.stringify(user), {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    }).then((res) => {
+        console.log("signup res:", res)
+    }). catch((err) => {
+        console.log("signup err:", err)
+    })
+}
+
+export const signIn = async () => {
+    const user = {
+        username: "sigmund",
+        password: "password"
+    }
+    await axios.post(`${backendURL}/auth/signin`, JSON.stringify(user), {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((res) => {
+        console.log("signun res:", res)
+        localStorage.setItem('token', res.data.accessToken)
+    })
+}
+
+export const signUpSignIn = async () => {
+    //await signUp()
+    await signIn()
+}
+
+export const getTest = async () => {
+    const token = localStorage.getItem('token');
+    axios.get(`${backendURL}/mellomlagring/`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Access-Control-Allow-Origin': 'http://localhost:3000'
+        }
+    }).then((res) => {
+        console.log("get test:", res)
+    }).catch((err) => {
+        console.log("get test:", err)
+    })
 }

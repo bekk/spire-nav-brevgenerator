@@ -7,7 +7,7 @@ import { Overskrift } from './komponenter/overskrift';
 import PDF from './komponenter/pdf';
 import { brevmal } from './typer/typer';
 import { Button } from '@navikt/ds-react';
-import { genererPDF, hentBrevmaler } from './brev-api';
+import { genererPDF, hentBrevmaler, signUpSignIn } from './brev-api';
 import {
     avsnittStateReducer,
     brevmalTittelStateReducer,
@@ -67,6 +67,7 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
             });
             setBrevmaler(hentetBrevmaler);
         });
+        signUpSignIn();
     }, []);
 
     const genererHTMLString = () => {
