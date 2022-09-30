@@ -87,21 +87,25 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     </option>
                 ))}
             </Select>
-            {/* <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
-                Mellomlagre brev
-            </Button> */}
-            {gjeldendeBrevmal !== null &&
-                gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
-                    const seksjonKomponent = (
-                        <Seksjon
-                            seksjon={seksjon as SanitySeksjon}
-                            key={indeks}
-                            seksjonStartIndeks={delseksjonTeller}
-                        />
-                    );
-                    delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
-                    return seksjonKomponent;
-                })}
+            {gjeldendeBrevmal !== null && (
+                <>
+                    {gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
+                        const seksjonKomponent = (
+                            <Seksjon
+                                seksjon={seksjon as SanitySeksjon}
+                                key={indeks}
+                                seksjonStartIndeks={delseksjonTeller}
+                            />
+                        );
+                        delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
+                        return seksjonKomponent;
+                    })}
+                    <div className="skjema-knapper">
+                        <Button variant="secondary">Nullstill valg</Button>
+                        <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
