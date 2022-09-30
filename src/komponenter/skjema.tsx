@@ -33,30 +33,33 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         React.useContext(MellomlagringContext);
 
     useEffect(() => {
-        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
-            if (res !== null && res.seksjoner.length > 0) {
-                setGjeldendeBrevmal(res);
-                brevmalTittelDispatch(res.brevmaloverskrift);
-                // const mellomlagretBrev = hentMellomlagretBrev(res._id);
-                // if (mellomlagretBrev !== undefined) {
-                //     avsnittDispatch(mellomlagretBrev.avsnitt);
-                //     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
-                //     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
-                // } else {
-                const { nyeAvsnitt, antallDelSeksjoner } = finnInitielleAvsnittOgAntallDelseksjoner(
-                    res.seksjoner
-                );
-                const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
-                const initelMellomlagringDelseksjonState = finnInitielMellomlagringDelseksjonState(
-                    res.seksjoner
-                );
+        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then(
+            async (res: SanityBrevmalMedSeksjoner) => {
+                if (res !== null && res.seksjoner.length > 0) {
+                    setGjeldendeBrevmal(res);
+                    brevmalTittelDispatch(res.brevmaloverskrift);
+                    const mellomlagretBrev = await hentMellomlagretBrev(res._id);
+                    console.log('mellomlagret brev: ', mellomlagretBrev);
+                    if (mellomlagretBrev !== undefined) {
+                        avsnittDispatch(mellomlagretBrev.avsnitt);
+                        skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                        mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                    } else {
+                        const { nyeAvsnitt, antallDelSeksjoner } =
+                            finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
+                        const nyeInkluderingsBrytere: boolean[] = new Array(
+                            antallDelSeksjoner
+                        ).fill(true);
+                        const initelMellomlagringDelseksjonState =
+                            finnInitielMellomlagringDelseksjonState(res.seksjoner);
 
-                avsnittDispatch(nyeAvsnitt);
-                skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
-                // }
+                        avsnittDispatch(nyeAvsnitt);
+                        skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                        mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
+                    }
+                }
             }
-        });
+        );
     }, [gjeldendeBrevmalId]);
 
     const mellomlagreBrev = () => {
