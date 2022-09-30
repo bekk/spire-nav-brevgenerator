@@ -101,6 +101,12 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
             </Select>
             {gjeldendeBrevmal !== null && (
                 <>
+                    <div className="skjema-knapper">
+                        <Button variant="secondary" onClick={nullStillAlleValg}>
+                            Nullstill valg
+                        </Button>
+                        <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
+                    </div>
                     {gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
                         const seksjonKomponent = (
                             <Seksjon
@@ -114,12 +120,6 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
                         return seksjonKomponent;
                     })}
-                    <div className="skjema-knapper">
-                        <Button variant="secondary" onClick={nullStillAlleValg}>
-                            Nullstill valg
-                        </Button>
-                        <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
-                    </div>
                 </>
             )}
         </div>
