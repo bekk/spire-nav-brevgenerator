@@ -9,6 +9,10 @@ const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
 };
 
+const finnSanityDatasett = (sanityBaseURL: string): string | undefined => {
+    return sanityBaseURL.split('/').pop()
+}
+
 const dateToString = (date: Date): string => {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 }
@@ -41,21 +45,21 @@ const lagreCache = (key: string, data: any) => {
 }
 
 export const hentBrevmaler = async (sanityBaseURL: string) => {
-    const cachedBrevmaler = hentCache('brevmaler');
+    const cachedBrevmaler = hentCache(finnSanityDatasett(sanityBaseURL)+'-brevmaler');
     if(cachedBrevmaler !== null) {
         return cachedBrevmaler;
     }
     else{
         const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
         return axios.get(URL).then((res) => {
-            lagreCache('brevmaler', res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL)+'-brevmaler', res.data.result);
             return res.data.result;
         });
     }
 };
 
 export const hentBrevmal = async (sanityBaseURL: string, id: string) => {
-    const cachedBrevmal = hentCache('brevmal' + id);
+    const cachedBrevmal = hentCache(finnSanityDatasett(sanityBaseURL)+'-brevmal-' + id);
     if(cachedBrevmal !== null) {
         return cachedBrevmal;
     }
@@ -104,7 +108,7 @@ export const hentBrevmal = async (sanityBaseURL: string, id: string) => {
         );
 
         return axios.get(URL).then((res) => {
-            lagreCache('brevmal' + id, res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL)+'-brevmal-' + id, res.data.result);
             return res.data.result;
         });
     }
