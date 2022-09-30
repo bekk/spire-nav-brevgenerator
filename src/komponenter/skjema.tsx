@@ -21,6 +21,8 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [gjeldendeBrevmal, setGjeldendeBrevmal] = useState<SanityBrevmalMedSeksjoner | null>(
         null
     );
+    const [skalAlleValgNullstilles, setSkalAlleValgNullstilles] = useState(false);
+
     const {
         avsnittDispatch,
         avsnittState,
@@ -32,6 +34,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         React.useContext(MellomlagringContext);
 
     useEffect(() => {
+        setSkalAlleValgNullstilles(false);
         hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
             if (res !== null && res.seksjoner.length > 0) {
                 setGjeldendeBrevmal(res);
@@ -42,21 +45,30 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 } else {
-                    const { nyeAvsnitt, antallDelSeksjoner } =
-                        finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
-                    const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
-                        true
-                    );
-                    const initelMellomlagringDelseksjonState =
-                        finnInitielMellomlagringDelseksjonState(res.seksjoner);
-
-                    avsnittDispatch(nyeAvsnitt);
-                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                    mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
+                    initierContext(res.seksjoner);
                 }
             }
         });
     }, [gjeldendeBrevmalId]);
+
+    const initierContext = (seksjoner: SanitySeksjon[]) => {
+        const { nyeAvsnitt, antallDelSeksjoner } =
+            finnInitielleAvsnittOgAntallDelseksjoner(seksjoner);
+        const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
+        const initelMellomlagringDelseksjonState =
+            finnInitielMellomlagringDelseksjonState(seksjoner);
+
+        avsnittDispatch(nyeAvsnitt);
+        skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+        mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
+    };
+
+    const nullStillAlleValg = () => {
+        setSkalAlleValgNullstilles(true);
+        if (gjeldendeBrevmal !== null) {
+            initierContext(gjeldendeBrevmal.seksjoner);
+        }
+    };
 
     const mellomlagreBrev = () => {
         const mellomlagringsobjekt = {
@@ -95,13 +107,17 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                                 seksjon={seksjon as SanitySeksjon}
                                 key={indeks}
                                 seksjonStartIndeks={delseksjonTeller}
+                                skalAlleValgNullstilles={skalAlleValgNullstilles}
+                                setSkalAlleValgNullstilles={setSkalAlleValgNullstilles}
                             />
                         );
                         delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
                         return seksjonKomponent;
                     })}
                     <div className="skjema-knapper">
-                        <Button variant="secondary">Nullstill valg</Button>
+                        <Button variant="secondary" onClick={nullStillAlleValg}>
+                            Nullstill valg
+                        </Button>
                         <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
                     </div>
                 </>
