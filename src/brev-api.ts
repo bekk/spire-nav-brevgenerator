@@ -160,7 +160,7 @@ export const hentMellomlagretBrev = async (
             }
             return undefined
         }).catch((err) => {
-            console.log('Kunne ikke hente mellomlagret brev', err);
+            console.log('Kunne ikke hente mellomlagret brev:', err);
             return undefined;
         });
 };
@@ -180,7 +180,7 @@ export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
             },
         })
         .catch((err) => {
-            console.log("Kunne ikke mellomlagre brev", err);
+            console.log("Kunne ikke mellomlagre brev:", err);
         });
 };
 
@@ -218,8 +218,4 @@ export const signIn = async () => {
         }).catch((err) => {
             console.log("Singin error:", err);
         });
-};
-
-export const signUpSignIn = async () => {
-    await signIn();
 };
