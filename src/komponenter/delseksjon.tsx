@@ -47,16 +47,19 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
         if (delseksjon.innhold !== null) {
             const mellomlagretDelseskjon = mellomlagringDelseksjonerState[delseksjonIndeks];
 
-            const nyFlettefeltTabell = innholdTilFlettefeltTabell(
-                delseksjon.innhold,
-                mellomlagretDelseskjon.innhold
-            );
-            settFlettefelt(nyFlettefeltTabell);
-
             if (erDataMellomlagret(mellomlagretDelseskjon)) {
+                const nyFlettefeltTabell = innholdTilFlettefeltTabell(
+                    delseksjon.innhold,
+                    mellomlagretDelseskjon.innhold
+                );
+                settFlettefelt(nyFlettefeltTabell);
+
                 settFritekstTabell(mellomlagretDelseskjon.fritekstTabell);
                 settFritekst(avsnittState[delseksjonIndeks]);
             } else {
+                const nyFlettefeltTabell = innholdTilFlettefeltTabell(delseksjon.innhold);
+                settFlettefelt(nyFlettefeltTabell);
+
                 const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
                 settFritekstTabell(nyFritekstTabell);
                 settFritekst(dobbelTabellTilStreng(nyFritekstTabell));
@@ -188,7 +191,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                                         ].innhold[
                                                             innholdIndeks
                                                         ] as mellomlagringDropdown
-                                                    ).valgVerdi
+                                                    )?.valgVerdi
                                                 }
                                             />
                                             {flettefelt[innholdIndeks] !== undefined && (
@@ -205,7 +208,7 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
                                                             ].innhold[
                                                                 innholdIndeks
                                                             ] as mellomlagringDropdown
-                                                        ).flettefelt
+                                                        )?.flettefelt
                                                     }
                                                 />
                                             )}

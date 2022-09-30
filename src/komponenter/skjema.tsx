@@ -32,30 +32,34 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         React.useContext(MellomlagringContext);
 
     useEffect(() => {
-        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
-            if (res !== null && res.seksjoner.length > 0) {
-                setGjeldendeBrevmal(res);
-                brevmalTittelDispatch(res.brevmaloverskrift);
-                const mellomlagretBrev = hentMellomlagretBrev(res._id);
+        const hentOgPopulerData = async () => {
+            const brevmal = await hentBrevmal(sanityBaseURL, gjeldendeBrevmalId);
+            if (brevmal) {
+                const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
+
+                setGjeldendeBrevmal(brevmal);
+                brevmalTittelDispatch(brevmal.brevmaloverskrift);
+
                 if (mellomlagretBrev !== undefined) {
                     avsnittDispatch(mellomlagretBrev.avsnitt);
                     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 } else {
                     const { nyeAvsnitt, antallDelSeksjoner } =
-                        finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
+                        finnInitielleAvsnittOgAntallDelseksjoner(brevmal.seksjoner);
                     const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
                         true
                     );
                     const initelMellomlagringDelseksjonState =
-                        finnInitielMellomlagringDelseksjonState(res.seksjoner);
+                        finnInitielMellomlagringDelseksjonState(brevmal.seksjoner);
 
                     avsnittDispatch(nyeAvsnitt);
                     skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
                     mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
                 }
             }
-        });
+        };
+        hentOgPopulerData();
     }, [gjeldendeBrevmalId]);
 
     const mellomlagreBrev = () => {
@@ -87,9 +91,9 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     </option>
                 ))}
             </Select>
-            {/* <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
+            <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
                 Mellomlagre brev
-            </Button> */}
+            </Button>
             {gjeldendeBrevmal !== null &&
                 gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
                     const seksjonKomponent = (
