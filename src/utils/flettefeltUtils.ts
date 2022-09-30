@@ -34,7 +34,7 @@ export const innholdTilFlettefeltTabell = (innhold: (SanityDropdown | SanityTeks
 			if (erInnholdTekstObjekt(innhold)) {
 				return (innhold as SanityTekstObjekt).tekst.flatMap((sanityTekst: SanityTekst) => finnFlettefeltITekst(sanityTekst));
 			} else {
-				if(mellomlagring !== undefined && (mellomlagring[innholdIndeks] as mellomlagringDropdown).valgVerdi !== undefined) {
+				if(mellomlagring !== undefined && (mellomlagring[innholdIndeks] as mellomlagringDropdown)?.valgVerdi !== undefined) {
 					const valgIndeks = (mellomlagring[innholdIndeks] as mellomlagringDropdown).valgVerdi!.split('@&#')[1];
 					return finnFlettefeltIDropdown(innhold as SanityDropdown, parseInt(valgIndeks))
 				}

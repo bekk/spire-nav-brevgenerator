@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import css from './stiler/css';
 import { CacheObjekt } from './typer/cache';
 import { mellomlagringState } from './typer/mellomlagring';
+import { SanityBrevmalMedSeksjoner } from './typer/sanity';
 
 const skalCache = true;
 const backendURL = 'http://34.88.177.137:8080';
@@ -54,7 +55,7 @@ export const hentBrevmaler = async (sanityBaseURL: string) => {
     }
 };
 
-export const hentBrevmal = async (sanityBaseURL: string, id: string) => {
+export const hentBrevmal = async (sanityBaseURL: string, id: string): Promise<SanityBrevmalMedSeksjoner> => {
     const cachedBrevmal = hentCache('brevmal' + id);
     if (cachedBrevmal !== null) {
         return cachedBrevmal;
@@ -145,7 +146,7 @@ export const hentMellomlagretBrev = async (
         brevmalId: brevmalId,
     };
     const token = localStorage.getItem('token');
-    axios
+    return axios
         .post(`${backendURL}/mellomlagring/hentEttBrev`, JSON.stringify(brev), {
             headers: {
                 'Content-Type': 'application/json',
@@ -153,27 +154,24 @@ export const hentMellomlagretBrev = async (
             },
         })
         .then((res) => {
-            console.log(JSON.parse(res.data.brev));
             if (res.data !== null || res.data !== undefined) {
                 const brevFraBackend = JSON.parse(res.data.brev);
                 return brevFraBackend;
             }
+            return undefined
+        }).catch((err) => {
+            console.log('Kunne ikke hente mellomlagret brev', err);
+            return undefined;
         });
-
-    console.log('Ble undefined!');
-    return undefined;
 };
 
 export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
-    console.log(mellomlagring);
-    console.log(JSON.stringify(mellomlagring));
     const brevTilBackend = {
         soknadId: '1',
         brevmalId: mellomlagring.brevmalId,
         brev: JSON.stringify(mellomlagring),
     };
     const token = localStorage.getItem('token');
-    console.log('token', token);
     axios
         .post(`${backendURL}/mellomlagring/`, JSON.stringify(brevTilBackend), {
             headers: {
@@ -181,11 +179,8 @@ export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((res) => {
-            console.log('post brev res:', res);
-        })
         .catch((err) => {
-            console.log('post brev err:', err);
+            console.log("Kunne ikke mellomlagre brev", err);
         });
 };
 
@@ -202,18 +197,15 @@ export const signUp = async () => {
                 'Content-Type': 'application/json',
             },
         })
-        .then((res) => {
-            console.log('signup res:', res);
-        })
         .catch((err) => {
-            console.log('signup err:', err);
+            console.log('Singup error:', err);
         });
 };
 
 export const signIn = async () => {
     const user = {
-        username: 'simen',
-        password: 'simen',
+        username: 'sigmund',
+        password: 'password',
     };
     await axios
         .post(`${backendURL}/auth/signin`, JSON.stringify(user), {
@@ -222,30 +214,12 @@ export const signIn = async () => {
             },
         })
         .then((res) => {
-            console.log('signun res:', res);
             localStorage.setItem('token', res.data.accessToken);
+        }).catch((err) => {
+            console.log("Singin error:", err);
         });
 };
 
 export const signUpSignIn = async () => {
-    //await signUp()
     await signIn();
-};
-
-export const getTest = async () => {
-    const token = localStorage.getItem('token');
-    axios
-        .get(`${backendURL}/mellomlagring/`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-                'Access-Control-Allow-Origin': 'http://localhost:3000',
-            },
-        })
-        .then((res) => {
-            console.log('get test:', res);
-        })
-        .catch((err) => {
-            console.log('get test:', err);
-        });
 };

@@ -1,6 +1,6 @@
 import { Button, Select } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { getTest, hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
+import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
 import { brevmal } from '../typer/typer';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
@@ -10,7 +10,6 @@ import {
     finnInitielleAvsnittOgAntallDelseksjoner,
     finnInitielMellomlagringDelseksjonState,
 } from '../utils/skjemaUtils';
-import { mellomlagringState } from '../typer/mellomlagring';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -33,33 +32,34 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         React.useContext(MellomlagringContext);
 
     useEffect(() => {
-        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then(
-            async (res: SanityBrevmalMedSeksjoner) => {
-                if (res !== null && res.seksjoner.length > 0) {
-                    setGjeldendeBrevmal(res);
-                    brevmalTittelDispatch(res.brevmaloverskrift);
-                    const mellomlagretBrev = await hentMellomlagretBrev(res._id);
-                    console.log('mellomlagret brev: ', mellomlagretBrev);
-                    if (mellomlagretBrev !== undefined) {
-                        avsnittDispatch(mellomlagretBrev.avsnitt);
-                        skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
-                        mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
-                    } else {
-                        const { nyeAvsnitt, antallDelSeksjoner } =
-                            finnInitielleAvsnittOgAntallDelseksjoner(res.seksjoner);
-                        const nyeInkluderingsBrytere: boolean[] = new Array(
-                            antallDelSeksjoner
-                        ).fill(true);
-                        const initelMellomlagringDelseksjonState =
-                            finnInitielMellomlagringDelseksjonState(res.seksjoner);
+        const hentOgPopulerData = async () => {
+            const brevmal = await hentBrevmal(sanityBaseURL, gjeldendeBrevmalId);
+            if (brevmal) {
+                const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
 
-                        avsnittDispatch(nyeAvsnitt);
-                        skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                        mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
-                    }
+                setGjeldendeBrevmal(brevmal);
+                brevmalTittelDispatch(brevmal.brevmaloverskrift);
+
+                if (mellomlagretBrev !== undefined) {
+                    avsnittDispatch(mellomlagretBrev.avsnitt);
+                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                } else {
+                    const { nyeAvsnitt, antallDelSeksjoner } =
+                        finnInitielleAvsnittOgAntallDelseksjoner(brevmal.seksjoner);
+                    const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
+                        true
+                    );
+                    const initelMellomlagringDelseksjonState =
+                        finnInitielMellomlagringDelseksjonState(brevmal.seksjoner);
+
+                    avsnittDispatch(nyeAvsnitt);
+                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+                    mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
                 }
             }
-        );
+        };
+        hentOgPopulerData();
     }, [gjeldendeBrevmalId]);
 
     const mellomlagreBrev = () => {
@@ -69,7 +69,6 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
             avsnitt: avsnittState,
             delseksjoner: mellomlagringDelseksjonerState,
         };
-        getTest();
         postMellomlagreBrev(mellomlagringsobjekt);
     };
 
