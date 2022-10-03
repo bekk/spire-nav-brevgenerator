@@ -8,7 +8,7 @@ import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
 import {
     finnInitielleAvsnittOgAntallDelseksjoner,
-    finnInitielMellomlagringDelseksjonState,
+    finnInitiellMellomlagringDelseksjonState,
 } from '../utils/skjemaUtils';
 
 interface SkjemaProps {
@@ -45,28 +45,28 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 } else {
-                    initierContext(res.seksjoner);
+                    initialisereContext(res.seksjoner);
                 }
             }
         });
     }, [gjeldendeBrevmalId]);
 
-    const initierContext = (seksjoner: SanitySeksjon[]) => {
+    const initialisereContext = (seksjoner: SanitySeksjon[]) => {
         const { nyeAvsnitt, antallDelSeksjoner } =
             finnInitielleAvsnittOgAntallDelseksjoner(seksjoner);
         const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
-        const initelMellomlagringDelseksjonState =
-            finnInitielMellomlagringDelseksjonState(seksjoner);
+        const initellMellomlagringDelseksjonState =
+            finnInitiellMellomlagringDelseksjonState(seksjoner);
 
         avsnittDispatch(nyeAvsnitt);
         skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-        mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
+        mellomlagringDelseksjonerDispatch(initellMellomlagringDelseksjonState);
     };
 
     const nullStillAlleValg = () => {
         setSkalAlleValgNullstilles(true);
         if (gjeldendeBrevmal !== null) {
-            initierContext(gjeldendeBrevmal.seksjoner);
+            initialisereContext(gjeldendeBrevmal.seksjoner);
         }
     };
 
