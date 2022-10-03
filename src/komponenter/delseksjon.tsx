@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Checkbox } from '@navikt/ds-react';
+import { Button, Checkbox } from '@navikt/ds-react';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
 import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from '../typer/sanity';
 import { Fritekst } from './fritekst';
@@ -175,6 +175,10 @@ export function Delseksjon({
         setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
     };
 
+    const nullstillFritekst = () => {
+        console.log('nullstill fritekst');
+    };
+
     return (
         <div className="delseksjon">
             <Checkbox
@@ -257,6 +261,9 @@ export function Delseksjon({
                         håndterEndringIFritekstFelt={håndterEndringIFritekstFelt}
                         defaultTekst={fritekst}
                     />
+                    <div className="nullstill-fritekst-kontainer">
+                        <Button onClick={nullstillFritekst}>Nullstill fritekst</Button>
+                    </div>
                 </div>
             )}
         </div>
