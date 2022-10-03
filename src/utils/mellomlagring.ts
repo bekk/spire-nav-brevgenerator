@@ -31,5 +31,5 @@ export const oppdaterFlettefeltIMellomlagring = (mellomlagringDelseksjonKopi: me
 }
 
 export const erDataMellomlagret = (mellomlagringDelseksjon: mellomlagringDelseksjon): boolean => {
-    return mellomlagringDelseksjon.fritekstTabell.length > 0;
+    return mellomlagringDelseksjon && mellomlagringDelseksjon.fritekstTabell.length > 0;
 }
