@@ -27,9 +27,16 @@ import {
 interface seksjonProps {
     delseksjon: SanityDelseksjon;
     delseksjonIndeks: number;
+    skalAlleValgNullstilles: boolean;
+    setSkalAlleValgNullstilles: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
+export function Delseksjon({
+    delseksjon,
+    delseksjonIndeks,
+    skalAlleValgNullstilles,
+    setSkalAlleValgNullstilles,
+}: seksjonProps) {
     const {
         avsnittState,
         avsnittDispatch,
@@ -66,6 +73,16 @@ export function Delseksjon({ delseksjon, delseksjonIndeks }: seksjonProps) {
             }
         }
     }, [delseksjon]);
+
+    useEffect(() => {
+        if (skalAlleValgNullstilles) {
+            const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+            settFritekstTabell(nyFritekstTabell);
+            settFritekst(dobbelTabellTilStreng(nyFritekstTabell));
+
+            setSkalAlleValgNullstilles(false);
+        }
+    }, [skalAlleValgNullstilles]);
 
     const oppdaterFlettefeltFraDropdowns = (nyeFlettefelt: flettefelt[], indeks: number) => {
         const flettefeltKopi = [...flettefelt];

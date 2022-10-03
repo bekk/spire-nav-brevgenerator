@@ -8,7 +8,7 @@ import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
 import {
     finnInitielleAvsnittOgAntallDelseksjoner,
-    finnInitielMellomlagringDelseksjonState,
+    finnInitiellMellomlagringDelseksjonState,
 } from '../utils/skjemaUtils';
 
 interface SkjemaProps {
@@ -21,6 +21,8 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [gjeldendeBrevmal, setGjeldendeBrevmal] = useState<SanityBrevmalMedSeksjoner | null>(
         null
     );
+    const [skalAlleValgNullstilles, setSkalAlleValgNullstilles] = useState(false);
+
     const {
         avsnittDispatch,
         avsnittState,
@@ -45,22 +47,31 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 } else {
-                    const { nyeAvsnitt, antallDelSeksjoner } =
-                        finnInitielleAvsnittOgAntallDelseksjoner(brevmal.seksjoner);
-                    const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(
-                        true
-                    );
-                    const initelMellomlagringDelseksjonState =
-                        finnInitielMellomlagringDelseksjonState(brevmal.seksjoner);
-
-                    avsnittDispatch(nyeAvsnitt);
-                    skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-                    mellomlagringDelseksjonerDispatch(initelMellomlagringDelseksjonState);
+                    initialiserContext(brevmal.seksjoner);
                 }
             }
         };
         hentOgPopulerData();
     }, [gjeldendeBrevmalId]);
+
+    const initialiserContext = (seksjoner: SanitySeksjon[]) => {
+        const { nyeAvsnitt, antallDelSeksjoner } =
+            finnInitielleAvsnittOgAntallDelseksjoner(seksjoner);
+        const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
+        const initellMellomlagringDelseksjonState =
+            finnInitiellMellomlagringDelseksjonState(seksjoner);
+
+        avsnittDispatch(nyeAvsnitt);
+        skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
+        mellomlagringDelseksjonerDispatch(initellMellomlagringDelseksjonState);
+    };
+
+    const nullStillAlleValg = () => {
+        setSkalAlleValgNullstilles(true);
+        if (gjeldendeBrevmal !== null) {
+            initialiserContext(gjeldendeBrevmal.seksjoner);
+        }
+    };
 
     const mellomlagreBrev = () => {
         const mellomlagringsobjekt = {
@@ -91,21 +102,29 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                     </option>
                 ))}
             </Select>
-            <Button onClick={mellomlagreBrev} className={'mellomlagre-button'}>
-                Mellomlagre brev
-            </Button>
-            {gjeldendeBrevmal !== null &&
-                gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
-                    const seksjonKomponent = (
-                        <Seksjon
-                            seksjon={seksjon as SanitySeksjon}
-                            key={indeks}
-                            seksjonStartIndeks={delseksjonTeller}
-                        />
-                    );
-                    delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
-                    return seksjonKomponent;
-                })}
+            {gjeldendeBrevmal !== null && (
+                <>
+                    <div className="skjema-knapper">
+                        <Button variant="secondary" onClick={nullStillAlleValg}>
+                            Nullstill valg
+                        </Button>
+                        <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
+                    </div>
+                    {gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
+                        const seksjonKomponent = (
+                            <Seksjon
+                                seksjon={seksjon as SanitySeksjon}
+                                key={indeks}
+                                seksjonStartIndeks={delseksjonTeller}
+                                skalAlleValgNullstilles={skalAlleValgNullstilles}
+                                setSkalAlleValgNullstilles={setSkalAlleValgNullstilles}
+                            />
+                        );
+                        delseksjonTeller += (seksjon as SanitySeksjon).delseksjoner.length;
+                        return seksjonKomponent;
+                    })}
+                </>
+            )}
         </div>
     );
 }

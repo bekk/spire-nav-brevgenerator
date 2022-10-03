@@ -6,9 +6,16 @@ import '../stiler/seksjon.css';
 interface SeksjonsProps {
     seksjon: SanitySeksjon;
     seksjonStartIndeks: number;
+    skalAlleValgNullstilles: boolean;
+    setSkalAlleValgNullstilles: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function Seksjon({ seksjon, seksjonStartIndeks }: SeksjonsProps) {
+export function Seksjon({
+    seksjon,
+    seksjonStartIndeks,
+    skalAlleValgNullstilles,
+    setSkalAlleValgNullstilles,
+}: SeksjonsProps) {
     return (
         <div className="seksjon">
             <h1>{seksjon.seksjonstittel}</h1>
@@ -17,6 +24,8 @@ export function Seksjon({ seksjon, seksjonStartIndeks }: SeksjonsProps) {
                     delseksjon={delseksjon}
                     delseksjonIndeks={seksjonStartIndeks + indeks}
                     key={indeks}
+                    skalAlleValgNullstilles={skalAlleValgNullstilles}
+                    setSkalAlleValgNullstilles={setSkalAlleValgNullstilles}
                 />
             ))}
         </div>
