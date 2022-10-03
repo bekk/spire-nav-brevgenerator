@@ -34,24 +34,27 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         React.useContext(MellomlagringContext);
 
     useEffect(() => {
-        setSkalAlleValgNullstilles(false);
-        hentBrevmal(sanityBaseURL, gjeldendeBrevmalId).then((res: SanityBrevmalMedSeksjoner) => {
-            if (res !== null && res.seksjoner.length > 0) {
-                setGjeldendeBrevmal(res);
-                brevmalTittelDispatch(res.brevmaloverskrift);
-                const mellomlagretBrev = hentMellomlagretBrev(res._id);
+        const hentOgPopulerData = async () => {
+            const brevmal = await hentBrevmal(sanityBaseURL, gjeldendeBrevmalId);
+            if (brevmal) {
+                const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
+
+                setGjeldendeBrevmal(brevmal);
+                brevmalTittelDispatch(brevmal.brevmaloverskrift);
+
                 if (mellomlagretBrev !== undefined) {
                     avsnittDispatch(mellomlagretBrev.avsnitt);
                     skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                     mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                 } else {
-                    initialisereContext(res.seksjoner);
+                    initialiserContext(brevmal.seksjoner);
                 }
             }
-        });
+        };
+        hentOgPopulerData();
     }, [gjeldendeBrevmalId]);
 
-    const initialisereContext = (seksjoner: SanitySeksjon[]) => {
+    const initialiserContext = (seksjoner: SanitySeksjon[]) => {
         const { nyeAvsnitt, antallDelSeksjoner } =
             finnInitielleAvsnittOgAntallDelseksjoner(seksjoner);
         const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
@@ -66,7 +69,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const nullStillAlleValg = () => {
         setSkalAlleValgNullstilles(true);
         if (gjeldendeBrevmal !== null) {
-            initialisereContext(gjeldendeBrevmal.seksjoner);
+            initialiserContext(gjeldendeBrevmal.seksjoner);
         }
     };
 
