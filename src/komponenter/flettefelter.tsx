@@ -6,19 +6,17 @@ export interface flettefeltProps {
     flettefelter: flettefelt[];
     innholdIndeks: number;
     håndterEndringIFletteFelt: (
-        e: React.ChangeEvent<HTMLInputElement>,
+        nyTekst: string,
         flettefeltIndeks: number,
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
-    mellomlagretVerdier?: string[];
 }
 
 export function Flettefelter({
     flettefelter,
     innholdIndeks,
     håndterEndringIFletteFelt,
-    mellomlagretVerdier,
 }: flettefeltProps) {
     return (
         <>
@@ -29,9 +27,6 @@ export function Flettefelter({
                     flettefeltIndeks={flettefeltIndeks}
                     innholdIndeks={innholdIndeks}
                     håndterEndringIFletteFelt={håndterEndringIFletteFelt}
-                    mellomlagretVerdi={
-                        mellomlagretVerdier ? mellomlagretVerdier[flettefeltIndeks] : undefined
-                    }
                 />
             ))}
         </>

@@ -1,17 +1,26 @@
-
 export interface mellomlagringState {
     brevmalId: string;
     inkluderingsbrytere: boolean[];
     avsnitt: string[];
-    delseksjoner: mellomlagringDelseksjon[]
+    delseksjoner: mellomlagringDelseksjon[];
 }
 
 export type mellomlagringDelseksjon = {
-    innhold: (string[] | mellomlagringDropdown)[];
+    innhold: (mellomlagringFlettefelt[] | mellomlagringDropdown)[];
     fritekstTabell: string[][];
-}
+};
 
-export interface mellomlagringDropdown {
+export type mellomlagringDropdown = {
     valgVerdi?: string;
-    flettefelt: string[];
-}  
+    flettefelt: mellomlagringFlettefelt[];
+};
+
+export type mellomlagringFlettefelt = {
+    verdi: string;
+    harBlittEndret: boolean;
+};
+
+export const tomtMellomlagringFlettefelt: mellomlagringFlettefelt = {
+    verdi: '',
+    harBlittEndret: false,
+};

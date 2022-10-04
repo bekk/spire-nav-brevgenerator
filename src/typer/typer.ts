@@ -13,8 +13,8 @@ export type skalAvsnittInkluderesType = boolean[];
 export type brevmalTittelType = string;
 
 export type SkjemaContextType = {
-	avsnittState: avsnittType;
-	avsnittDispatch: Dispatch<avsnittType>;
+    avsnittState: avsnittType;
+    avsnittDispatch: Dispatch<avsnittType>;
 
     skalAvsnittInkluderesState: skalAvsnittInkluderesType;
     skalAvsnittInkluderesDispatch: Dispatch<skalAvsnittInkluderesType>;
@@ -23,19 +23,20 @@ export type SkjemaContextType = {
     brevmalTittelDispatch: Dispatch<brevmalTittelType>;
 };
 
-export type MellomlagringContextType = { 
-	mellomlagringDelseksjonerState: mellomlagringDelseksjon[];
-	mellomlagringDelseksjonerDispatch: Dispatch<mellomlagringDelseksjon[]>;
-}
-
+export type MellomlagringContextType = {
+    mellomlagringDelseksjonerState: mellomlagringDelseksjon[];
+    mellomlagringDelseksjonerDispatch: Dispatch<mellomlagringDelseksjon[]>;
+};
 
 export type tabellObjekt = {
-	id: string;
-	tabell: string[][];
-}
+    id: string;
+    tabell: string[][];
+};
 
 export type flettefelt = {
-	tekst: string;
-	marks: string[];
-	key: string;
-}
+    tekst: string;
+    marks: string[];
+    key: string;
+    verdi: string;
+    harBlittEndret: boolean;
+};

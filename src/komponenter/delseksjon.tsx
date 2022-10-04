@@ -14,7 +14,11 @@ import '../stiler/delseksjon.css';
 import { erInnholdDropdown, erInnholdTekstObjekt } from '../utils/sanityUtils';
 import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
-import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/flettefeltUtils';
+import {
+    finnFlettefeltIDropdown,
+    finnInnholdOgFlettefletIndeks,
+    innholdTilFlettefeltTabell,
+} from '../utils/flettefeltUtils';
 import { flettefelt } from '../typer/typer';
 import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
 import {
@@ -90,6 +94,17 @@ export function Delseksjon({
         settFlettefelt(flettefeltKopi);
     };
 
+    const oppdaterFlettefelt = (
+        flettefeltKopi: flettefelt[][],
+        innholdIndeks: number,
+        flettefeltIndeks: number,
+        verdi: string
+    ) => {
+        flettefeltKopi[innholdIndeks][flettefeltIndeks].verdi = verdi;
+        flettefeltKopi[innholdIndeks][flettefeltIndeks].harBlittEndret = true;
+        settFlettefelt(flettefeltKopi);
+    };
+
     const oppdaterAvsnitt = (avsnittStreng: string) => {
         const nyeAvsnitt = [...avsnittState];
         nyeAvsnitt[delseksjonIndeks] = avsnittStreng;
@@ -109,16 +124,34 @@ export function Delseksjon({
     };
 
     const håndterEndringIFritekstFelt = (nyFritekst: string) => {
-        const nyFritekstTabell = oppdaterFritekstTabellMedTekst(
-            [...fritekstTabell],
-            nyFritekst,
-            fritekstTabell
-        );
-        const nyMellomlagringDelseksjon = oppdaterFritekstTabellIMellomlagring(
+        const { nyFritekstTabell, flettefeltNummer, nyttFritekstElement } =
+            oppdaterFritekstTabellMedTekst([...fritekstTabell], nyFritekst);
+        let nyMellomlagringDelseksjon = oppdaterFritekstTabellIMellomlagring(
             { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
             nyFritekstTabell
         );
 
+        if (flettefeltNummer !== undefined && nyttFritekstElement !== undefined) {
+            const { innholdIndeks, flettefeltIndeks } = finnInnholdOgFlettefletIndeks(
+                flettefeltNummer,
+                flettefelt
+            );
+            if (innholdIndeks !== -1) {
+                oppdaterFlettefelt(
+                    [...flettefelt],
+                    innholdIndeks,
+                    flettefeltIndeks,
+                    nyttFritekstElement
+                );
+                nyMellomlagringDelseksjon = oppdaterFlettefeltIMellomlagring(
+                    { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
+                    nyFritekstTabell,
+                    innholdIndeks,
+                    flettefeltIndeks,
+                    nyttFritekstElement
+                );
+            }
+        }
         oppdaterAvsnitt(nyFritekst);
         settFritekstTabell(nyFritekstTabell);
         setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
@@ -153,12 +186,16 @@ export function Delseksjon({
         setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
     };
 
-    const håndterEndringIFletteFelt = (e: any, flettefeltIndeks: number, innholdIndeks: number) => {
+    const håndterEndringIFletteFelt = (
+        nyTekst: string,
+        flettefeltIndeks: number,
+        innholdIndeks: number
+    ) => {
         const nyFritekstTabell = oppdaterFritekstTabellMedFlettefelt(
             [...fritekstTabell],
             innholdIndeks,
             flettefeltIndeks,
-            e.target.value
+            nyTekst
         );
         const nyFritekst = dobbelTabellTilStreng(nyFritekstTabell);
         const nyMellomlagringDelseksjon = oppdaterFlettefeltIMellomlagring(
@@ -166,9 +203,10 @@ export function Delseksjon({
             nyFritekstTabell,
             innholdIndeks,
             flettefeltIndeks,
-            e.target.value
+            nyTekst
         );
 
+        oppdaterFlettefelt([...flettefelt], innholdIndeks, flettefeltIndeks, nyTekst);
         settFritekstTabell(nyFritekstTabell);
         settFritekst(nyFritekst);
         oppdaterAvsnitt(nyFritekst);
@@ -218,15 +256,6 @@ export function Delseksjon({
                                                     håndterEndringIFletteFelt={
                                                         håndterEndringIFletteFelt
                                                     }
-                                                    mellomlagretVerdier={
-                                                        (
-                                                            mellomlagringDelseksjonerState[
-                                                                delseksjonIndeks
-                                                            ].innhold[
-                                                                innholdIndeks
-                                                            ] as mellomlagringDropdown
-                                                        )?.flettefelt
-                                                    }
                                                 />
                                             )}
                                         </div>
@@ -240,10 +269,6 @@ export function Delseksjon({
                                                 innholdIndeks={innholdIndeks}
                                                 håndterEndringIFletteFelt={
                                                     håndterEndringIFletteFelt
-                                                }
-                                                mellomlagretVerdier={
-                                                    mellomlagringDelseksjonerState[delseksjonIndeks]
-                                                        .innhold[innholdIndeks] as string[]
                                                 }
                                             />
                                         );
