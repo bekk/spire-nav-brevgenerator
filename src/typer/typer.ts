@@ -2,6 +2,7 @@ import { Dispatch } from 'react';
 export interface brevmal {
     tittel: string;
     id: string;
+	updatedAt: string;
 }
 
 export type skalAvsnittInkluderesType = boolean[];

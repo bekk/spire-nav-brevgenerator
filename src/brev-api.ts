@@ -15,20 +15,16 @@ const finnSanityDatasett = (sanityBaseURL: string): string | undefined => {
     return sanityBaseURL.split('/').pop();
 };
 
-const dateToString = (date: Date): string => {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+const erCacheGyldig = (cache: CacheObjekt, utløpsDato: string): boolean => {
+    return new Date(cache.dato) > new Date(utløpsDato);
 };
 
-const erCacheGyldig = (cache: CacheObjekt): boolean => {
-    return cache.dato === dateToString(new Date());
-};
-
-const hentCache = (key: string): any => {
+const hentCache = (key: string, utløpsDato: string): any => {
     if (skalCache) {
         const cacheString = localStorage.getItem(key);
         if (cacheString != null) {
             const cacheObjekt = JSON.parse(cacheString) as CacheObjekt;
-            if (erCacheGyldig(cacheObjekt)) {
+            if (erCacheGyldig(cacheObjekt, utløpsDato)) {
                 return JSON.parse(cacheObjekt.data);
             }
         }
@@ -39,7 +35,7 @@ const hentCache = (key: string): any => {
 const lagreCache = (key: string, data: any) => {
     if (skalCache) {
         const cache: CacheObjekt = {
-            dato: dateToString(new Date()),
+            dato: new Date().toISOString(),
             data: JSON.stringify(data),
         };
         localStorage.setItem(key, JSON.stringify(cache));
@@ -47,23 +43,21 @@ const lagreCache = (key: string, data: any) => {
 };
 
 export const hentBrevmaler = async (sanityBaseURL: string) => {
-    const cachedBrevmaler = hentCache(finnSanityDatasett(sanityBaseURL) + '-brevmaler');
-    if (cachedBrevmaler !== null) {
-        return cachedBrevmaler;
-    } else {
-        const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
-        return axios.get(URL).then((res) => {
-            lagreCache(finnSanityDatasett(sanityBaseURL) + '-brevmaler', res.data.result);
-            return res.data.result;
-        });
-    }
+    const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
+    return axios.get(URL).then((res) => {
+        return res.data.result;
+    });
 };
 
 export const hentBrevmal = async (
     sanityBaseURL: string,
-    id: string
+    id: string,
+    cacheUtløpsDato: string
 ): Promise<SanityBrevmalMedSeksjoner> => {
-    const cachedBrevmal = hentCache(finnSanityDatasett(sanityBaseURL) + '-brevmal-' + id);
+    const cachedBrevmal = hentCache(
+        finnSanityDatasett(sanityBaseURL) + '/brevmal/' + id,
+        cacheUtløpsDato
+    );
     if (cachedBrevmal !== null) {
         return cachedBrevmal;
     } else {
@@ -111,7 +105,7 @@ export const hentBrevmal = async (
         );
 
         return axios.get(URL).then((res) => {
-            lagreCache(finnSanityDatasett(sanityBaseURL) + '-brevmal-' + id, res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL) + '/brevmal/' + id, res.data.result);
             return res.data.result;
         });
     }
