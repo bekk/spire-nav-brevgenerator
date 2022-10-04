@@ -12,8 +12,8 @@ const genererSanityURL = (sanityBaseURL: string, query: string): string => {
 };
 
 const finnSanityDatasett = (sanityBaseURL: string): string | undefined => {
-    return sanityBaseURL.split('/').pop()
-}
+    return sanityBaseURL.split('/').pop();
+};
 
 const dateToString = (date: Date): string => {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
@@ -47,21 +47,24 @@ const lagreCache = (key: string, data: any) => {
 };
 
 export const hentBrevmaler = async (sanityBaseURL: string) => {
-    const cachedBrevmaler = hentCache(finnSanityDatasett(sanityBaseURL)+'-brevmaler');
-    if(cachedBrevmaler !== null) {
+    const cachedBrevmaler = hentCache(finnSanityDatasett(sanityBaseURL) + '-brevmaler');
+    if (cachedBrevmaler !== null) {
         return cachedBrevmaler;
     } else {
         const URL = genererSanityURL(sanityBaseURL, '*[_type == "brevmal"]');
         return axios.get(URL).then((res) => {
-            lagreCache(finnSanityDatasett(sanityBaseURL)+'-brevmaler', res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL) + '-brevmaler', res.data.result);
             return res.data.result;
         });
     }
 };
 
-export const hentBrevmal = async (sanityBaseURL: string, id: string): Promise<SanityBrevmalMedSeksjoner> => {
-    const cachedBrevmal = hentCache(finnSanityDatasett(sanityBaseURL)+'-brevmal-' + id);
-    if(cachedBrevmal !== null) {
+export const hentBrevmal = async (
+    sanityBaseURL: string,
+    id: string
+): Promise<SanityBrevmalMedSeksjoner> => {
+    const cachedBrevmal = hentCache(finnSanityDatasett(sanityBaseURL) + '-brevmal-' + id);
+    if (cachedBrevmal !== null) {
         return cachedBrevmal;
     } else {
         const URL = genererSanityURL(
@@ -108,7 +111,7 @@ export const hentBrevmal = async (sanityBaseURL: string, id: string): Promise<Sa
         );
 
         return axios.get(URL).then((res) => {
-            lagreCache(finnSanityDatasett(sanityBaseURL)+'-brevmal-' + id, res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL) + '-brevmal-' + id, res.data.result);
             return res.data.result;
         });
     }
@@ -162,8 +165,9 @@ export const hentMellomlagretBrev = async (
                 const brevFraBackend = JSON.parse(res.data.brev);
                 return brevFraBackend;
             }
-            return undefined
-        }).catch((err) => {
+            return undefined;
+        })
+        .catch((err) => {
             console.log('Kunne ikke hente mellomlagret brev:', err);
             return undefined;
         });
@@ -184,7 +188,7 @@ export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
             },
         })
         .catch((err) => {
-            console.log("Kunne ikke mellomlagre brev:", err);
+            console.log('Kunne ikke mellomlagre brev:', err);
         });
 };
 
@@ -219,7 +223,8 @@ export const signIn = async () => {
         })
         .then((res) => {
             localStorage.setItem('token', res.data.accessToken);
-        }).catch((err) => {
-            console.log("Singin error:", err);
+        })
+        .catch((err) => {
+            console.log('Singin error:', err);
         });
 };

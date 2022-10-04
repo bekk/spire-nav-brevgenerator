@@ -9,16 +9,14 @@ import { brevmal } from './typer/typer';
 import { Button } from '@navikt/ds-react';
 import { genererPDF, hentBrevmaler, signIn } from './brev-api';
 import {
-    avsnittStateReducer,
     brevmalTittelStateReducer,
-    initialAvsnittState,
-    initialMellomlagringDelseksjonerState,
-    mellomlagringDelseksjonerStateReducer,
     initialBrevmalTittelState,
     initialSkalAvsnittInkluderesState,
     skalAvsnittInkluderesStateReducer,
+    initialDelseksjonerState,
+    delseksjonerStateReducer,
 } from './context/reducer';
-import { MellomlagringContext, SkjemaContext } from './context/context';
+import { SkjemaContext } from './context/context';
 import { SanityBrevmalUtenSeksjoner } from './typer/sanity';
 import HTMLPDF from './komponenter/htmlPDF';
 
@@ -27,7 +25,6 @@ interface brevGeneratorProps {
 }
 
 function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
-    const [avsnittState, avsnittDispatch] = useReducer(avsnittStateReducer, initialAvsnittState);
     const [skalAvsnittInkluderesState, skalAvsnittInkluderesDispatch] = useReducer(
         skalAvsnittInkluderesStateReducer,
         initialSkalAvsnittInkluderesState
@@ -36,25 +33,20 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
         brevmalTittelStateReducer,
         initialBrevmalTittelState
     );
-    const [mellomlagringDelseksjonerState, mellomlagringDelseksjonerDispatch] = useReducer(
-        mellomlagringDelseksjonerStateReducer,
-        initialMellomlagringDelseksjonerState
+    const [delseksjonerState, delseksjonerDispatch] = useReducer(
+        delseksjonerStateReducer,
+        initialDelseksjonerState
     );
 
     const [brevmaler, setBrevmaler] = useState<brevmal[]>([]);
 
     const skjemaContextValue = {
-        avsnittState,
-        avsnittDispatch,
         skalAvsnittInkluderesState,
         skalAvsnittInkluderesDispatch,
         brevmalTittelState,
         brevmalTittelDispatch,
-    };
-
-    const mellomlagringContextValue = {
-        mellomlagringDelseksjonerState,
-        mellomlagringDelseksjonerDispatch,
+        delseksjonerState,
+        delseksjonerDispatch,
     };
 
     useEffect(() => {
@@ -79,20 +71,18 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
     };
 
     return (
-        <MellomlagringContext.Provider value={mellomlagringContextValue}>
-            <SkjemaContext.Provider value={skjemaContextValue}>
-                <div>
-                    <Overskrift />
-                    <div className="side-om-side">
-                        <Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
-                        <HTMLPDF />
-                    </div>
-                    <div className="bottomBar">
-                        <Button onClick={() => genererPDF(genererHTMLString())}>Generer PDF</Button>
-                    </div>
+        <SkjemaContext.Provider value={skjemaContextValue}>
+            <div>
+                <Overskrift />
+                <div className="side-om-side">
+                    <Skjema brevmaler={brevmaler} sanityBaseURL={sanityBaseURL} />
+                    <HTMLPDF />
                 </div>
-            </SkjemaContext.Provider>
-        </MellomlagringContext.Provider>
+                <div className="bottomBar">
+                    <Button onClick={() => genererPDF(genererHTMLString())}>Generer PDF</Button>
+                </div>
+            </div>
+        </SkjemaContext.Provider>
     );
 }
 

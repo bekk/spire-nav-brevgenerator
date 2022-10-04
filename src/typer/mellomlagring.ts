@@ -1,17 +1,8 @@
+import { delseksjonType } from './typer';
 
 export interface mellomlagringState {
     brevmalId: string;
     inkluderingsbrytere: boolean[];
     avsnitt: string[];
-    delseksjoner: mellomlagringDelseksjon[]
+    delseksjoner: delseksjonType[];
 }
-
-export type mellomlagringDelseksjon = {
-    innhold: (string[] | mellomlagringDropdown)[];
-    fritekstTabell: string[][];
-}
-
-export interface mellomlagringDropdown {
-    valgVerdi?: string;
-    flettefelt: string[];
-}  

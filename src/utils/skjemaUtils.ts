@@ -1,52 +1,48 @@
-import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
-import { SanityDropdown, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
+import { SanityDelseksjon, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
+import { dropdown } from '../typer/typer';
 import { finnFlettefeltITekst } from './flettefeltUtils';
-import { erInnholdDropdown, sanityBlocktekstToHtml } from './sanityUtils';
+import { innholdTilFritekstTabell } from './fritekstUtils';
+import { erInnholdSanityDropdown } from './sanityUtils';
 
-const finnInitelleAvsnittISeksjon = (seksjon: SanitySeksjon): string[] => {
-    return seksjon.delseksjoner.map((delseksjon) => {
-        let nyFritekst = '';
-        delseksjon.innhold.forEach((innhold: SanityDropdown | SanityTekstObjekt) => {
-            if ((innhold as SanityTekstObjekt).tekstTittel !== undefined) {
-                nyFritekst += sanityBlocktekstToHtml(innhold as SanityTekstObjekt).join(' ');
-            }
-        });
-        return nyFritekst;
-    });
-};
-
-export const finnInitielleAvsnittOgAntallDelseksjoner = (
-    seksjoner: SanitySeksjon[]
-): { nyeAvsnitt: string[]; antallDelSeksjoner: number } => {
+export const finnInitiellDelseksjonerState = (seksjoner: SanitySeksjon[]) => {
     let antallDelSeksjoner = 0;
-    const nyeAvsnitt: string[] = seksjoner.flatMap((seksjon) => {
+    return seksjoner.flatMap((seksjon) => {
         antallDelSeksjoner += seksjon.delseksjoner.length;
-        return finnInitelleAvsnittISeksjon(seksjon);
+        return seksjon.delseksjoner.map((delseksjon) => {
+            const innhold = lagInitieltInnhold(delseksjon);
+            const fritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+
+            return {
+                innhold: innhold,
+                fritekstTabell: fritekstTabell,
+            };
+        });
     });
-    return { nyeAvsnitt, antallDelSeksjoner };
 };
 
-export const finnInitiellMellomlagringDelseksjonState = (
-    seksjoner: SanitySeksjon[]
-): mellomlagringDelseksjon[] => {
-    return seksjoner.flatMap((seksjon) => {
-        return seksjon.delseksjoner.map((delseksjon) => {
-            const innhold = delseksjon.innhold.map((innhold): string[] | mellomlagringDropdown => {
-                if (erInnholdDropdown(innhold)) {
-                    return {
-                        valgVerdi: undefined,
-                        flettefelt: [],
-                    };
-                } else {
-                    let antallFlettefelt = 0;
-                    (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
-                        const flettefelt = finnFlettefeltITekst(tekst);
-                        antallFlettefelt += flettefelt.length;
-                    });
-                    return Array(antallFlettefelt).fill('');
-                }
+export const finnAntallDelseksjoner = (seksjoner: SanitySeksjon[]) => {
+    let antallDelSeksjoner = 0;
+    seksjoner.forEach((seksjon) => {
+        antallDelSeksjoner += seksjon.delseksjoner.length;
+    });
+
+    return antallDelSeksjoner;
+};
+
+const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
+    return delseksjon.innhold.map((innhold): string[] | dropdown => {
+        if (erInnholdSanityDropdown(innhold)) {
+            return {
+                valgVerdi: undefined,
+                flettefelt: [],
+            };
+        } else {
+            let antallFlettefelt = 0;
+            (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                const flettefelt = finnFlettefeltITekst(tekst);
+                antallFlettefelt += flettefelt.length;
             });
-            return { innhold: innhold, fritekstTabell: [] };
-        });
+            return Array(antallFlettefelt).fill('');
+        }
     });
 };

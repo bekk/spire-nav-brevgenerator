@@ -1,14 +1,9 @@
-import { mellomlagringDelseksjon } from '../typer/mellomlagring';
-import {
-	avsnittType,
-	brevmalTittelType,
-	skalAvsnittInkluderesType,
-} from '../typer/typer';
+import { brevmalTittelType, delseksjonType, skalAvsnittInkluderesType } from '../typer/typer';
 
-export const avsnittStateReducer = (
-    avsnittState: avsnittType,
-    action: avsnittType
-): avsnittType => {
+export const delseksjonerStateReducer = (
+    delseksjonerState: delseksjonType[],
+    action: delseksjonType[]
+): delseksjonType[] => {
     return action;
 };
 
@@ -26,16 +21,8 @@ export const brevmalTittelStateReducer = (
     return action;
 };
 
-export const mellomlagringDelseksjonerStateReducer = (
-	mellomlagringDelseksjonerState: mellomlagringDelseksjon[],
-	action: mellomlagringDelseksjon[]) : mellomlagringDelseksjon[] => {
-		return action
-};
-
-export const initialAvsnittState: avsnittType = [];
-
 export const initialSkalAvsnittInkluderesState: skalAvsnittInkluderesType = [];
 
 export const initialBrevmalTittelState: brevmalTittelType = '';
 
-export const initialMellomlagringDelseksjonerState: mellomlagringDelseksjon[] = [];
+export const initialDelseksjonerState: delseksjonType[] = [];
