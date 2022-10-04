@@ -35,19 +35,30 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
 
     useEffect(() => {
         const hentOgPopulerData = async () => {
-            const brevmal = await hentBrevmal(sanityBaseURL, gjeldendeBrevmalId);
-            if (brevmal) {
-                const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
+            if (gjeldendeBrevmalId !== '-1') {
+                const brevmalMetaData = brevmaler.find(
+                    (brevmal) => brevmal.id === gjeldendeBrevmalId
+                );
+                if (brevmalMetaData) {
+                    const brevmal = await hentBrevmal(
+                        sanityBaseURL,
+                        gjeldendeBrevmalId,
+                        brevmalMetaData.updatedAt
+                    );
+                    if (brevmal) {
+                        const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
 
-                setGjeldendeBrevmal(brevmal);
-                brevmalTittelDispatch(brevmal.brevmaloverskrift);
+                        setGjeldendeBrevmal(brevmal);
+                        brevmalTittelDispatch(brevmal.brevmaloverskrift);
 
-                if (mellomlagretBrev !== undefined) {
-                    avsnittDispatch(mellomlagretBrev.avsnitt);
-                    skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
-                    mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
-                } else {
-                    initialiserContext(brevmal.seksjoner);
+                        if (mellomlagretBrev !== undefined) {
+                            avsnittDispatch(mellomlagretBrev.avsnitt);
+                            skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                            mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                        } else {
+                            initialiserContext(brevmal.seksjoner);
+                        }
+                    }
                 }
             }
         };

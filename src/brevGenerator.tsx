@@ -63,6 +63,7 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
                 return {
                     id: result._id,
                     tittel: result.brevmaltittel,
+                    updatedAt: result._updatedAt,
                 };
             });
             setBrevmaler(hentetBrevmaler);
