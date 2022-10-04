@@ -160,6 +160,41 @@ export function Delseksjon({
         settOppdaterFritekst(true);
     };
 
+    const nullstillFritekst = () => {
+        console.log('nullstill fritekstfelt'); // Må håndtere flettefelt, disse skal vell ikke slettes?
+        // Finn initiell tekst til fritekst-tabellen
+        // settFritekst('');
+        const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+        // Tilbakestill tekst knyttet til dropdowns
+        delseksjonerState[delseksjonIndeks].innhold.forEach(
+            (innhold: string[] | dropdown, indeks: number) => {
+                if ((innhold as dropdown).valgVerdi != undefined) {
+                    nyFritekstTabell[indeks] = [
+                        (innhold as dropdown).valgVerdi?.split('@&#')[0] || '',
+                    ];
+                }
+            }
+        );
+
+        // settFritekstTabell(nyFritekstTabell);
+        // const nyDelseksjonState = oppdaterFritekstTabellIMellomlagring(
+        //     { ...mellomlagringDelseksjonerState[delseksjonIndeks] },
+        //     nyFritekstTabell
+        // );
+        // settOppdaterFritekst(true);
+        // const nyFritekst = dobbelTabellTilStreng(nyFritekstTabell);
+        // console.log(dobbelTabellTilStreng(nyFritekstTabell));
+        // // settFritekst(dobbelTabellTilStreng(nyFritekstTabell));
+        // // oppdaterAvsnitt(nyFritekst);
+        // setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
+        // //setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
+        // // mellomlagret[delseksjonsindeks].innhold = [[], {flettefelt: [], valgverdi: ""}]
+        // // [] om det er en tekst
+        // // {flettefelt, valgverdi} om det er tekst fra dropdown.
+        // console.log('Mellomlagret: ', nyMellomlagringDelseksjon);
+        // console.log('nullstill fritekst');
+    };
+
     return (
         <div className="delseksjon">
             <Checkbox
