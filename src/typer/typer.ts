@@ -4,6 +4,7 @@ import { mellomlagringDelseksjon } from './mellomlagring';
 export interface brevmal {
     tittel: string;
     id: string;
+	updatedAt: string;
 }
 
 export type avsnittType = string[];
