@@ -1,4 +1,4 @@
-import { BodyLong, Button, Heading, Modal, Select, Alert } from '@navikt/ds-react';
+import { Button, Select, Alert } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
 import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
