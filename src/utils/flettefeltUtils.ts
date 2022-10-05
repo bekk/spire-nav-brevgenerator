@@ -8,7 +8,7 @@ export const finnFlettefeltITekst = (
     flettefeltTeller: number,
     mellomlagring?: mellomlagringFlettefelt[]
 ): flettefelt[] => {
-    const flettefeltNy: flettefelt[] = [];
+    const nyeFlettefelt: flettefelt[] = [];
     sanityTekst.children.forEach((child) => {
         if (child.marks.length > 0) {
             sanityTekst.markDefs.forEach((markDef) => {
@@ -16,7 +16,7 @@ export const finnFlettefeltITekst = (
                     markDef._key === child.marks[0] &&
                     (markDef.tabell === undefined || markDef.tabell === null)
                 ) {
-                    flettefeltNy.push({
+                    nyeFlettefelt.push({
                         tekst: markDef.flettefelt ? markDef.flettefelt.flettefeltNavn : child.text,
                         marks: child.marks,
                         key: child._key,
@@ -34,7 +34,7 @@ export const finnFlettefeltITekst = (
             });
         }
     });
-    return flettefeltNy;
+    return nyeFlettefelt;
 };
 
 export const finnFlettefeltIDropdown = (
@@ -91,17 +91,17 @@ export const innholdTilFlettefeltTabell = (
     });
 };
 
-export const finnInnholdOgFlettefletIndeks = (
-    flettefletNummer: number,
+export const finnInnholdOgFlettefeltIndeks = (
+    flettefeltNummer: number,
     flettefelter: flettefelt[][]
 ): { innholdIndeks: number; flettefeltIndeks: number } => {
-    let telleNummer = 0;
+    let flettefeltTeller = 0;
     for (const [innholdIndeks, innhold] of flettefelter.entries()) {
         for (const [flettefeltIndeks, flettefelt] of innhold.entries()) {
-            if (telleNummer === flettefletNummer) {
+            if (flettefeltTeller === flettefeltNummer) {
                 return { innholdIndeks, flettefeltIndeks };
             }
-            telleNummer++;
+            flettefeltTeller++;
         }
     }
     return { innholdIndeks: -1, flettefeltIndeks: -1 };

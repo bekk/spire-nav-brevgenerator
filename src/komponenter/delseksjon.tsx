@@ -16,7 +16,7 @@ import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
 import {
     finnFlettefeltIDropdown,
-    finnInnholdOgFlettefletIndeks,
+    finnInnholdOgFlettefeltIndeks,
     innholdTilFlettefeltTabell,
 } from '../utils/flettefeltUtils';
 import { flettefelt } from '../typer/typer';
@@ -132,7 +132,7 @@ export function Delseksjon({
         );
 
         if (flettefeltNummer !== undefined && nyttFritekstElement !== undefined) {
-            const { innholdIndeks, flettefeltIndeks } = finnInnholdOgFlettefletIndeks(
+            const { innholdIndeks, flettefeltIndeks } = finnInnholdOgFlettefeltIndeks(
                 flettefeltNummer,
                 flettefelt
             );

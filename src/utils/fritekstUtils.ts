@@ -42,11 +42,10 @@ export const finnTabellIndeksOgNyttFritekstElement = (
     for (let indeks = 0; indeks < fritekstTabellKopi.length; indeks++) {
         antallTegnFørElement = indeksTilSisteTegn;
         indeksTilSisteTegn += fritekstTabellKopi[indeks].length - 1;
+        const antallTegnTelt =
+            antallTegnITidligereElementer + indeksTilSisteTegn + indeks * skilletegnLengde;
 
-        if (
-            antallTegnITidligereElementer + indeksTilSisteTegn + indeks * skilletegnLengde >=
-            endringsIndeks
-        ) {
+        if (antallTegnTelt >= endringsIndeks) {
             tabellIndeks = indeks;
             break;
         }
@@ -60,13 +59,17 @@ export const finnTabellIndeksOgNyttFritekstElement = (
             indeksTilSisteTegn + tabellIndeks * skilletegnLengde + 1
         );
     } else {
-        nyttFritekstElement = nyFritekst.slice(
-            antallTegnITidligereElementer + antallTegnFørElement + tabellIndeks * skilletegnLengde,
+        const fritekstElementStartIndeks =
+            antallTegnITidligereElementer + antallTegnFørElement + tabellIndeks * skilletegnLengde;
+        const fritekstElementSluttIndeks =
             antallTegnITidligereElementer +
-                indeksTilSisteTegn +
-                tabellIndeks * skilletegnLengde +
-                antallTegnLagtTil +
-                1
+            indeksTilSisteTegn +
+            tabellIndeks * skilletegnLengde +
+            antallTegnLagtTil +
+            1;
+        nyttFritekstElement = nyFritekst.slice(
+            fritekstElementStartIndeks,
+            fritekstElementSluttIndeks
         );
     }
 
@@ -142,6 +145,8 @@ export const oppdaterFritekstTabellMedTekst = (
         });
     }
 
+    //I flettefelt tabellen ligger tekst og flettefelt annen hver gang, og det vil alltid starte med en tekst.
+    //Derfor sjekker vi om flettefeltIndeksITabell er oddetall og dermed indeksen til et flettefelt.
     if (nyttFritekstElement !== undefined && flettefeltIndeksITabell % 2 == 1) {
         return {
             nyFritekstTabell: nyFritekstTabell,
