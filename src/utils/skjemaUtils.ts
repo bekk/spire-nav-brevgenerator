@@ -1,4 +1,9 @@
-import { mellomlagringDelseksjon, mellomlagringDropdown } from '../typer/mellomlagring';
+import {
+    mellomlagringDelseksjon,
+    mellomlagringDropdown,
+    mellomlagringFlettefelt,
+    tomtMellomlagringFlettefelt,
+} from '../typer/mellomlagring';
 import { SanityDropdown, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
 import { finnFlettefeltITekst } from './flettefeltUtils';
 import { erInnholdDropdown, sanityBlocktekstToHtml } from './sanityUtils';
@@ -31,21 +36,23 @@ export const finnInitiellMellomlagringDelseksjonState = (
 ): mellomlagringDelseksjon[] => {
     return seksjoner.flatMap((seksjon) => {
         return seksjon.delseksjoner.map((delseksjon) => {
-            const innhold = delseksjon.innhold.map((innhold): string[] | mellomlagringDropdown => {
-                if (erInnholdDropdown(innhold)) {
-                    return {
-                        valgVerdi: undefined,
-                        flettefelt: [],
-                    };
-                } else {
-                    let antallFlettefelt = 0;
-                    (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
-                        const flettefelt = finnFlettefeltITekst(tekst);
-                        antallFlettefelt += flettefelt.length;
-                    });
-                    return Array(antallFlettefelt).fill('');
+            const innhold = delseksjon.innhold.map(
+                (innhold): mellomlagringFlettefelt[] | mellomlagringDropdown => {
+                    if (erInnholdDropdown(innhold)) {
+                        return {
+                            valgVerdi: undefined,
+                            flettefelt: [],
+                        };
+                    } else {
+                        let antallFlettefelt = 0;
+                        (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                            const flettefelt = finnFlettefeltITekst(tekst, 0);
+                            antallFlettefelt += flettefelt.length;
+                        });
+                        return Array(antallFlettefelt).fill(tomtMellomlagringFlettefelt);
+                    }
                 }
-            });
+            );
             return { innhold: innhold, fritekstTabell: [] };
         });
     });
