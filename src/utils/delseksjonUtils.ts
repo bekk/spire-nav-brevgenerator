@@ -1,49 +1,62 @@
-import { delseksjonType, dropdown, flettefelt } from '../typer/typer';
+import {
+    FlettefeltVerdier,
+    StateDelseksjon,
+    StateDropdown,
+    StateFlettefelt,
+    tomtFlettefelt,
+} from '../typer/typer';
 
-export const erInnholdStateDropdown = (innhold: string[] | dropdown): boolean => {
-    return (innhold as dropdown).valgVerdi !== undefined;
+export const erInnholdStateDropdown = (innhold: StateFlettefelt[] | StateDropdown): boolean => {
+    return (innhold as StateDropdown).valgVerdi !== undefined;
 };
 
 export const oppdaterFritekstTabellIDelseksjonState = (
-    delseksjonStateKopi: delseksjonType,
+    delseksjonStateKopi: StateDelseksjon,
     nyFritekstTabell: string[][]
-): delseksjonType => {
+): StateDelseksjon => {
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
     return delseksjonStateKopi;
 };
 
 export const oppdaterDropdownIDelseksjonState = (
-    delseksjonStateKopi: delseksjonType,
+    delseksjonStateKopi: StateDelseksjon,
     nyFritekstTabell: string[][],
     innholdIndeks: number,
     nyDropodownValue: string,
-    nyeFlettefelt: flettefelt[]
-): delseksjonType => {
-    (delseksjonStateKopi.innhold[innholdIndeks] as dropdown).valgVerdi = nyDropodownValue;
+    nyeFlettefelt: FlettefeltVerdier[]
+): StateDelseksjon => {
+    (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).valgVerdi = nyDropodownValue;
 
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
 
-    (delseksjonStateKopi.innhold[innholdIndeks] as dropdown).flettefelt = Array(
+    (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt = Array(
         nyeFlettefelt.length
-    ).fill('');
+    ).fill(tomtFlettefelt);
 
     return delseksjonStateKopi;
 };
 
 export const oppdaterFlettefeltIDelseksjonerState = (
-    delseksjonStateKopi: delseksjonType,
+    delseksjonStateKopi: StateDelseksjon,
     nyFritekstTabell: string[][],
     innholdIndeks: number,
     flettefeltIndeks: number,
     nyFlettefeltVerdi: string
-): delseksjonType => {
+): StateDelseksjon => {
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
     if (erInnholdStateDropdown(delseksjonStateKopi.innhold[innholdIndeks])) {
-        (delseksjonStateKopi.innhold[innholdIndeks] as dropdown).flettefelt[flettefeltIndeks] =
-            nyFlettefeltVerdi;
+        (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt[
+            flettefeltIndeks
+        ].verdi = nyFlettefeltVerdi;
+        (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt[
+            flettefeltIndeks
+        ].harBlittEndret = true;
     } else {
-        (delseksjonStateKopi.innhold[innholdIndeks] as string[])[flettefeltIndeks] =
+        (delseksjonStateKopi.innhold[innholdIndeks] as StateFlettefelt[])[flettefeltIndeks].verdi =
             nyFlettefeltVerdi;
+        (delseksjonStateKopi.innhold[innholdIndeks] as StateFlettefelt[])[
+            flettefeltIndeks
+        ].harBlittEndret = true;
     }
     return delseksjonStateKopi;
 };

@@ -1,5 +1,5 @@
 import { SanityDelseksjon, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
-import { dropdown } from '../typer/typer';
+import { StateDropdown, StateFlettefelt, tomtFlettefelt } from '../typer/typer';
 import { finnFlettefeltITekst } from './flettefeltUtils';
 import { innholdTilFritekstTabell } from './fritekstUtils';
 import { erInnholdSanityDropdown } from './sanityUtils';
@@ -30,7 +30,7 @@ export const finnAntallDelseksjoner = (seksjoner: SanitySeksjon[]) => {
 };
 
 const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
-    return delseksjon.innhold.map((innhold): string[] | dropdown => {
+    return delseksjon.innhold.map((innhold): StateFlettefelt[] | StateDropdown => {
         if (erInnholdSanityDropdown(innhold)) {
             return {
                 valgVerdi: undefined,
@@ -39,10 +39,10 @@ const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
         } else {
             let antallFlettefelt = 0;
             (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
-                const flettefelt = finnFlettefeltITekst(tekst);
+                const flettefelt = finnFlettefeltITekst(tekst, 0);
                 antallFlettefelt += flettefelt.length;
             });
-            return Array(antallFlettefelt).fill('');
+            return Array(antallFlettefelt).fill(tomtFlettefelt);
         }
     });
 };
