@@ -1,28 +1,28 @@
-import { brevmalTittelType, delseksjonType, skalAvsnittInkluderesType } from '../typer/typer';
+import { StateBrevmalTittel, StateDelseksjon, StateSkalAvsnittInkluderes } from '../typer/typer';
 
 export const delseksjonerStateReducer = (
-    delseksjonerState: delseksjonType[],
-    action: delseksjonType[]
-): delseksjonType[] => {
+    delseksjonerState: StateDelseksjon[],
+    action: StateDelseksjon[]
+): StateDelseksjon[] => {
     return action;
 };
 
 export const skalAvsnittInkluderesStateReducer = (
-    skalAvsnittInkluderesState: skalAvsnittInkluderesType,
-    action: skalAvsnittInkluderesType
-): skalAvsnittInkluderesType => {
+    skalAvsnittInkluderesState: StateSkalAvsnittInkluderes,
+    action: StateSkalAvsnittInkluderes
+): StateSkalAvsnittInkluderes => {
     return action;
 };
 
 export const brevmalTittelStateReducer = (
-    brevmalTittelState: brevmalTittelType,
-    action: brevmalTittelType
-): brevmalTittelType => {
+    brevmalTittelState: StateBrevmalTittel,
+    action: StateBrevmalTittel
+): StateBrevmalTittel => {
     return action;
 };
 
-export const initialSkalAvsnittInkluderesState: skalAvsnittInkluderesType = [];
+export const initialSkalAvsnittInkluderesState: StateSkalAvsnittInkluderes = [];
 
-export const initialBrevmalTittelState: brevmalTittelType = '';
+export const initialBrevmalTittelState: StateBrevmalTittel = '';
 
-export const initialDelseksjonerState: delseksjonType[] = [];
+export const initialDelseksjonerState: StateDelseksjon[] = [];
