@@ -45,7 +45,7 @@ export const finnTabellIndeksOgNyttFritekstElement = (
         const antallTegnTelt =
             antallTegnITidligereElementer + indeksTilSisteTegn + indeks * skilletegnLengde;
 
-        if (antallTegnTelt >= endringsIndeks) {
+        if (antallTegnTelt >= endringsIndeks - 1) {
             tabellIndeks = indeks;
             break;
         }
