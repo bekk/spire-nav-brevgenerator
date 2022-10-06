@@ -12,8 +12,8 @@ const genererSanityURL = (sanityBaseURL: string, query: string): string => {
 };
 
 const finnSanityDatasett = (sanityBaseURL: string): string | undefined => {
-    return sanityBaseURL.split('/').pop()
-}
+    return sanityBaseURL.split('/').pop();
+};
 
 const erCacheGyldig = (cache: CacheObjekt, utløpsDato: string): boolean => {
     return new Date(cache.dato) > new Date(utløpsDato);
@@ -49,9 +49,16 @@ export const hentBrevmaler = async (sanityBaseURL: string) => {
     });
 };
 
-export const hentBrevmal = async (sanityBaseURL: string, id: string, cacheUtløpsDato: string): Promise<SanityBrevmalMedSeksjoner> => {
-    const cachedBrevmal = hentCache(finnSanityDatasett(sanityBaseURL)+'/brevmal/' + id, cacheUtløpsDato);
-    if(cachedBrevmal !== null) {
+export const hentBrevmal = async (
+    sanityBaseURL: string,
+    id: string,
+    cacheUtløpsDato: string
+): Promise<SanityBrevmalMedSeksjoner> => {
+    const cachedBrevmal = hentCache(
+        finnSanityDatasett(sanityBaseURL) + '/brevmal/' + id,
+        cacheUtløpsDato
+    );
+    if (cachedBrevmal !== null) {
         return cachedBrevmal;
     } else {
         const URL = genererSanityURL(
@@ -98,7 +105,7 @@ export const hentBrevmal = async (sanityBaseURL: string, id: string, cacheUtløp
         );
 
         return axios.get(URL).then((res) => {
-            lagreCache(finnSanityDatasett(sanityBaseURL)+'/brevmal/' + id, res.data.result);
+            lagreCache(finnSanityDatasett(sanityBaseURL) + '/brevmal/' + id, res.data.result);
             return res.data.result;
         });
     }
@@ -152,29 +159,34 @@ export const hentMellomlagretBrev = async (
                 const brevFraBackend = JSON.parse(res.data.brev);
                 return brevFraBackend;
             }
-            return undefined
-        }).catch((err) => {
+            return undefined;
+        })
+        .catch((err) => {
             console.log('Kunne ikke hente mellomlagret brev:', err);
             return undefined;
         });
 };
 
-export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
+export const postMellomlagreBrev = async (mellomlagring: mellomlagringState): Promise<boolean> => {
     const brevTilBackend = {
         soknadId: '1',
         brevmalId: mellomlagring.brevmalId,
         brev: JSON.stringify(mellomlagring),
     };
     const token = localStorage.getItem('token');
-    axios
+    return await axios
         .post(`${backendURL}/mellomlagring/`, JSON.stringify(brevTilBackend), {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
         })
+        .then(() => {
+            return true;
+        })
         .catch((err) => {
-            console.log("Kunne ikke mellomlagre brev:", err);
+            console.log('Kunne ikke mellomlagre brev:', err);
+            return false;
         });
 };
 
@@ -209,7 +221,8 @@ export const signIn = async () => {
         })
         .then((res) => {
             localStorage.setItem('token', res.data.accessToken);
-        }).catch((err) => {
-            console.log("Singin error:", err);
+        })
+        .catch((err) => {
+            console.log('Singin error:', err);
         });
 };
