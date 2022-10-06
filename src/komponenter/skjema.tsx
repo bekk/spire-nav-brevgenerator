@@ -1,4 +1,4 @@
-import { Button, Select } from '@navikt/ds-react';
+import { Button, Select, Alert } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
 import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
@@ -19,6 +19,8 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         null
     );
     const [skalAlleValgNullstilles, setSkalAlleValgNullstilles] = useState(false);
+    const [alertSkalVises, settAlertSkalVises] = useState(false);
+    const [vellykketMellomlagring, settVellykketMellomlagring] = useState(false);
 
     const {
         skalAvsnittInkluderesDispatch,
@@ -75,15 +77,31 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         }
     };
 
+    const håndterMellomlagringKlikk = (vellykket: boolean) => {
+        settVellykketMellomlagring(vellykket);
+        settAlertSkalVises(true);
+        setTimeout(() => {
+            settAlertSkalVises(false);
+        }, 2500);
+    };
+
+    const AlertMellomlagring = (vellykket: boolean) => {
+        return vellykket ? (
+            <Alert variant="success">Mellomlagring vellykket!</Alert>
+        ) : (
+            <Alert variant="error">Feil: Brevet ble ikke mellomlagret.</Alert>
+        );
+    };
+
     // TODO: Fjerne avsnitt her
-    const mellomlagreBrev = () => {
+    const mellomlagreBrev = async () => {
         const mellomlagringsobjekt = {
             brevmalId: gjeldendeBrevmalId,
             inkluderingsbrytere: skalAvsnittInkluderesState,
             avsnitt: [],
             delseksjoner: delseksjonerState,
         };
-        postMellomlagreBrev(mellomlagringsobjekt);
+        håndterMellomlagringKlikk(await postMellomlagreBrev(mellomlagringsobjekt));
     };
 
     let delseksjonTeller = 0;
@@ -114,6 +132,11 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         </Button>
                         <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
                     </div>
+
+                    <div className="mellomlagring-alert">
+                        {alertSkalVises && AlertMellomlagring(vellykketMellomlagring)}
+                    </div>
+
                     {gjeldendeBrevmal.seksjoner.map((seksjon: SanitySeksjon, indeks: number) => {
                         const seksjonKomponent = (
                             <Seksjon

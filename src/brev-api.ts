@@ -167,58 +167,25 @@ export const hentMellomlagretBrev = async (
         });
 };
 
-export const postMellomlagreBrev = (mellomlagring: mellomlagringState) => {
+export const postMellomlagreBrev = async (mellomlagring: mellomlagringState): Promise<boolean> => {
     const brevTilBackend = {
         soknadId: '1',
         brevmalId: mellomlagring.brevmalId,
         brev: JSON.stringify(mellomlagring),
     };
     const token = localStorage.getItem('token');
-    axios
+    return await axios
         .post(`${backendURL}/mellomlagring/`, JSON.stringify(brevTilBackend), {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
         })
+        .then(() => {
+            return true;
+        })
         .catch((err) => {
             console.log('Kunne ikke mellomlagre brev:', err);
-        });
-};
-
-export const signUp = async () => {
-    const user = {
-        username: 'sigmund',
-        email: 'sigmund@mail.no',
-        password: 'password',
-        roles: ['admin', 'mod', 'user'],
-    };
-    await axios
-        .post(`${backendURL}/auth/signup`, JSON.stringify(user), {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .catch((err) => {
-            console.log('Singup error:', err);
-        });
-};
-
-export const signIn = async () => {
-    const user = {
-        username: 'sigmund',
-        password: 'password',
-    };
-    await axios
-        .post(`${backendURL}/auth/signin`, JSON.stringify(user), {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then((res) => {
-            localStorage.setItem('token', res.data.accessToken);
-        })
-        .catch((err) => {
-            console.log('Singin error:', err);
+            return false;
         });
 };
