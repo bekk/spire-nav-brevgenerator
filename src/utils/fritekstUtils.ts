@@ -124,15 +124,15 @@ export const oppdaterFritekstTabellMedTekst = (
 
             if (karakterTeller > endringsIndeks && !erEndringGjort) {
                 erEndringGjort = true;
-                const tabbellIndeksOgNyttFritekstElement = finnTabellIndeksOgNyttFritekstElement(
+                const tabellIndeksOgNyttFritekstElement = finnTabellIndeksOgNyttFritekstElement(
                     endringsIndeks,
                     nyFritekstSterilisert,
                     fritekstTabellElement,
                     antallTegnLagtTil,
                     gammelKarakterTeller
                 );
-                const tabellIndeks = tabbellIndeksOgNyttFritekstElement.tabellIndeks;
-                nyttFritekstElement = tabbellIndeksOgNyttFritekstElement.nyttFritekstElement;
+                const tabellIndeks = tabellIndeksOgNyttFritekstElement.tabellIndeks;
+                nyttFritekstElement = tabellIndeksOgNyttFritekstElement.nyttFritekstElement;
                 fritekstTabellElement[tabellIndeks] = nyttFritekstElement;
                 flettefeltIndeksITabell += tabellIndeks;
                 return fritekstTabellElement;
