@@ -18,7 +18,7 @@ import {
     finnInnholdOgFlettefeltIndeks,
     innholdTilFlettefeltTabell,
 } from '../utils/flettefeltUtils';
-import { FlettefeltVerdier, StateDelseksjon, StateDropdown } from '../typer/typer';
+import { FlettefeltVerdier, StateDelseksjon, StateDropdown, StateFlettefelt } from '../typer/typer';
 import {
     oppdaterDropdownIDelseksjonState,
     oppdaterFlettefeltIDelseksjonerState,
@@ -206,21 +206,21 @@ export function Delseksjon({
 
         // Tilbakestill tekst knyttet til dropdowns
         delseksjonerState[delseksjonIndeks].innhold.forEach(
-            (innhold: string[] | dropdown, indeks: number) => {
-                if ((innhold as dropdown).valgVerdi != undefined) {
-                    nyFritekstTabell[indeks] = (innhold as dropdown).valgVerdi
+            (innhold: StateFlettefelt[] | StateDropdown, indeks: number) => {
+                if ((innhold as StateDropdown).valgVerdi != undefined) {
+                    nyFritekstTabell[indeks] = (innhold as StateDropdown).valgVerdi
                         ?.split('@&#')[0]
                         .split('|') || [''];
-                    if ((innhold as dropdown).flettefelt.length > 0) {
+                    if ((innhold as StateDropdown).flettefelt.length > 0) {
                         let flettefeltIndeks = 0;
                         for (let i = 1; i < nyFritekstTabell[indeks].length; i += 2) {
-                            nyFritekstTabell[indeks][i] = (innhold as dropdown).flettefelt[
+                            nyFritekstTabell[indeks][i] = (innhold as StateDropdown).flettefelt[
                                 flettefeltIndeks
-                            ];
+                            ].verdi;
                             console.log(i);
                         }
                     }
-                } else if (innhold as string[]) {
+                } else if (innhold as StateFlettefelt[]) {
                 }
             }
         );
