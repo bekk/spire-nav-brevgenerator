@@ -5,9 +5,7 @@ import { innholdTilFritekstTabell } from './fritekstUtils';
 import { erInnholdSanityDropdown } from './sanityUtils';
 
 export const finnInitiellDelseksjonerState = (seksjoner: SanitySeksjon[]) => {
-    let antallDelSeksjoner = 0;
     return seksjoner.flatMap((seksjon) => {
-        antallDelSeksjoner += seksjon.delseksjoner.length;
         return seksjon.delseksjoner.map((delseksjon) => {
             const innhold = lagInitieltInnhold(delseksjon);
             const fritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
