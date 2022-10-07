@@ -8,10 +8,9 @@ import {
     oppdaterFritekstTabellMedDropdown,
     oppdaterFritekstTabellMedFlettefelt,
     innholdTilFritekstTabell,
-    innholdTilFritekstTabell,
 } from '../utils/fritekstUtils';
 import '../stiler/delseksjon.css';
-import { erInnholdSanitySanityDropdown, erInnholdTekstObjekt } from '../utils/sanityUtils';
+import { erInnholdSanityDropdown, erInnholdTekstObjekt } from '../utils/sanityUtils';
 import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
 import {
