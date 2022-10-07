@@ -1,4 +1,3 @@
-//import { mellomlagringDropdown, mellomlagringFlettefelt } from '../typer/mellomlagring';
 import { SanityDropdown, SanityTekst, SanityTekstObjekt } from '../typer/sanity';
 import { FlettefeltVerdier, StateDropdown, StateFlettefelt } from '../typer/typer';
 import { erInnholdTekstObjekt } from './sanityUtils';
@@ -16,18 +15,19 @@ export const finnFlettefeltITekst = (
                     markDef._key === child.marks[0] &&
                     (markDef.tabell === undefined || markDef.tabell === null)
                 ) {
+                    const mellomlagringFinnes =
+                        mellomlagring !== undefined &&
+                        mellomlagring[flettefeltTeller] !== undefined;
                     nyeFlettefelt.push({
                         tekst: markDef.flettefelt ? markDef.flettefelt.flettefeltNavn : child.text,
                         marks: child.marks,
                         key: child._key,
-                        verdi:
-                            mellomlagring !== undefined
-                                ? mellomlagring[flettefeltTeller].verdi
-                                : child.text,
-                        harBlittEndret:
-                            mellomlagring !== undefined
-                                ? mellomlagring[flettefeltTeller].harBlittEndret
-                                : false,
+                        verdi: mellomlagringFinnes
+                            ? mellomlagring[flettefeltTeller].verdi
+                            : child.text,
+                        harBlittEndret: mellomlagringFinnes
+                            ? mellomlagring[flettefeltTeller].harBlittEndret
+                            : false,
                     });
                     flettefeltTeller++;
                 }
