@@ -4,13 +4,13 @@ import parse from 'html-react-parser';
 import { SkjemaContext } from '../context/context';
 import { settInnTabell } from '../utils/htmlPdfUtils';
 import { dobbelTabellTilStreng } from '../utils/fritekstUtils';
-import { delseksjonType } from '../typer/typer';
+import { StateDelseksjon } from '../typer/typer';
 
 const PDF = () => {
     const { skalAvsnittInkluderesState, brevmalTittelState, delseksjonerState } =
         useContext(SkjemaContext);
 
-    const avsnitt = delseksjonerState.map((delseksjoner: delseksjonType) => {
+    const avsnitt = delseksjonerState.map((delseksjoner: StateDelseksjon) => {
         return dobbelTabellTilStreng(delseksjoner.fritekstTabell);
     });
 

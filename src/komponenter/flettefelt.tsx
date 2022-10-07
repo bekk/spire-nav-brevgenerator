@@ -1,18 +1,17 @@
 import React from 'react';
 import { TextField } from '@navikt/ds-react';
-import { flettefelt } from '../typer/typer';
+import { FlettefeltVerdier } from '../typer/typer';
 
 export interface flettefeltProps {
-    flettefelt: flettefelt;
+    flettefelt: FlettefeltVerdier;
     flettefeltIndeks: number;
     innholdIndeks: number;
     håndterEndringIFletteFelt: (
-        e: React.ChangeEvent<HTMLInputElement>,
+        nyTekst: string,
         flettefeltIndeks: number,
         innholdIndeks: number,
         dropdownIndeks?: number
     ) => void;
-    mellomlagretVerdi?: string;
 }
 
 export function Flettefelt({
@@ -20,17 +19,23 @@ export function Flettefelt({
     flettefeltIndeks,
     innholdIndeks,
     håndterEndringIFletteFelt,
-    mellomlagretVerdi,
 }: flettefeltProps) {
+    const tømFlettefelt = () => {
+        if (flettefelt.harBlittEndret === false) {
+            håndterEndringIFletteFelt('', flettefeltIndeks, innholdIndeks);
+        }
+    };
+
     return (
         <TextField
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                håndterEndringIFletteFelt(e, flettefeltIndeks, innholdIndeks)
+                håndterEndringIFletteFelt(e.target.value, flettefeltIndeks, innholdIndeks)
             }
+            onClick={tømFlettefelt}
             key={flettefelt.key}
             label={flettefelt.tekst}
             size="small"
-            defaultValue={mellomlagretVerdi}
+            value={flettefelt.verdi}
         />
     );
 }

@@ -13,8 +13,12 @@ import '../stiler/delseksjon.css';
 import { erInnholdSanityDropdown, erInnholdTekstObjekt } from '../utils/sanityUtils';
 import { Dropdown } from './dropdown';
 import { Flettefelter } from './flettefelter';
-import { finnFlettefeltIDropdown, innholdTilFlettefeltTabell } from '../utils/flettefeltUtils';
-import { delseksjonType, dropdown, flettefelt } from '../typer/typer';
+import {
+    finnFlettefeltIDropdown,
+    finnInnholdOgFlettefeltIndeks,
+    innholdTilFlettefeltTabell,
+} from '../utils/flettefeltUtils';
+import { FlettefeltVerdier, StateDelseksjon, StateDropdown } from '../typer/typer';
 import {
     oppdaterDropdownIDelseksjonState,
     oppdaterFlettefeltIDelseksjonerState,
@@ -42,7 +46,7 @@ export function Delseksjon({
     } = useContext(SkjemaContext);
 
     const [fritekstTabell, settFritekstTabell] = useState<string[][]>([]);
-    const [flettefelt, settFlettefelt] = useState<flettefelt[][]>([]);
+    const [flettefelt, settFlettefelt] = useState<FlettefeltVerdier[][]>([]);
     const [oppdaterFritekst, settOppdaterFritekst] = useState(true);
 
     useEffect(() => {
@@ -75,10 +79,20 @@ export function Delseksjon({
         }
     }, [skalAlleValgNullstilles]);
 
-    const oppdaterFlettefeltFraDropdowns = (nyeFlettefelt: flettefelt[], indeks: number) => {
+    const oppdaterFlettefeltFraDropdowns = (nyeFlettefelt: FlettefeltVerdier[], indeks: number) => {
         const flettefeltKopi = [...flettefelt];
         flettefeltKopi[indeks] = nyeFlettefelt;
+        settFlettefelt(flettefeltKopi);
+    };
 
+    const oppdaterFlettefelt = (
+        flettefeltKopi: FlettefeltVerdier[][],
+        innholdIndeks: number,
+        flettefeltIndeks: number,
+        verdi: string
+    ) => {
+        flettefeltKopi[innholdIndeks][flettefeltIndeks].verdi = verdi;
+        flettefeltKopi[innholdIndeks][flettefeltIndeks].harBlittEndret = true;
         settFlettefelt(flettefeltKopi);
     };
 
@@ -89,7 +103,7 @@ export function Delseksjon({
         skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
     };
 
-    const settDelseksjonerState = (delseksjonState: delseksjonType) => {
+    const settDelseksjonerState = (delseksjonState: StateDelseksjon) => {
         const delseksjonerStateKopi = [...delseksjonerState];
         delseksjonerStateKopi[delseksjonIndeks] = delseksjonState;
 
@@ -97,16 +111,34 @@ export function Delseksjon({
     };
 
     const håndterEndringIFritekstFelt = (nyFritekst: string) => {
-        const nyFritekstTabell = oppdaterFritekstTabellMedTekst(
-            [...fritekstTabell],
-            nyFritekst,
-            fritekstTabell
-        );
-        const nyDelseksjonState = oppdaterFritekstTabellIDelseksjonState(
+        const { nyFritekstTabell, flettefeltNummer, nyttFritekstElement } =
+            oppdaterFritekstTabellMedTekst([...fritekstTabell], nyFritekst);
+        let nyDelseksjonState = oppdaterFritekstTabellIDelseksjonState(
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell
         );
 
+        if (flettefeltNummer !== undefined && nyttFritekstElement !== undefined) {
+            const { innholdIndeks, flettefeltIndeks } = finnInnholdOgFlettefeltIndeks(
+                flettefeltNummer,
+                flettefelt
+            );
+            if (innholdIndeks !== -1) {
+                oppdaterFlettefelt(
+                    [...flettefelt],
+                    innholdIndeks,
+                    flettefeltIndeks,
+                    nyttFritekstElement
+                );
+                nyDelseksjonState = oppdaterFlettefeltIDelseksjonerState(
+                    { ...delseksjonerState[delseksjonIndeks] },
+                    nyFritekstTabell,
+                    innholdIndeks,
+                    flettefeltIndeks,
+                    nyttFritekstElement
+                );
+            }
+        }
         settFritekstTabell(nyFritekstTabell);
         settDelseksjonerState(nyDelseksjonState);
     };
@@ -141,21 +173,26 @@ export function Delseksjon({
         settOppdaterFritekst(true);
     };
 
-    const håndterEndringIFletteFelt = (e: any, flettefeltIndeks: number, innholdIndeks: number) => {
+    const håndterEndringIFletteFelt = (
+        nyTekst: string,
+        flettefeltIndeks: number,
+        innholdIndeks: number
+    ) => {
         const nyFritekstTabell = oppdaterFritekstTabellMedFlettefelt(
             [...fritekstTabell],
             innholdIndeks,
             flettefeltIndeks,
-            e.target.value
+            nyTekst
         );
         const nyDelseksjonState = oppdaterFlettefeltIDelseksjonerState(
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell,
             innholdIndeks,
             flettefeltIndeks,
-            e.target.value
+            nyTekst
         );
 
+        oppdaterFlettefelt([...flettefelt], innholdIndeks, flettefeltIndeks, nyTekst);
         settFritekstTabell(nyFritekstTabell);
         settDelseksjonerState(nyDelseksjonState);
         settOppdaterFritekst(true);
@@ -247,7 +284,7 @@ export function Delseksjon({
                                                     (
                                                         delseksjonerState[delseksjonIndeks].innhold[
                                                             innholdIndeks
-                                                        ] as dropdown
+                                                        ] as StateDropdown
                                                     )?.valgVerdi
                                                 }
                                             />
@@ -257,12 +294,6 @@ export function Delseksjon({
                                                     innholdIndeks={innholdIndeks}
                                                     håndterEndringIFletteFelt={
                                                         håndterEndringIFletteFelt
-                                                    }
-                                                    mellomlagretVerdier={
-                                                        (
-                                                            delseksjonerState[delseksjonIndeks]
-                                                                .innhold[innholdIndeks] as dropdown
-                                                        )?.flettefelt
                                                     }
                                                 />
                                             )}
@@ -277,11 +308,6 @@ export function Delseksjon({
                                                 innholdIndeks={innholdIndeks}
                                                 håndterEndringIFletteFelt={
                                                     håndterEndringIFletteFelt
-                                                }
-                                                mellomlagretVerdier={
-                                                    delseksjonerState[delseksjonIndeks].innhold[
-                                                        innholdIndeks
-                                                    ] as string[]
                                                 }
                                             />
                                         );

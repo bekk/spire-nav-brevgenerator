@@ -2,31 +2,31 @@ import { Dispatch } from 'react';
 export interface brevmal {
     tittel: string;
     id: string;
-	updatedAt: string;
+    updatedAt: string;
 }
 
-export type skalAvsnittInkluderesType = boolean[];
+export type StateSkalAvsnittInkluderes = boolean[];
 
-export type brevmalTittelType = string;
+export type StateBrevmalTittel = string;
 
-export type delseksjonType = {
-    innhold: (string[] | dropdown)[];
+export type StateDelseksjon = {
+    innhold: (StateFlettefelt[] | StateDropdown)[];
     fritekstTabell: string[][];
 };
 
 export type SkjemaContextType = {
-    skalAvsnittInkluderesState: skalAvsnittInkluderesType;
-    skalAvsnittInkluderesDispatch: Dispatch<skalAvsnittInkluderesType>;
+    skalAvsnittInkluderesState: StateSkalAvsnittInkluderes;
+    skalAvsnittInkluderesDispatch: Dispatch<StateSkalAvsnittInkluderes>;
 
-    brevmalTittelState: brevmalTittelType;
-    brevmalTittelDispatch: Dispatch<brevmalTittelType>;
+    brevmalTittelState: StateBrevmalTittel;
+    brevmalTittelDispatch: Dispatch<StateBrevmalTittel>;
 
-    delseksjonerState: delseksjonType[];
-    delseksjonerDispatch: Dispatch<delseksjonType[]>;
+    delseksjonerState: StateDelseksjon[];
+    delseksjonerDispatch: Dispatch<StateDelseksjon[]>;
 };
-export interface dropdown {
+export interface StateDropdown {
     valgVerdi?: string;
-    flettefelt: string[];
+    flettefelt: StateFlettefelt[];
 }
 
 export type tabellObjekt = {
@@ -34,8 +34,20 @@ export type tabellObjekt = {
     tabell: string[][];
 };
 
-export type flettefelt = {
+export type StateFlettefelt = {
+    verdi: string;
+    harBlittEndret: boolean;
+};
+
+export const tomtFlettefelt: StateFlettefelt = {
+    verdi: '',
+    harBlittEndret: false,
+};
+
+export type FlettefeltVerdier = {
     tekst: string;
     marks: string[];
     key: string;
+    verdi: string;
+    harBlittEndret: boolean;
 };

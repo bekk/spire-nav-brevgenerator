@@ -93,12 +93,10 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         );
     };
 
-    // TODO: Fjerne avsnitt her
     const mellomlagreBrev = async () => {
         const mellomlagringsobjekt = {
             brevmalId: gjeldendeBrevmalId,
             inkluderingsbrytere: skalAvsnittInkluderesState,
-            avsnitt: [],
             delseksjoner: delseksjonerState,
         };
         håndterMellomlagringKlikk(await postMellomlagreBrev(mellomlagringsobjekt));
