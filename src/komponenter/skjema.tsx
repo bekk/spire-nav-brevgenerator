@@ -1,6 +1,6 @@
 import { Button, Select, Alert } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { hentBrevmal, hentMellomlagretBrev, postMellomlagreBrev } from '../brev-api';
+import { hentBrevmal, postMellomlagreBrev, validerOgHentMellomlagring } from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
 import { brevmal } from '../typer/typer';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
@@ -48,16 +48,19 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         brevmalMetaData.updatedAt
                     );
                     if (brevmal) {
-                        const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
+                        const mellomlagretBrev = await validerOgHentMellomlagring(
+                            brevmal._id,
+                            brevmalMetaData.updatedAt
+                        );
 
-                        setGjeldendeBrevmal(brevmal);
-                        brevmalTittelDispatch(brevmal.brevmaloverskrift);
+                        // mellomlagret brev er ikke av typen brev, undefined eller null??
 
-                        if (mellomlagretBrev !== undefined) {
+                        if (mellomlagretBrev !== undefined && mellomlagretBrev !== null) {
                             avsnittDispatch(mellomlagretBrev.avsnitt);
                             skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                             mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
                         } else {
+                            console.log('kom her');
                             initialiserContext(brevmal.seksjoner);
                         }
                     }
@@ -91,7 +94,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         settAlertSkalVises(true);
         setTimeout(() => {
             settAlertSkalVises(false);
-        }, 2500);
+        }, 5000);
     };
 
     const AlertMellomlagring = (vellykket: boolean) => {

@@ -5,7 +5,8 @@ import { mellomlagringState } from './typer/mellomlagring';
 import { SanityBrevmalMedSeksjoner } from './typer/sanity';
 
 const skalCache = true;
-const backendURL = 'http://34.88.177.137:8080';
+//const backendURL = 'http://34.88.177.137:8080';
+const backendURL = 'http://localhost:8080';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
@@ -140,11 +141,13 @@ export const genererPDF = async (html: string) => {
 };
 
 export const hentMellomlagretBrev = async (
-    brevmalId: string
+    brevmalId: string,
+    brevmalSistOppdatert: string
 ): Promise<mellomlagringState | undefined> => {
     const brev = {
         soknadId: '1',
         brevmalId: brevmalId,
+        brevmalSistOppdatert: brevmalSistOppdatert,
     };
     const token = localStorage.getItem('token');
     return axios
@@ -162,7 +165,33 @@ export const hentMellomlagretBrev = async (
             return undefined;
         })
         .catch((err) => {
-            console.log('Kunne ikke hente mellomlagret brev:', err);
+            console.log(err.response.message);
+            return undefined;
+        });
+};
+
+export const validerOgHentMellomlagring = async (
+    brevmalId: string,
+    brevmalSistOppdatert: string
+): Promise<mellomlagringState | undefined> => {
+    const brev = {
+        soknadId: '1',
+        brevmalId: brevmalId,
+        brevmalSistOppdatert: brevmalSistOppdatert,
+    };
+    const token = localStorage.getItem('token');
+    return axios
+        .post(`${backendURL}/mellomlagring/validerOgHentBrev`, JSON.stringify(brev), {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((res) => {
+            return res.data;
+        })
+        .catch((err) => {
+            console.log(err.response.message);
             return undefined;
         });
 };
