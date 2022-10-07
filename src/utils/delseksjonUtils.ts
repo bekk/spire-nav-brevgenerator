@@ -46,7 +46,6 @@ export const oppdaterFlettefeltIDelseksjonerState = (
     flettefeltIndeks: number,
     nyFlettefeltVerdi: string
 ): StateDelseksjon => {
-    console.log('oppdater flettefelt kjører');
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
     if (erInnholdStateDropdown(delseksjonStateKopi.innhold[innholdIndeks])) {
         (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt[
