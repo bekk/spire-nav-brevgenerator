@@ -1,59 +1,46 @@
-import {
-    mellomlagringDelseksjon,
-    mellomlagringDropdown,
-    mellomlagringFlettefelt,
-    tomtMellomlagringFlettefelt,
-} from '../typer/mellomlagring';
-import { SanityDropdown, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
+import { SanityDelseksjon, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
+import { StateDropdown, StateFlettefelt, tomtFlettefelt } from '../typer/typer';
 import { finnFlettefeltITekst } from './flettefeltUtils';
-import { erInnholdDropdown, sanityBlocktekstToHtml } from './sanityUtils';
+import { innholdTilFritekstTabell } from './fritekstUtils';
+import { erInnholdSanityDropdown } from './sanityUtils';
 
-const finnInitelleAvsnittISeksjon = (seksjon: SanitySeksjon): string[] => {
-    return seksjon.delseksjoner.map((delseksjon) => {
-        let nyFritekst = '';
-        delseksjon.innhold.forEach((innhold: SanityDropdown | SanityTekstObjekt) => {
-            if ((innhold as SanityTekstObjekt).tekstTittel !== undefined) {
-                nyFritekst += sanityBlocktekstToHtml(innhold as SanityTekstObjekt).join(' ');
-            }
-        });
-        return nyFritekst;
-    });
-};
-
-export const finnInitielleAvsnittOgAntallDelseksjoner = (
-    seksjoner: SanitySeksjon[]
-): { nyeAvsnitt: string[]; antallDelSeksjoner: number } => {
-    let antallDelSeksjoner = 0;
-    const nyeAvsnitt: string[] = seksjoner.flatMap((seksjon) => {
-        antallDelSeksjoner += seksjon.delseksjoner.length;
-        return finnInitelleAvsnittISeksjon(seksjon);
-    });
-    return { nyeAvsnitt, antallDelSeksjoner };
-};
-
-export const finnInitiellMellomlagringDelseksjonState = (
-    seksjoner: SanitySeksjon[]
-): mellomlagringDelseksjon[] => {
+export const finnInitiellDelseksjonerState = (seksjoner: SanitySeksjon[]) => {
     return seksjoner.flatMap((seksjon) => {
         return seksjon.delseksjoner.map((delseksjon) => {
-            const innhold = delseksjon.innhold.map(
-                (innhold): mellomlagringFlettefelt[] | mellomlagringDropdown => {
-                    if (erInnholdDropdown(innhold)) {
-                        return {
-                            valgVerdi: undefined,
-                            flettefelt: [],
-                        };
-                    } else {
-                        let antallFlettefelt = 0;
-                        (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
-                            const flettefelt = finnFlettefeltITekst(tekst, 0);
-                            antallFlettefelt += flettefelt.length;
-                        });
-                        return Array(antallFlettefelt).fill(tomtMellomlagringFlettefelt);
-                    }
-                }
-            );
-            return { innhold: innhold, fritekstTabell: [] };
+            const innhold = lagInitieltInnhold(delseksjon);
+            const fritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+
+            return {
+                innhold: innhold,
+                fritekstTabell: fritekstTabell,
+            };
         });
+    });
+};
+
+export const finnAntallDelseksjoner = (seksjoner: SanitySeksjon[]) => {
+    let antallDelSeksjoner = 0;
+    seksjoner.forEach((seksjon) => {
+        antallDelSeksjoner += seksjon.delseksjoner.length;
+    });
+
+    return antallDelSeksjoner;
+};
+
+const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
+    return delseksjon.innhold.map((innhold): StateFlettefelt[] | StateDropdown => {
+        if (erInnholdSanityDropdown(innhold)) {
+            return {
+                valgVerdi: undefined,
+                flettefelt: [],
+            };
+        } else {
+            let antallFlettefelt = 0;
+            (innhold as SanityTekstObjekt).tekst.forEach((tekst) => {
+                const flettefelt = finnFlettefeltITekst(tekst, 0);
+                antallFlettefelt += flettefelt.length;
+            });
+            return Array(antallFlettefelt).fill(tomtFlettefelt);
+        }
     });
 };

@@ -10,9 +10,10 @@ import {
 } from '../utils/htmlPdfUtils';
 import { Ark } from './ark';
 import { ArkMedBrevhode } from './arkMedBrevhode';
+import { dobbelTabellTilStreng } from '../utils/fritekstUtils';
 
 const HTMLPDF = () => {
-    const { avsnittState, brevmalTittelState, skalAvsnittInkluderesState } =
+    const { brevmalTittelState, skalAvsnittInkluderesState, delseksjonerState } =
         useContext(SkjemaContext);
 
     const genererInnholdTilArk = (paragraftabell: string[]) => {
@@ -45,9 +46,11 @@ const HTMLPDF = () => {
     const finnAvsnittSomSkalInkluderes = (): string[] => {
         const avsnittSomSkalInkluderes: string[] = [];
 
-        for (let indeks = 0; indeks < avsnittState.length; indeks++) {
+        for (let indeks = 0; indeks < delseksjonerState.length; indeks++) {
             if (skalAvsnittInkluderesState[indeks]) {
-                avsnittSomSkalInkluderes.push(avsnittState[indeks]);
+                avsnittSomSkalInkluderes.push(
+                    dobbelTabellTilStreng(delseksjonerState[indeks].fritekstTabell)
+                );
             }
         }
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import { TextField } from '@navikt/ds-react';
-import { flettefelt } from '../typer/typer';
+import { FlettefeltVerdier } from '../typer/typer';
 
 export interface flettefeltProps {
-    flettefelt: flettefelt;
+    flettefelt: FlettefeltVerdier;
     flettefeltIndeks: number;
     innholdIndeks: number;
     håndterEndringIFletteFelt: (

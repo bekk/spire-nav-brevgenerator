@@ -1,41 +1,28 @@
-import { mellomlagringDelseksjon } from '../typer/mellomlagring';
-import {
-	avsnittType,
-	brevmalTittelType,
-	skalAvsnittInkluderesType,
-} from '../typer/typer';
+import { StateBrevmalTittel, StateDelseksjon, StateSkalAvsnittInkluderes } from '../typer/typer';
 
-export const avsnittStateReducer = (
-    avsnittState: avsnittType,
-    action: avsnittType
-): avsnittType => {
+export const delseksjonerStateReducer = (
+    delseksjonerState: StateDelseksjon[],
+    action: StateDelseksjon[]
+): StateDelseksjon[] => {
     return action;
 };
 
 export const skalAvsnittInkluderesStateReducer = (
-    skalAvsnittInkluderesState: skalAvsnittInkluderesType,
-    action: skalAvsnittInkluderesType
-): skalAvsnittInkluderesType => {
+    skalAvsnittInkluderesState: StateSkalAvsnittInkluderes,
+    action: StateSkalAvsnittInkluderes
+): StateSkalAvsnittInkluderes => {
     return action;
 };
 
 export const brevmalTittelStateReducer = (
-    brevmalTittelState: brevmalTittelType,
-    action: brevmalTittelType
-): brevmalTittelType => {
+    brevmalTittelState: StateBrevmalTittel,
+    action: StateBrevmalTittel
+): StateBrevmalTittel => {
     return action;
 };
 
-export const mellomlagringDelseksjonerStateReducer = (
-	mellomlagringDelseksjonerState: mellomlagringDelseksjon[],
-	action: mellomlagringDelseksjon[]) : mellomlagringDelseksjon[] => {
-		return action
-};
+export const initialSkalAvsnittInkluderesState: StateSkalAvsnittInkluderes = [];
 
-export const initialAvsnittState: avsnittType = [];
+export const initialBrevmalTittelState: StateBrevmalTittel = '';
 
-export const initialSkalAvsnittInkluderesState: skalAvsnittInkluderesType = [];
-
-export const initialBrevmalTittelState: brevmalTittelType = '';
-
-export const initialMellomlagringDelseksjonerState: mellomlagringDelseksjon[] = [];
+export const initialDelseksjonerState: StateDelseksjon[] = [];

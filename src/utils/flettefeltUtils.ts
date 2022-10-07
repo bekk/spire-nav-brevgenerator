@@ -1,14 +1,13 @@
-import { mellomlagringDropdown, mellomlagringFlettefelt } from '../typer/mellomlagring';
 import { SanityDropdown, SanityTekst, SanityTekstObjekt } from '../typer/sanity';
-import { flettefelt } from '../typer/typer';
+import { FlettefeltVerdier, StateDropdown, StateFlettefelt } from '../typer/typer';
 import { erInnholdTekstObjekt } from './sanityUtils';
 
 export const finnFlettefeltITekst = (
     sanityTekst: SanityTekst,
     flettefeltTeller: number,
-    mellomlagring?: mellomlagringFlettefelt[]
-): flettefelt[] => {
-    const nyeFlettefelt: flettefelt[] = [];
+    mellomlagring?: StateFlettefelt[]
+): FlettefeltVerdier[] => {
+    const nyeFlettefelt: FlettefeltVerdier[] = [];
     sanityTekst.children.forEach((child) => {
         if (child.marks.length > 0) {
             sanityTekst.markDefs.forEach((markDef) => {
@@ -16,18 +15,19 @@ export const finnFlettefeltITekst = (
                     markDef._key === child.marks[0] &&
                     (markDef.tabell === undefined || markDef.tabell === null)
                 ) {
+                    const mellomlagringFinnes =
+                        mellomlagring !== undefined &&
+                        mellomlagring[flettefeltTeller] !== undefined;
                     nyeFlettefelt.push({
                         tekst: markDef.flettefelt ? markDef.flettefelt.flettefeltNavn : child.text,
                         marks: child.marks,
                         key: child._key,
-                        verdi:
-                            mellomlagring !== undefined
-                                ? mellomlagring[flettefeltTeller].verdi
-                                : child.text,
-                        harBlittEndret:
-                            mellomlagring !== undefined
-                                ? mellomlagring[flettefeltTeller].harBlittEndret
-                                : false,
+                        verdi: mellomlagringFinnes
+                            ? mellomlagring[flettefeltTeller].verdi
+                            : child.text,
+                        harBlittEndret: mellomlagringFinnes
+                            ? mellomlagring[flettefeltTeller].harBlittEndret
+                            : false,
                     });
                     flettefeltTeller++;
                 }
@@ -40,8 +40,8 @@ export const finnFlettefeltITekst = (
 export const finnFlettefeltIDropdown = (
     sanityDropdown: SanityDropdown,
     valgIndeks: number,
-    mellomlagring?: mellomlagringDropdown
-): flettefelt[] => {
+    mellomlagring?: StateDropdown
+): FlettefeltVerdier[] => {
     let flettefeltTeller = 0;
     return sanityDropdown.valg[valgIndeks].tekst.flatMap((sanityTekst: SanityTekst) => {
         const flettefelt = finnFlettefeltITekst(
@@ -56,8 +56,8 @@ export const finnFlettefeltIDropdown = (
 
 export const innholdTilFlettefeltTabell = (
     innhold: (SanityDropdown | SanityTekstObjekt)[],
-    mellomlagring?: (mellomlagringFlettefelt[] | mellomlagringDropdown)[]
-): flettefelt[][] => {
+    delseksjonStateInnold?: (StateFlettefelt[] | StateDropdown)[]
+): FlettefeltVerdier[][] => {
     let flettefeltTeller = 0;
     return innhold.map((innhold: SanityDropdown | SanityTekstObjekt, innholdIndeks: number) => {
         if (erInnholdTekstObjekt(innhold)) {
@@ -65,8 +65,8 @@ export const innholdTilFlettefeltTabell = (
                 const flettefelt = finnFlettefeltITekst(
                     sanityTekst,
                     flettefeltTeller,
-                    mellomlagring !== undefined
-                        ? (mellomlagring[innholdIndeks] as mellomlagringFlettefelt[])
+                    delseksjonStateInnold !== undefined
+                        ? (delseksjonStateInnold[innholdIndeks] as StateFlettefelt[])
                         : undefined
                 );
                 flettefeltTeller += flettefelt.length;
@@ -74,16 +74,16 @@ export const innholdTilFlettefeltTabell = (
             });
         } else {
             if (
-                mellomlagring !== undefined &&
-                (mellomlagring[innholdIndeks] as mellomlagringDropdown)?.valgVerdi !== undefined
+                delseksjonStateInnold !== undefined &&
+                (delseksjonStateInnold[innholdIndeks] as StateDropdown)?.valgVerdi !== undefined
             ) {
                 const valgIndeks = (
-                    mellomlagring[innholdIndeks] as mellomlagringDropdown
+                    delseksjonStateInnold[innholdIndeks] as StateDropdown
                 ).valgVerdi!.split('@&#')[1];
                 return finnFlettefeltIDropdown(
                     innhold as SanityDropdown,
                     parseInt(valgIndeks),
-                    mellomlagring[innholdIndeks] as mellomlagringDropdown
+                    delseksjonStateInnold[innholdIndeks] as StateDropdown
                 );
             }
             return [];
@@ -93,7 +93,7 @@ export const innholdTilFlettefeltTabell = (
 
 export const finnInnholdOgFlettefeltIndeks = (
     flettefeltNummer: number,
-    flettefelter: flettefelt[][]
+    flettefelter: FlettefeltVerdier[][]
 ): { innholdIndeks: number; flettefeltIndeks: number } => {
     let flettefeltTeller = 0;
     for (const [innholdIndeks, innhold] of flettefelter.entries()) {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { flettefelt } from '../typer/typer';
+import { FlettefeltVerdier } from '../typer/typer';
 import { Flettefelt } from './flettefelt';
 
 export interface flettefeltProps {
-    flettefelter: flettefelt[];
+    flettefelter: FlettefeltVerdier[];
     innholdIndeks: number;
     håndterEndringIFletteFelt: (
         nyTekst: string,
@@ -20,7 +20,7 @@ export function Flettefelter({
 }: flettefeltProps) {
     return (
         <>
-            {flettefelter.map((flettefelt: flettefelt, flettefeltIndeks: number) => (
+            {flettefelter.map((flettefelt: FlettefeltVerdier, flettefeltIndeks: number) => (
                 <Flettefelt
                     key={flettefeltIndeks}
                     flettefelt={flettefelt}
