@@ -106,3 +106,16 @@ export const finnInnholdOgFlettefeltIndeks = (
     }
     return { innholdIndeks: -1, flettefeltIndeks: -1 };
 };
+
+export const fyllInnFlettefeltIFritekstTabell = (
+    fritekstTabellElement: string[],
+    flettefelter: StateFlettefelt[]
+) => {
+    let flettefeltIndeks = 0;
+    for (let i = 1; i < fritekstTabellElement.length; i += 2) {
+        const flettefeltVerdi = flettefelter[flettefeltIndeks].verdi;
+        if (flettefeltVerdi !== '') {
+            fritekstTabellElement[i] = flettefeltVerdi;
+        }
+    }
+};

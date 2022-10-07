@@ -40,7 +40,7 @@ const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
                 const flettefelt = finnFlettefeltITekst(tekst, 0);
                 antallFlettefelt += flettefelt.length;
             });
-            return Array(antallFlettefelt).fill(tomtFlettefelt);
+            return Array(antallFlettefelt).fill({ ...tomtFlettefelt });
         }
     });
 };

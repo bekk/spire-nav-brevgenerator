@@ -1,3 +1,4 @@
+import { SanityDelseksjon } from '../typer/sanity';
 import {
     FlettefeltVerdier,
     StateDelseksjon,
@@ -5,6 +6,8 @@ import {
     StateFlettefelt,
     tomtFlettefelt,
 } from '../typer/typer';
+import { fyllInnFlettefeltIFritekstTabell } from './flettefeltUtils';
+import { innholdTilFritekstTabell } from './fritekstUtils';
 
 export const erInnholdStateDropdown = (innhold: StateFlettefelt[] | StateDropdown): boolean => {
     return (innhold as StateDropdown).valgVerdi !== undefined;
@@ -31,7 +34,7 @@ export const oppdaterDropdownIDelseksjonState = (
 
     (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt = Array(
         nyeFlettefelt.length
-    ).fill(tomtFlettefelt);
+    ).fill({ ...tomtFlettefelt });
 
     return delseksjonStateKopi;
 };
@@ -43,6 +46,7 @@ export const oppdaterFlettefeltIDelseksjonerState = (
     flettefeltIndeks: number,
     nyFlettefeltVerdi: string
 ): StateDelseksjon => {
+    console.log('oppdater flettefelt kjører');
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
     if (erInnholdStateDropdown(delseksjonStateKopi.innhold[innholdIndeks])) {
         (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt[
@@ -59,4 +63,35 @@ export const oppdaterFlettefeltIDelseksjonerState = (
         ].harBlittEndret = true;
     }
     return delseksjonStateKopi;
+};
+
+export const oppdaterFritekstTabellFraDelseksjonState = (
+    delseksjon: SanityDelseksjon,
+    delseksjonerState: StateDelseksjon[],
+    delseksjonIndeks: number
+) => {
+    const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+
+    delseksjonerState[delseksjonIndeks].innhold.forEach(
+        (innhold: StateFlettefelt[] | StateDropdown, indeks: number) => {
+            if ((innhold as StateDropdown).valgVerdi != undefined) {
+                nyFritekstTabell[indeks] = (innhold as StateDropdown).valgVerdi
+                    ?.split('@&#')[0]
+                    .split('|') || [''];
+                if ((innhold as StateDropdown).flettefelt.length > 0) {
+                    fyllInnFlettefeltIFritekstTabell(
+                        nyFritekstTabell[indeks],
+                        (innhold as StateDropdown).flettefelt
+                    );
+                }
+            } else if (innhold as StateFlettefelt[]) {
+                fyllInnFlettefeltIFritekstTabell(
+                    nyFritekstTabell[indeks],
+                    innhold as StateFlettefelt[]
+                );
+            }
+        }
+    );
+
+    return nyFritekstTabell;
 };

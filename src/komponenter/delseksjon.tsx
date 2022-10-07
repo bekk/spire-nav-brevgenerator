@@ -16,12 +16,14 @@ import { Flettefelter } from './flettefelter';
 import {
     finnFlettefeltIDropdown,
     finnInnholdOgFlettefeltIndeks,
+    fyllInnFlettefeltIFritekstTabell,
     innholdTilFlettefeltTabell,
 } from '../utils/flettefeltUtils';
 import { FlettefeltVerdier, StateDelseksjon, StateDropdown, StateFlettefelt } from '../typer/typer';
 import {
     oppdaterDropdownIDelseksjonState,
     oppdaterFlettefeltIDelseksjonerState,
+    oppdaterFritekstTabellFraDelseksjonState,
     oppdaterFritekstTabellIDelseksjonState,
 } from '../utils/delseksjonUtils';
 
@@ -144,7 +146,6 @@ export function Delseksjon({
     };
 
     const håndterEndringIDropdown = (nyTekstOgIndeksStreng: string, innholdIndeks: number) => {
-        console.log(nyTekstOgIndeksStreng);
         const nyTekstOgIndeks = nyTekstOgIndeksStreng.split('@&#');
         const valgIndeks = Number(nyTekstOgIndeks[1]);
         const nyFritekstTabell = oppdaterFritekstTabellMedDropdown(
@@ -199,59 +200,20 @@ export function Delseksjon({
     };
 
     const nullstillFritekst = () => {
-        console.log('nullstill fritekstfelt'); // Må håndtere flettefelt, disse skal vell ikke slettes?
-        // Finn initiell tekst til fritekst-tabellen
-        // settFritekst('');
-        const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold); //Kun for å få struktur
-
-        // Tilbakestill tekst knyttet til dropdowns
-        delseksjonerState[delseksjonIndeks].innhold.forEach(
-            (innhold: StateFlettefelt[] | StateDropdown, indeks: number) => {
-                if ((innhold as StateDropdown).valgVerdi != undefined) {
-                    nyFritekstTabell[indeks] = (innhold as StateDropdown).valgVerdi
-                        ?.split('@&#')[0]
-                        .split('|') || [''];
-                    if ((innhold as StateDropdown).flettefelt.length > 0) {
-                        let flettefeltIndeks = 0;
-                        for (let i = 1; i < nyFritekstTabell[indeks].length; i += 2) {
-                            nyFritekstTabell[indeks][i] = (innhold as StateDropdown).flettefelt[
-                                flettefeltIndeks
-                            ].verdi;
-                            console.log(i);
-                        }
-                    }
-                } else if (innhold as StateFlettefelt[]) {
-                }
-            }
+        const nyFritekstTabell = oppdaterFritekstTabellFraDelseksjonState(
+            delseksjon,
+            delseksjonerState,
+            delseksjonIndeks
         );
 
-        console.log('ny fri: ', nyFritekstTabell);
-        //for (let i = 1; i + 2; i < nyFritekstTabell.length) {}
-
-        // Fyll inn flettefeltverdier
-        // const nyFlettefeltTabell = innholdTilFlettefeltTabell(
-        //     delseksjon.innhold,
-        //     delseksjonerState[delseksjonIndeks].innhold
-        // );
-
-        //console.log(nyFritekstTabell);
-        //settFlettefelt(nyFlettefeltTabell);
-
-        settFritekstTabell(nyFritekstTabell);
         const nyDelseksjonState = oppdaterFritekstTabellIDelseksjonState(
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell
         );
-        settOppdaterFritekst(true);
-        // settFritekst(dobbelTabellTilStreng(nyFritekstTabell));
-        // oppdaterAvsnitt(nyFritekst);
+
+        settFritekstTabell(nyFritekstTabell);
         settDelseksjonerState(nyDelseksjonState);
-        //setMellomlagringDelseksjonState(nyMellomlagringDelseksjon);
-        // mellomlagret[delseksjonsindeks].innhold = [[], {flettefelt: [], valgverdi: ""}]
-        // [] om det er en tekst
-        // {flettefelt, valgverdi} om det er tekst fra dropdown.
-        console.log('Mellomlagret: ', nyDelseksjonState);
-        console.log('nullstill fritekst');
+        settOppdaterFritekst(true);
     };
 
     return (
