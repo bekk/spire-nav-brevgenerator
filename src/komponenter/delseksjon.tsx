@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Checkbox } from '@navikt/ds-react';
+import { Checkbox, Label } from '@navikt/ds-react';
 import { SkjemaContext } from '../context/context';
 import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from '../typer/sanity';
 import { Fritekst } from './fritekst';
@@ -258,7 +258,9 @@ export function Delseksjon({
                                 }
                             }
                         )}
-                    <label className="navds-form-field__label navds-label">Fritekst</label>
+                    <div className="fritekst-label">
+                        <Label>Fritekst</Label>
+                    </div>
 
                     <Fritekst
                         håndterEndringIFritekstFelt={håndterEndringIFritekstFelt}
