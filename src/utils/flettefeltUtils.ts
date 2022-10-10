@@ -110,12 +110,17 @@ export const finnInnholdOgFlettefeltIndeks = (
 export const fyllInnFlettefeltIFritekstTabell = (
     fritekstTabellElement: string[],
     flettefelter: StateFlettefelt[]
-) => {
+): string[] => {
     let flettefeltIndeks = 0;
+    console.log('flettefelt inn: ', fritekstTabellElement.length);
     for (let i = 1; i < fritekstTabellElement.length; i += 2) {
         const flettefeltVerdi = flettefelter[flettefeltIndeks].verdi;
+        console.log('flettefeltverdi: ', flettefeltVerdi);
         if (flettefeltVerdi !== '') {
             fritekstTabellElement[i] = flettefeltVerdi;
+            console.log(fritekstTabellElement);
         }
     }
+
+    return fritekstTabellElement;
 };

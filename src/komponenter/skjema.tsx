@@ -50,6 +50,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
 
                         if (mellomlagretBrev !== undefined) {
                             skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                            console.log(mellomlagretBrev.delseksjoner);
                             delseksjonerDispatch(mellomlagretBrev.delseksjoner);
                         } else {
                             initialiserContext(brevmal.seksjoner);

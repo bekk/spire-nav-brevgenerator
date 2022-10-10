@@ -69,7 +69,7 @@ export const oppdaterFritekstTabellFraDelseksjonState = (
     delseksjonerState: StateDelseksjon[],
     delseksjonIndeks: number
 ) => {
-    const nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
+    let nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
 
     delseksjonerState[delseksjonIndeks].innhold.forEach(
         (innhold: StateFlettefelt[] | StateDropdown, indeks: number) => {
@@ -78,13 +78,14 @@ export const oppdaterFritekstTabellFraDelseksjonState = (
                     ?.split('@&#')[0]
                     .split('|') || [''];
                 if ((innhold as StateDropdown).flettefelt.length > 0) {
-                    fyllInnFlettefeltIFritekstTabell(
+                    console.log('fant flettefelt');
+                    nyFritekstTabell[indeks] = fyllInnFlettefeltIFritekstTabell(
                         nyFritekstTabell[indeks],
                         (innhold as StateDropdown).flettefelt
                     );
                 }
             } else if (innhold as StateFlettefelt[]) {
-                fyllInnFlettefeltIFritekstTabell(
+                nyFritekstTabell[indeks] = fyllInnFlettefeltIFritekstTabell(
                     nyFritekstTabell[indeks],
                     innhold as StateFlettefelt[]
                 );
