@@ -1,6 +1,7 @@
 .wrapper-class {
     border: 1px solid rgba(112, 112, 112, 1);
     border-radius: 4px;
+    overflow: hidden;
 }
 
 .editor-class {
@@ -10,6 +11,8 @@
     font-weight: normal;
     display: block;
     min-height: 1.2em;
+    max-height: 15em;
+    overflow-y: scroll;
 }
 
 .toolbar-class {

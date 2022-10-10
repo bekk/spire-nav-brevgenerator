@@ -5,7 +5,7 @@ import { mellomlagringState } from './typer/mellomlagring';
 import { SanityBrevmalMedSeksjoner } from './typer/sanity';
 
 const skalCache = true;
-const backendURL = 'http://34.88.177.137:8080';
+const backendURL = 'http://spire-nav-backend.sberbom.com';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
