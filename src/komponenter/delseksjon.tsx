@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Checkbox, Label } from '@navikt/ds-react';
+import { Checkbox, Button, Label } from '@navikt/ds-react';
 import { SkjemaContext } from '../context/context';
 import { SanityDelseksjon, SanityDropdown, SanityTekstObjekt } from '../typer/sanity';
 import { Fritekst } from './fritekst';
@@ -22,6 +22,7 @@ import { FlettefeltVerdier, StateDelseksjon, StateDropdown } from '../typer/type
 import {
     oppdaterDropdownIDelseksjonState,
     oppdaterFlettefeltIDelseksjonerState,
+    oppdaterFritekstTabellFraDelseksjonState,
     oppdaterFritekstTabellIDelseksjonState,
 } from '../utils/delseksjonUtils';
 
@@ -183,6 +184,7 @@ export function Delseksjon({
             flettefeltIndeks,
             nyTekst
         );
+
         const nyDelseksjonState = oppdaterFlettefeltIDelseksjonerState(
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell,
@@ -192,6 +194,22 @@ export function Delseksjon({
         );
 
         oppdaterFlettefelt([...flettefelt], innholdIndeks, flettefeltIndeks, nyTekst);
+        settFritekstTabell(nyFritekstTabell);
+        settDelseksjonerState(nyDelseksjonState);
+        settOppdaterFritekst(true);
+    };
+
+    const nullstillFritekst = () => {
+        const nyFritekstTabell = oppdaterFritekstTabellFraDelseksjonState(
+            delseksjon,
+            delseksjonerState[delseksjonIndeks]
+        );
+
+        const nyDelseksjonState = oppdaterFritekstTabellIDelseksjonState(
+            { ...delseksjonerState[delseksjonIndeks] },
+            nyFritekstTabell
+        );
+
         settFritekstTabell(nyFritekstTabell);
         settDelseksjonerState(nyDelseksjonState);
         settOppdaterFritekst(true);
@@ -268,6 +286,9 @@ export function Delseksjon({
                         oppdaterFritekst={oppdaterFritekst}
                         settOppdaterFritekst={settOppdaterFritekst}
                     />
+                    <div className="nullstill-fritekst-kontainer">
+                        <Button onClick={nullstillFritekst}>Tilbakestill fritekstfelt</Button>
+                    </div>
                 </div>
             )}
         </div>

@@ -30,7 +30,7 @@ export function Dropdown({
                 sanityDropdown.valg.map((valg: SanityTekstObjekt, indeks2: number) => (
                     <option
                         key={indeks2}
-                        value={sanityBlocktekstToHtml(valg) + `@&#${indeks2.toString()}`}
+                        value={sanityBlocktekstToHtml(valg).join('|') + `@&#${indeks2.toString()}`}
                     >
                         {valg.tekstTittel}
                     </option>
