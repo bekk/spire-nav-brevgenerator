@@ -3,12 +3,18 @@ import { NavIkon } from '../ikoner/navikon';
 import parse from 'html-react-parser';
 import { SkjemaContext } from '../context/context';
 import { settInnTabell } from '../utils/htmlPdfUtils';
+import { dobbelTabellTilStreng } from '../utils/fritekstUtils';
+import { StateDelseksjon } from '../typer/typer';
 
 const PDF = () => {
-    const { avsnittState, skalAvsnittInkluderesState, brevmalTittelState } =
+    const { skalAvsnittInkluderesState, brevmalTittelState, delseksjonerState } =
         useContext(SkjemaContext);
 
-    const avsnittMedTabell = settInnTabell(avsnittState);
+    const avsnitt = delseksjonerState.map((delseksjoner: StateDelseksjon) => {
+        return dobbelTabellTilStreng(delseksjoner.fritekstTabell);
+    });
+
+    const avsnittMedTabell = settInnTabell(avsnitt);
 
     return (
         <div className="a4">

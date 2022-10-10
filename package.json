@@ -1,6 +1,6 @@
 {
     "name": "@bekk/spire-nav-brevgenerator",
-    "version": "1.0.22",
+    "version": "1.0.25",
     "description": "",
     "main": "./brevGenerator.js",
     "scripts": {

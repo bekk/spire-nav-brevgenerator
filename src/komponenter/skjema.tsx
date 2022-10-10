@@ -1,20 +1,12 @@
 import { Button, Select, Alert } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import {
-    hentBrevmal,
-    hentMellomlagretBrev,
-    postMellomlagreBrev,
-    validerOgHentMellomlagring,
-} from '../brev-api';
+import { hentBrevmal, postMellomlagreBrev, validerOgHentMellomlagring } from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
 import { brevmal } from '../typer/typer';
-import { MellomlagringContext, SkjemaContext } from '../context/context';
+import { SkjemaContext } from '../context/context';
 import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
-import {
-    finnInitielleAvsnittOgAntallDelseksjoner,
-    finnInitiellMellomlagringDelseksjonState,
-} from '../utils/skjemaUtils';
+import { finnAntallDelseksjoner, finnInitiellDelseksjonerState } from '../utils/skjemaUtils';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -31,14 +23,12 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [vellykketMellomlagring, settVellykketMellomlagring] = useState(false);
 
     const {
-        avsnittDispatch,
-        avsnittState,
         skalAvsnittInkluderesDispatch,
         skalAvsnittInkluderesState,
         brevmalTittelDispatch,
+        delseksjonerState,
+        delseksjonerDispatch,
     } = React.useContext(SkjemaContext);
-    const { mellomlagringDelseksjonerDispatch, mellomlagringDelseksjonerState } =
-        React.useContext(MellomlagringContext);
 
     useEffect(() => {
         const hentOgPopulerData = async () => {
@@ -58,22 +48,20 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                             brevmalMetaData.updatedAt
                         );
 
-                        const brevet = await hentMellomlagretBrev(brevmal._id);
                         setGjeldendeBrevmal(brevmal);
                         brevmalTittelDispatch(brevmal.brevmaloverskrift);
 
-                        console.log(mellomlagretBrev);
+                        if (mellomlagretBrev === null) {
+                            //TODO: kan gi beskjed til bruker om at utkast er slettet her.
+                            console.log(
+                                'The server refuses to brew coffee because it is, permanently, a teapot.'
+                            );
+                        }
 
-                        // mellomlagret brev er ikke av typen brev, undefined eller null??
-                        //console.log(mellomlagretBrev);
-
-                        //initialiserContext(brevmal.seksjoner);
-
-                        if (brevet !== undefined) {
-                            skalAvsnittInkluderesDispatch(brevet.inkluderingsbrytere);
-                            mellomlagringDelseksjonerDispatch(brevet.delseksjoner);
+                        if (mellomlagretBrev !== undefined && mellomlagretBrev !== null) {
+                            skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
+                            delseksjonerDispatch(mellomlagretBrev.delseksjoner);
                         } else {
-                            console.log('kom her');
                             initialiserContext(brevmal.seksjoner);
                         }
                     }
@@ -84,15 +72,12 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     }, [gjeldendeBrevmalId]);
 
     const initialiserContext = (seksjoner: SanitySeksjon[]) => {
-        const { nyeAvsnitt, antallDelSeksjoner } =
-            finnInitielleAvsnittOgAntallDelseksjoner(seksjoner);
-        const nyeInkluderingsBrytere: boolean[] = new Array(antallDelSeksjoner).fill(true);
-        const initellMellomlagringDelseksjonState =
-            finnInitiellMellomlagringDelseksjonState(seksjoner);
-
-        avsnittDispatch(nyeAvsnitt);
+        const antallDelseksjoner = finnAntallDelseksjoner(seksjoner);
+        const nyeInkluderingsBrytere: boolean[] = new Array(antallDelseksjoner).fill(true);
         skalAvsnittInkluderesDispatch(nyeInkluderingsBrytere);
-        mellomlagringDelseksjonerDispatch(initellMellomlagringDelseksjonState);
+
+        const initielleDelseksjoner = finnInitiellDelseksjonerState(seksjoner);
+        delseksjonerDispatch(initielleDelseksjoner);
     };
 
     const nullStillAlleValg = () => {
@@ -122,13 +107,13 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         const mellomlagringsobjekt = {
             brevmalId: gjeldendeBrevmalId,
             inkluderingsbrytere: skalAvsnittInkluderesState,
-            avsnitt: avsnittState,
-            delseksjoner: mellomlagringDelseksjonerState,
+            delseksjoner: delseksjonerState,
         };
         håndterMellomlagringKlikk(await postMellomlagreBrev(mellomlagringsobjekt));
     };
 
     let delseksjonTeller = 0;
+
     return (
         <div className="skjema">
             <Select

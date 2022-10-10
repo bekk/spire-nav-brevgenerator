@@ -7,6 +7,7 @@ import { SanityBrevmalMedSeksjoner } from './typer/sanity';
 const skalCache = true;
 //const backendURL = 'http://34.88.177.137:8080';
 const backendURL = 'http://localhost:8080';
+//const backendURL = 'http://spire-nav-backend.sberbom.com';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
@@ -163,7 +164,7 @@ export const hentMellomlagretBrev = async (
             return undefined;
         })
         .catch((err) => {
-            console.log(err.response.message);
+            console.log(err.response);
             return undefined;
         });
 };
@@ -171,7 +172,7 @@ export const hentMellomlagretBrev = async (
 export const validerOgHentMellomlagring = async (
     brevmalId: string,
     brevmalSistOppdatert: string
-): Promise<mellomlagringState | undefined> => {
+): Promise<mellomlagringState | undefined | null> => {
     const brev = {
         soknadId: '1',
         brevmalId: brevmalId,
@@ -186,14 +187,14 @@ export const validerOgHentMellomlagring = async (
             },
         })
         .then((res) => {
-            if (res.data !== null || res.data !== undefined) {
-                const brevFraBackend = JSON.parse(res.data.brev);
-                return brevFraBackend;
+            if (res.data !== undefined) {
+                return JSON.parse(res.data.brev);
             }
-            return undefined;
         })
         .catch((err) => {
-            console.log(err.response.message);
+            if (err.response.status === 418) {
+                return null;
+            }
             return undefined;
         });
 };
