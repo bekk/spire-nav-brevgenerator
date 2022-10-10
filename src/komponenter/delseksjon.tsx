@@ -16,7 +16,6 @@ import { Flettefelter } from './flettefelter';
 import {
     finnFlettefeltIDropdown,
     finnInnholdOgFlettefeltIndeks,
-    fyllInnFlettefeltIFritekstTabell,
     innholdTilFlettefeltTabell,
 } from '../utils/flettefeltUtils';
 import { FlettefeltVerdier, StateDelseksjon, StateDropdown } from '../typer/typer';
