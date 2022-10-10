@@ -1,6 +1,6 @@
 import { SanityDelseksjon, SanitySeksjon, SanityTekstObjekt } from '../typer/sanity';
-import { StateDropdown, StateFlettefelt, tomtFlettefelt } from '../typer/typer';
-import { finnFlettefeltITekst } from './flettefeltUtils';
+import { StateDropdown, StateFlettefelt } from '../typer/typer';
+import { finnFlettefeltITekst, lagTomFlettefeltTabell } from './flettefeltUtils';
 import { innholdTilFritekstTabell } from './fritekstUtils';
 import { erInnholdSanityDropdown } from './sanityUtils';
 
@@ -40,7 +40,7 @@ const lagInitieltInnhold = (delseksjon: SanityDelseksjon) => {
                 const flettefelt = finnFlettefeltITekst(tekst, 0);
                 antallFlettefelt += flettefelt.length;
             });
-            return Array(antallFlettefelt).fill(tomtFlettefelt);
+            return lagTomFlettefeltTabell(antallFlettefelt);
         }
     });
 };
