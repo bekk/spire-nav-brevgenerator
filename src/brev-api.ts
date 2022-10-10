@@ -191,6 +191,9 @@ export const validerOgHentMellomlagring = async (
         })
         .catch((err) => {
             if (err.response.status === 418) {
+                console.log(
+                    'The server refuses to brew coffee because it is, permanently, a teapot.'
+                );
                 return null;
             }
             return undefined;

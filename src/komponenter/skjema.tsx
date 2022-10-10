@@ -51,13 +51,6 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         setGjeldendeBrevmal(brevmal);
                         brevmalTittelDispatch(brevmal.brevmaloverskrift);
 
-                        if (mellomlagretBrev === null) {
-                            //TODO: kan gi beskjed til bruker om at utkast er slettet her.
-                            console.log(
-                                'The server refuses to brew coffee because it is, permanently, a teapot.'
-                            );
-                        }
-
                         if (mellomlagretBrev !== undefined && mellomlagretBrev !== null) {
                             skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                             delseksjonerDispatch(mellomlagretBrev.delseksjoner);
