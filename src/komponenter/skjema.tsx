@@ -1,6 +1,11 @@
 import { Button, Select, Alert } from '@navikt/ds-react';
 import React, { useEffect, useState } from 'react';
-import { hentBrevmal, postMellomlagreBrev, validerOgHentMellomlagring } from '../brev-api';
+import {
+    hentBrevmal,
+    hentMellomlagretBrev,
+    postMellomlagreBrev,
+    validerOgHentMellomlagring,
+} from '../brev-api';
 import { SanityBrevmalMedSeksjoner, SanitySeksjon } from '../typer/sanity';
 import { brevmal } from '../typer/typer';
 import { MellomlagringContext, SkjemaContext } from '../context/context';
@@ -53,12 +58,20 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                             brevmalMetaData.updatedAt
                         );
 
-                        // mellomlagret brev er ikke av typen brev, undefined eller null??
+                        const brevet = await hentMellomlagretBrev(brevmal._id);
+                        setGjeldendeBrevmal(brevmal);
+                        brevmalTittelDispatch(brevmal.brevmaloverskrift);
 
-                        if (mellomlagretBrev !== undefined && mellomlagretBrev !== null) {
-                            avsnittDispatch(mellomlagretBrev.avsnitt);
-                            skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
-                            mellomlagringDelseksjonerDispatch(mellomlagretBrev.delseksjoner);
+                        console.log(mellomlagretBrev);
+
+                        // mellomlagret brev er ikke av typen brev, undefined eller null??
+                        //console.log(mellomlagretBrev);
+
+                        //initialiserContext(brevmal.seksjoner);
+
+                        if (brevet !== undefined) {
+                            skalAvsnittInkluderesDispatch(brevet.inkluderingsbrytere);
+                            mellomlagringDelseksjonerDispatch(brevet.delseksjoner);
                         } else {
                             console.log('kom her');
                             initialiserContext(brevmal.seksjoner);

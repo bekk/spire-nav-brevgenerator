@@ -141,13 +141,11 @@ export const genererPDF = async (html: string) => {
 };
 
 export const hentMellomlagretBrev = async (
-    brevmalId: string,
-    brevmalSistOppdatert: string
+    brevmalId: string
 ): Promise<mellomlagringState | undefined> => {
     const brev = {
         soknadId: '1',
         brevmalId: brevmalId,
-        brevmalSistOppdatert: brevmalSistOppdatert,
     };
     const token = localStorage.getItem('token');
     return axios
@@ -188,7 +186,11 @@ export const validerOgHentMellomlagring = async (
             },
         })
         .then((res) => {
-            return res.data;
+            if (res.data !== null || res.data !== undefined) {
+                const brevFraBackend = JSON.parse(res.data.brev);
+                return brevFraBackend;
+            }
+            return undefined;
         })
         .catch((err) => {
             console.log(err.response.message);
