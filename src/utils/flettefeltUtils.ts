@@ -1,5 +1,5 @@
 import { SanityDropdown, SanityTekst, SanityTekstObjekt } from '../typer/sanity';
-import { FlettefeltVerdier, StateDropdown, StateFlettefelt } from '../typer/typer';
+import { FlettefeltVerdier, StateDropdown, StateFlettefelt, tomtFlettefelt } from '../typer/typer';
 import { erInnholdTekstObjekt } from './sanityUtils';
 
 export const finnFlettefeltITekst = (
@@ -117,7 +117,18 @@ export const fyllInnFlettefeltIFritekstTabell = (
         if (flettefeltVerdi !== '') {
             fritekstTabellElement[i] = flettefeltVerdi;
         }
+        flettefeltIndeks++;
     }
 
     return fritekstTabellElement;
+};
+
+export const lagTomFlettefeltTabell = (tabellengde: number): StateFlettefelt[] => {
+    const tomFlettefeltTabell = new Array(tabellengde);
+
+    for (let i = 0; i < tabellengde; i++) {
+        tomFlettefeltTabell[i] = { tomtFlettefelt };
+    }
+
+    return tomFlettefeltTabell;
 };

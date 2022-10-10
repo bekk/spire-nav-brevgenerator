@@ -184,6 +184,7 @@ export function Delseksjon({
             flettefeltIndeks,
             nyTekst
         );
+
         const nyDelseksjonState = oppdaterFlettefeltIDelseksjonerState(
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell,
@@ -201,8 +202,7 @@ export function Delseksjon({
     const nullstillFritekst = () => {
         const nyFritekstTabell = oppdaterFritekstTabellFraDelseksjonState(
             delseksjon,
-            delseksjonerState,
-            delseksjonIndeks
+            delseksjonerState[delseksjonIndeks]
         );
 
         const nyDelseksjonState = oppdaterFritekstTabellIDelseksjonState(

@@ -6,7 +6,7 @@ import {
     StateFlettefelt,
     tomtFlettefelt,
 } from '../typer/typer';
-import { fyllInnFlettefeltIFritekstTabell } from './flettefeltUtils';
+import { fyllInnFlettefeltIFritekstTabell, lagTomFlettefeltTabell } from './flettefeltUtils';
 import { innholdTilFritekstTabell } from './fritekstUtils';
 
 export const erInnholdStateDropdown = (innhold: StateFlettefelt[] | StateDropdown): boolean => {
@@ -32,9 +32,8 @@ export const oppdaterDropdownIDelseksjonState = (
 
     delseksjonStateKopi.fritekstTabell = nyFritekstTabell;
 
-    (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt = Array(
-        nyeFlettefelt.length
-    ).fill({ ...tomtFlettefelt });
+    (delseksjonStateKopi.innhold[innholdIndeks] as StateDropdown).flettefelt =
+        lagTomFlettefeltTabell(nyeFlettefelt.length);
 
     return delseksjonStateKopi;
 };
@@ -66,12 +65,11 @@ export const oppdaterFlettefeltIDelseksjonerState = (
 
 export const oppdaterFritekstTabellFraDelseksjonState = (
     delseksjon: SanityDelseksjon,
-    delseksjonerState: StateDelseksjon[],
-    delseksjonIndeks: number
+    delseksjonState: StateDelseksjon
 ) => {
     let nyFritekstTabell = innholdTilFritekstTabell(delseksjon.innhold);
 
-    delseksjonerState[delseksjonIndeks].innhold.forEach(
+    delseksjonState.innhold.forEach(
         (innhold: StateFlettefelt[] | StateDropdown, indeks: number) => {
             if ((innhold as StateDropdown).valgVerdi != undefined) {
                 nyFritekstTabell[indeks] = (innhold as StateDropdown).valgVerdi
