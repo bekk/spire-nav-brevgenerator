@@ -78,7 +78,6 @@ export const oppdaterFritekstTabellFraDelseksjonState = (
                     ?.split('@&#')[0]
                     .split('|') || [''];
                 if ((innhold as StateDropdown).flettefelt.length > 0) {
-                    console.log('fant flettefelt');
                     nyFritekstTabell[indeks] = fyllInnFlettefeltIFritekstTabell(
                         nyFritekstTabell[indeks],
                         (innhold as StateDropdown).flettefelt

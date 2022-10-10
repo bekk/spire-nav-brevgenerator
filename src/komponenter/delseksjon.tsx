@@ -199,7 +199,6 @@ export function Delseksjon({
     };
 
     const nullstillFritekst = () => {
-        console.log(delseksjonerState);
         const nyFritekstTabell = oppdaterFritekstTabellFraDelseksjonState(
             delseksjon,
             delseksjonerState,
@@ -210,8 +209,6 @@ export function Delseksjon({
             { ...delseksjonerState[delseksjonIndeks] },
             nyFritekstTabell
         );
-
-        console.log(nyDelseksjonState);
 
         settFritekstTabell(nyFritekstTabell);
         settDelseksjonerState(nyDelseksjonState);
