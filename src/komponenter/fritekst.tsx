@@ -7,21 +7,34 @@ import draftToHtml from 'draftjs-to-html';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../stiler/fritekst.css';
+import { dobbelTabellTilStreng } from '../utils/fritekstUtils';
 
 interface fritekstProps {
-    defaultTekst: string;
+    defaultTekst: string[][];
+    oppdaterFritekst: boolean;
     håndterEndringIFritekstFelt(nyFritekst: string): void;
+    settOppdaterFritekst: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function Fritekst({ defaultTekst, håndterEndringIFritekstFelt }: fritekstProps) {
+export function Fritekst({
+    defaultTekst,
+    håndterEndringIFritekstFelt,
+    oppdaterFritekst,
+    settOppdaterFritekst,
+}: fritekstProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
 
     useEffect(() => {
-        setEditorState(
-            EditorState.createWithContent(
-                ContentState.createFromBlockArray(htmlToDraft(defaultTekst).contentBlocks)
-            )
-        );
+        if (oppdaterFritekst) {
+            setEditorState(
+                EditorState.createWithContent(
+                    ContentState.createFromBlockArray(
+                        htmlToDraft(dobbelTabellTilStreng(defaultTekst)).contentBlocks
+                    )
+                )
+            );
+            settOppdaterFritekst(false);
+        }
     }, [defaultTekst]);
 
     const handterEditorEndring = (e: EditorState) => {
