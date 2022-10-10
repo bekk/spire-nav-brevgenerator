@@ -1,11 +1,5 @@
 import { SanityDelseksjon } from '../typer/sanity';
-import {
-    FlettefeltVerdier,
-    StateDelseksjon,
-    StateDropdown,
-    StateFlettefelt,
-    tomtFlettefelt,
-} from '../typer/typer';
+import { FlettefeltVerdier, StateDelseksjon, StateDropdown, StateFlettefelt } from '../typer/typer';
 import { fyllInnFlettefeltIFritekstTabell, lagTomFlettefeltTabell } from './flettefeltUtils';
 import { innholdTilFritekstTabell } from './fritekstUtils';
 
