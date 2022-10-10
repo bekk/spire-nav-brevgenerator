@@ -127,7 +127,7 @@ export const lagTomFlettefeltTabell = (tabellengde: number): StateFlettefelt[] =
     const tomFlettefeltTabell = new Array(tabellengde);
 
     for (let i = 0; i < tabellengde; i++) {
-        tomFlettefeltTabell[i] = { tomtFlettefelt };
+        tomFlettefeltTabell[i] = { ...tomtFlettefelt };
     }
 
     return tomFlettefeltTabell;
