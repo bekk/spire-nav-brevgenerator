@@ -5,7 +5,7 @@ import { mellomlagringState } from './typer/mellomlagring';
 import { SanityBrevmalMedSeksjoner } from './typer/sanity';
 
 const skalCache = true;
-const backendURL = 'http://spire-nav-backend.sberbom.com';
+const backendURL = 'http://localhost:8080';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
     return sanityBaseURL + '?query=' + query;
@@ -106,6 +106,7 @@ export const hentBrevmal = async (
 
         return axios.get(URL).then((res) => {
             lagreCache(finnSanityDatasett(sanityBaseURL) + '/brevmal/' + id, res.data.result);
+            console.log(res.data.result);
             return res.data.result;
         });
     }

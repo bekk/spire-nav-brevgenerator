@@ -42,6 +42,7 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         gjeldendeBrevmalId,
                         brevmalMetaData.updatedAt
                     );
+                    console.log(brevmalMetaData.updatedAt);
                     if (brevmal) {
                         const mellomlagretBrev = await validerOgHentMellomlagring(
                             brevmal._id,
