@@ -7,6 +7,7 @@ import { SkjemaContext } from '../context/context';
 import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
 import { finnAntallDelseksjoner, finnInitiellDelseksjonerState } from '../utils/skjemaUtils';
+import hash from 'object-hash';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -21,7 +22,6 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
     const [skalAlleValgNullstilles, setSkalAlleValgNullstilles] = useState(false);
     const [alertSkalVises, settAlertSkalVises] = useState(false);
     const [vellykketMellomlagring, settVellykketMellomlagring] = useState(false);
-    const hash = require('object-hash');
 
     const {
         skalAvsnittInkluderesDispatch,
