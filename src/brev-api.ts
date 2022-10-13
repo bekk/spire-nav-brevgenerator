@@ -3,8 +3,9 @@ import css from './stiler/css';
 import { CacheObjekt } from './typer/cache';
 import { mellomlagringState } from './typer/mellomlagring';
 import { SanityBrevmalMedSeksjoner } from './typer/sanity';
+import hash from 'object-hash';
 
-const skalCache = true;
+const skalCache = false;
 const backendURL = 'https://spire-nav.kolbjorn.tech';
 
 const genererSanityURL = (sanityBaseURL: string, query: string): string => {
@@ -142,11 +143,13 @@ export const genererPDF = async (html: string) => {
 };
 
 export const hentMellomlagretBrev = async (
-    brevmalId: string
-): Promise<mellomlagringState | undefined> => {
+    brevmalId: string,
+    brevmalToken: string
+): Promise<mellomlagringState | undefined | null> => {
     const brev = {
         soknadId: '1',
         brevmalId: brevmalId,
+        brevmalToken: brevmalToken,
     };
     const token = localStorage.getItem('token');
     return axios
@@ -157,24 +160,33 @@ export const hentMellomlagretBrev = async (
             },
         })
         .then((res) => {
-            if (res.data !== null || res.data !== undefined) {
-                const brevFraBackend = JSON.parse(res.data.brev);
-                return brevFraBackend;
+            if (res.data !== undefined) {
+                return JSON.parse(res.data.brev);
             }
             return undefined;
         })
         .catch((err) => {
-            console.log('Kunne ikke hente mellomlagret brev:', err);
+            if (err.response.status === 418) {
+                console.log(
+                    'The server refuses to brew coffee because it is, permanently, a teapot.'
+                );
+                return null;
+            }
             return undefined;
         });
 };
 
-export const postMellomlagreBrev = async (mellomlagring: mellomlagringState): Promise<boolean> => {
+export const postMellomlagreBrev = async (
+    mellomlagring: mellomlagringState,
+    brevmal: SanityBrevmalMedSeksjoner
+): Promise<boolean> => {
     const brevTilBackend = {
         soknadId: '1',
         brevmalId: mellomlagring.brevmalId,
         brev: JSON.stringify(mellomlagring),
+        brevmalToken: hash(brevmal),
     };
+
     const token = localStorage.getItem('token');
     return await axios
         .post(`${backendURL}/mellomlagring/`, JSON.stringify(brevTilBackend), {
