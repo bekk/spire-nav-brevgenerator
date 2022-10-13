@@ -120,13 +120,14 @@ const genererPDFKontekst = (html: string): string => {
 export const genererPDF = async (html: string) => {
     const url = backendURL + '/pdf/';
     const htmlMedKontekst = genererPDFKontekst(html);
-
+    const token = localStorage.getItem('token');
     const pdf = await axios
         .post(url, htmlMedKontekst, {
             responseType: 'arraybuffer',
             headers: {
                 'Content-Type': 'application/html',
                 Accept: 'application/pdf',
+                Authorization: `Bearer ${token}`,
             },
         })
         .then(
