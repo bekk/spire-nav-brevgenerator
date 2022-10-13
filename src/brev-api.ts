@@ -118,8 +118,9 @@ const genererPDFKontekst = (html: string): string => {
 };
 
 export const genererPDF = async (html: string) => {
-    const url = 'http://localhost:8082/api/html-til-pdf';
+    const url = backendURL + '/pdf/';
     const htmlMedKontekst = genererPDFKontekst(html);
+
     const pdf = await axios
         .post(url, htmlMedKontekst, {
             responseType: 'arraybuffer',
@@ -131,6 +132,7 @@ export const genererPDF = async (html: string) => {
         .then(
             (res: AxiosResponse<ArrayBuffer>) => new Blob([res.data], { type: 'application/pdf' })
         );
+    
     const pdfURL = URL.createObjectURL(pdf);
     const vindu = window.open(pdfURL);
     setTimeout(() => {
