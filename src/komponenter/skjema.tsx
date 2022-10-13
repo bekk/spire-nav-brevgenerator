@@ -7,6 +7,7 @@ import { SkjemaContext } from '../context/context';
 import { Seksjon } from './seksjon';
 import '../stiler/skjema.css';
 import { finnAntallDelseksjoner, finnInitiellDelseksjonerState } from '../utils/skjemaUtils';
+import hash from 'object-hash';
 
 interface SkjemaProps {
     brevmaler: brevmal[];
@@ -42,13 +43,17 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         gjeldendeBrevmalId,
                         brevmalMetaData.updatedAt
                     );
+
                     if (brevmal) {
-                        const mellomlagretBrev = await hentMellomlagretBrev(brevmal._id);
+                        const mellomlagretBrev = await hentMellomlagretBrev(
+                            brevmal._id,
+                            hash(brevmal)
+                        );
 
                         setGjeldendeBrevmal(brevmal);
                         brevmalTittelDispatch(brevmal.brevmaloverskrift);
 
-                        if (mellomlagretBrev !== undefined) {
+                        if (mellomlagretBrev !== undefined && mellomlagretBrev !== null) {
                             skalAvsnittInkluderesDispatch(mellomlagretBrev.inkluderingsbrytere);
                             delseksjonerDispatch(mellomlagretBrev.delseksjoner);
                         } else {
@@ -93,13 +98,15 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
         );
     };
 
-    const mellomlagreBrev = async () => {
+    const mellomlagreBrev = async (gjeldendeBrevmal: SanityBrevmalMedSeksjoner) => {
         const mellomlagringsobjekt = {
             brevmalId: gjeldendeBrevmalId,
             inkluderingsbrytere: skalAvsnittInkluderesState,
             delseksjoner: delseksjonerState,
         };
-        håndterMellomlagringKlikk(await postMellomlagreBrev(mellomlagringsobjekt));
+        håndterMellomlagringKlikk(
+            await postMellomlagreBrev(mellomlagringsobjekt, gjeldendeBrevmal)
+        );
     };
 
     let delseksjonTeller = 0;
@@ -128,7 +135,9 @@ export function Skjema({ brevmaler, sanityBaseURL }: SkjemaProps) {
                         <Button variant="secondary" onClick={nullStillAlleValg}>
                             Nullstill valg
                         </Button>
-                        <Button onClick={mellomlagreBrev}>Mellomlagre brev</Button>
+                        <Button onClick={() => mellomlagreBrev(gjeldendeBrevmal)}>
+                            Mellomlagre brev
+                        </Button>
                     </div>
 
                     <div className="mellomlagring-alert">
