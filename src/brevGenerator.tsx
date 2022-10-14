@@ -5,7 +5,7 @@ import '@navikt/ds-css';
 import { Skjema } from './komponenter/skjema';
 import { Overskrift } from './komponenter/overskrift';
 import PDF from './komponenter/pdf';
-import { brevmal } from './typer/typer';
+import { brevmal, Bruker } from './typer/typer';
 import { Button } from '@navikt/ds-react';
 import { genererPDF, hentBrevmaler } from './brev-api';
 import {
@@ -22,9 +22,10 @@ import HTMLPDF from './komponenter/htmlPDF';
 
 interface brevGeneratorProps {
     sanityBaseURL: string;
+    brukerInfo: Bruker;
 }
 
-function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
+function BrevGenerator({ sanityBaseURL, brukerInfo }: brevGeneratorProps) {
     const [skalAvsnittInkluderesState, skalAvsnittInkluderesDispatch] = useReducer(
         skalAvsnittInkluderesStateReducer,
         initialSkalAvsnittInkluderesState
@@ -47,6 +48,7 @@ function BrevGenerator({ sanityBaseURL }: brevGeneratorProps) {
         brevmalTittelDispatch,
         delseksjonerState,
         delseksjonerDispatch,
+        brukerInfo,
     };
 
     useEffect(() => {

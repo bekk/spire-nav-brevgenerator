@@ -13,7 +13,7 @@ import { ArkMedBrevhode } from './arkMedBrevhode';
 import { dobbelTabellTilStreng } from '../utils/fritekstUtils';
 
 const HTMLPDF = () => {
-    const { brevmalTittelState, skalAvsnittInkluderesState, delseksjonerState } =
+    const { brevmalTittelState, skalAvsnittInkluderesState, delseksjonerState, brukerInfo } =
         useContext(SkjemaContext);
 
     const genererInnholdTilArk = (paragraftabell: string[]) => {
@@ -69,6 +69,7 @@ const HTMLPDF = () => {
                         key={indeks}
                         innhold={innhold}
                         brevmaltittel={brevmalTittelState}
+                        bruker={brukerInfo}
                     />
                 ) : (
                     <Ark key={indeks} innhold={innhold} />

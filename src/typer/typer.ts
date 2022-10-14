@@ -23,6 +23,8 @@ export type SkjemaContextType = {
 
     delseksjonerState: StateDelseksjon[];
     delseksjonerDispatch: Dispatch<StateDelseksjon[]>;
+
+    brukerInfo: Bruker;
 };
 export interface StateDropdown {
     valgVerdi?: string;
@@ -51,3 +53,10 @@ export type FlettefeltVerdier = {
     verdi: string;
     harBlittEndret: boolean;
 };
+
+export type Bruker = {
+    autentisert: boolean;
+    navn: string;
+    telefon: string;
+    email: string;
+}
