@@ -10,7 +10,14 @@ export const Signatur = ({ bruker }: SignaturProps) => {
         <div className="signatur">
             <p>{bruker.navn}</p>
             <p>{bruker.email}</p>
-            <p>{bruker.telefon}</p>
+            <p>
+                {'+47 ' +
+                    bruker.telefon.toString().slice(0, 3) +
+                    ' ' +
+                    bruker.telefon.toString().slice(3, 5) +
+                    ' ' +
+                    bruker.telefon.toString().slice(5, 8)}
+            </p>
         </div>
     );
 };
