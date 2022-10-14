@@ -33,4 +33,21 @@ export default `
     display: inline-block;
 	margin-top: 40mm;
 }
+
+table,
+th,
+td {
+    border: 1px solid;
+    font-size: 1.2vmin;
+}
+
+th,
+td {
+    padding: 1mm 2mm;
+}
+
+table {
+    border-collapse: collapse;
+    width: 150mm;
+}
 `;
